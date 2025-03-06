@@ -1,12 +1,6 @@
 import React from "react";
 import NavButtonMobile from "./nav-button-mobile";
-import { Url } from "next/dist/shared/lib/router/router";
-
-type NavButton = {
-  icon: React.ElementType;
-  text: String;
-  href: Url;
-};
+import { NavButton } from "./global-component-types";
 
 type BottomNavMobileProps = {
   NavButtons: NavButton[];

@@ -1,12 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Url } from "next/dist/shared/lib/router/router";
-
-type NavButton = {
-  icon: React.ElementType;
-  text: String;
-  href: Url;
-};
+import { NavButton } from "./global-component-types";
 
 type NavButtonMobileProps = {
   NavButton: NavButton;
