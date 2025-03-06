@@ -5,6 +5,12 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
+import BottomNavMobile from "@/components/bottom-nav-mobile";
+
+// Icons
+import { HomeIcon } from "@heroicons/react/24/solid";
+import { MapIcon } from "@heroicons/react/24/solid";
+import { UserIcon } from "@heroicons/react/24/solid";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -12,8 +18,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Food tracker app",
-  description: "Help you find food truck",
+  title: "BiteMap",
+  description: "Find and share local food trucks and food stands.",
 };
 
 const geistSans = Geist({
@@ -34,19 +40,21 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col gap-20 items-center">
-              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                  <div className="flex gap-5 items-center font-semibold"></div>
-                  <HeaderAuth />
-                </div>
-              </nav>
-              <div className="flex flex-col gap-20 max-w-5xl p-5">
-                {children}
-              </div>
-            </div>
-          </main>
+          <div className="min-h-screen">
+            <header className="w-full flex justify-center h-16 bg-gray-300">
+              SEARCH
+            </header>
+            <main className="flex-1 w-full flex flex-col items-center bg-gray-50 pb-16">
+              {children}
+            </main>
+            <BottomNavMobile
+              NavButtons={[
+                { icon: HomeIcon, text: "Home", href: "/" },
+                { icon: MapIcon, text: "Map", href: "/map" },
+                { icon: UserIcon, text: "Account", href: "/profile" },
+              ]}
+            />
+          </div>
         </ThemeProvider>
       </body>
     </html>

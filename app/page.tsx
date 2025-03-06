@@ -1,7 +1,9 @@
+import Image from "next/image";
+
 export default async function Home() {
   return (
     <>
-      <div>Hello world</div>
+      <h1>LOCAL TRUCK MAP</h1>
     </>
   );
 }
