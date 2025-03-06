@@ -36,17 +36,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen">
-            <header className="w-full flex justify-center h-16 bg-gray-300">
+          <div className="min-h-screen h-[100svh] flex flex-col ">
+            <header className="w-full flex shrink-0 justify-center h-16 bg-gray-300">
               SEARCH
             </header>
-            <main className="flex-1 w-full flex flex-col items-center bg-gray-50 pb-16">
-              {children}
-            </main>
+            <main className="flex-1 relative">{children}</main>
             <BottomNavMobile
               NavButtons={[
                 { icon: HomeIcon, text: "Home", href: "/" },
-                { icon: MapIcon, text: "Map", href: "/map" },
+                { icon: MapIcon, text: "Map", href: "/truckmap" },
                 { icon: UserIcon, text: "Account", href: "/profile" },
               ]}
             />
