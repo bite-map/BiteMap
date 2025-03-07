@@ -43,8 +43,7 @@ export default async function RootLayout({
           <div className="min-h-screen h-[100svh] flex flex-col ">
             <header className="w-full flex shrink-0 justify-center h-16 bg-gray-300"></header>
             <main className="flex-1 relative">{children}</main>
-            {user && <BottomNavMobileLoggedIn />}
-            {!user && <BottomNavMobileLoggedOut />}
+            {user ? <BottomNavMobileLoggedIn /> : <BottomNavMobileLoggedOut />}
           </div>
         </ThemeProvider>
       </body>

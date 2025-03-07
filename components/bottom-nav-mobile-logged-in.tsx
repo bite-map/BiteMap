@@ -14,7 +14,7 @@ export default function BottomNavMobileLoggedIn() {
       NavButtons={[
         { icon: HomeIcon, text: "Home", href: "/" },
         { icon: MapIcon, text: "Map", href: "/truckmap" },
-        { icon: UserIcon, text: "Account", href: "/profile" },
+        { icon: UserIcon, text: "Account", href: "/user-profile" },
       ]}
     />
   );
