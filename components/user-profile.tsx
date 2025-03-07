@@ -1,5 +1,5 @@
 "use client";
-
+import { signOutAction } from "@/app/actions";
 import React, {useState} from "react";
 
 export default function UserProfile() {
@@ -45,7 +45,7 @@ export default function UserProfile() {
           disabled={!isEditing}
         />
         <p> Email: {user.email}</p> 
-        
+
         {isEditing ? (
           <button onClick={handleSaveProfile}>
             Save Profile
@@ -62,6 +62,9 @@ export default function UserProfile() {
         </button>
         <button onClick={handleHistory}>
           ↺ History
+        </button>
+        <button onClick={signOutAction}>
+          Log Out
         </button>
       </div>
     </div>
