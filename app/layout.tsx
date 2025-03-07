@@ -1,12 +1,9 @@
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import BottomNavMobile from "@/components/bottom-nav-mobile";
-
-// Icons
-import { HomeIcon } from "@heroicons/react/24/outline";
-import { MapIcon } from "@heroicons/react/24/outline";
-import { UserIcon } from "@heroicons/react/24/outline";
+import BottomNavMobileLoggedIn from "@/components/bottom-nav-mobile-logged-in";
+import BottomNavMobileLoggedOut from "@/components/bottom-nav-mobile-logged-out";
+import { createClient } from "@/utils/supabase/server";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -22,11 +19,18 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+
+  // gets information about logged in user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning={true}>
@@ -37,17 +41,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-screen h-[100svh] flex flex-col ">
-            <header className="w-full flex shrink-0 justify-center h-16 bg-gray-300">
-              SEARCH
-            </header>
+            <header className="w-full flex shrink-0 justify-center h-16 bg-gray-300"></header>
             <main className="flex-1 relative">{children}</main>
-            <BottomNavMobile
-              NavButtons={[
-                { icon: HomeIcon, text: "Home", href: "/" },
-                { icon: MapIcon, text: "Map", href: "/truckmap" },
-                { icon: UserIcon, text: "Account", href: "/user-profile" },
-              ]}
-            />
+            {user ? <BottomNavMobileLoggedIn /> : <BottomNavMobileLoggedOut />}
           </div>
         </ThemeProvider>
       </body>

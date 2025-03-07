@@ -9,6 +9,7 @@ type BottomNavMobileProps = {
 export default function BottomNavMobile({ NavButtons }: BottomNavMobileProps) {
   return (
     <div className="sticky top-[100vh] flex justify-around items-center w-full h-16 bg-gray-300">
+      {/* creates a button for each button passed to the component */}
       {NavButtons.map((NavButton, index) => (
         <NavButtonMobile key={index} NavButton={NavButton} />
       ))}
