@@ -20,5 +20,6 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign up process completes
+  // WE NEED TO DECIDE WHERE THIS GOES
   return NextResponse.redirect(`${origin}/protected`);
 }
