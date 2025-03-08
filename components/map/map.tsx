@@ -17,10 +17,12 @@ export default function Map() {
       });
     }
   };
+
   useEffect(() => {
     getLocation();
   }, []);
   useEffect(() => {
+    // load map
     const initMap = async () => {
       const loader = new Loader({
         apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -33,10 +35,13 @@ export default function Map() {
         mapId: "MAIN_MAP",
       };
       const map = new Map(mapRef.current as HTMLDivElement, mapOptions);
+
     };
 
     initMap();
   }, [location]);
+
+
   return (
     <div ref={mapRef} className="w-full h-full relative overflow-hidden"></div>
   );
