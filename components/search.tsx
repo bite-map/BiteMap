@@ -3,15 +3,15 @@ export default function SearchBar() {
   return (
     <div
       className=" p-1 
-      w-auto gap-3  relative flex flex-row ite"
+      w-auto gap-3  relative flex flex-row items-center h-3/4"
     >
-      <div className=" absolute h-full items-center">
+      <div className=" absolute h-1/2 w-1/6 items-center">
         <svg
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="gray"
-          className="w-6 h-6  inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+          className="w-full h-full"
         >
           <path
             strokeLinecap="round"
@@ -21,13 +21,13 @@ export default function SearchBar() {
         </svg>
       </div>
       <input
-        type="text"
+        type="text "
         placeholder="Search Trucks"
-        className=" bg-gray-100 outline-none w-full block p-4 ps-10 text-sm   "
+        className=" bg-gray-100 outline-none w-full h-full block  ps-10 text-sm placeholder:p-1 "
       />
       <button
         type="submit"
-        className="text-white rel end-2.5 bottom-2.5 bg-gray-600 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2"
+        className="text-white rel end-2.5  w-1/4 h-full bottom-2.5 bg-gray-600 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2"
       >
         Search
       </button>

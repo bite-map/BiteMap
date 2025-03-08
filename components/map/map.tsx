@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-// import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
 
 export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number }>();
+  const [places, setPlaces] = useState<google.maps.places.Place[]>();
   const getLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -18,39 +19,25 @@ export default function Map() {
     }
   };
 
+  // load nearby places
   async function nearbySearch() {
     //@ts-ignore
-    const { Place, SearchNearbyRankPreference } =
-      (await google.maps.importLibrary("places")) as google.maps.PlacesLibrary;
-    const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-      "marker"
-    )) as google.maps.MarkerLibrary;
-
+    const { Place } = (await google.maps.importLibrary(
+      "places"
+    )) as google.maps.PlacesLibrary;
+    // Search parameters
     const request = {
-      // required parameters
+      textQuery: "Curry",
       fields: ["displayName", "location", "businessStatus"],
-      locationRestriction: {
-        center: location,
-        radius: 1500,
-      },
-      // optional parameters
-      includedPrimaryTypes: ["restaurant"],
+      locationBias: location,
+      includedType: "restaurant",
     };
     //@ts-ignore
-    const { places } = await Place.searchNearby(request);
+    const { places } = await Place.searchByText(request);
     if (places.length) {
-      console.log(places);
-
-      const { LatLngBounds } = (await google.maps.importLibrary(
-        "core"
-      )) as google.maps.CoreLibrary;
-      const bounds = new LatLngBounds();
-      // Loop through and get all the results.
-      places.forEach((place) => {
-        console.log(place);
-      });
+      setPlaces(places);
     } else {
-      console.log("No results");
+      console.error("No results");
     }
   }
 
@@ -68,40 +55,36 @@ export default function Map() {
       const mapOptions: google.maps.MapOptions = {
         center: location,
         zoom: 20,
-        mapId: "MAIN_MAP",
+        mapId: "3f60e97302b8c3",
       };
       const map = new Map(mapRef.current as HTMLDivElement, mapOptions);
+      // display with marker
+      // const { AdvancedMarkerElement, PinElement } =
+      //   (await google.maps.importLibrary(
+      //     "marker"
+      //   )) as google.maps.MarkerLibrary;
+
+      // const pin = new PinElement({
+      //   borderColor: "black",
+      //   glyphColor: "black",
+      // });
+      // const marker = new AdvancedMarkerElement({
+      //   map,
+      //   position:location,
+      //   content:pin.element
+      // })
       nearbySearch();
     };
-
-    initMap();
+    if (location) {
+      initMap();
+    }
   }, [location]);
 
-  const fetchNearbyTrucks = async () => {
-    // Restrict within the map viewport.
-    let center = new google.maps.LatLng(52.369358, 4.889258);
-
-    const request = {
-      // required parameters
-      fields: ["displayName", "location", "businessStatus"],
-      locationRestriction: {
-        center: center,
-        radius: 500,
-      },
-      // optional parameters
-      includedPrimaryTypes: ["restaurant"],
-      maxResultCount: 5,
-      language: "en-US",
-      region: "us",
-    };
-    //@ts-ignore
-    const { places } = await google.maps.Place.searchNearby(request);
-    console.log(places);
-  };
-  useEffect(() => {
-    // fetchNearbyTrucks();
-  }, [mapRef]);
   return (
-    <div ref={mapRef} className="w-full h-full relative overflow-hidden"></div>
+    <div
+      id="map"
+      ref={mapRef}
+      className="w-full h-full relative overflow-hidden"
+    ></div>
   );
 }

@@ -26,7 +26,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
-
   // gets information about logged in user
   const {
     data: { user },
@@ -42,7 +41,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-screen h-[100svh] flex flex-col ">
-            <header className="w-full flex shrink-0 justify-center h-16 bg-gray-300">
+            <header className="w-full flex shrink-0 justify-center items-center h-16 bg-gray-300">
               <SearchBar />
             </header>
             <main className="flex-1 relative">{children}</main>
