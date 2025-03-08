@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     url.searchParams.append("keyword", "food truck");
     url.searchParams.append("key", apiKey);
     const urlString = url.toString();
-    console.log(urlString);
+    
     const response = await fetch(urlString);
     const data = await response.json();
     return NextResponse.json(data);
