@@ -1,73 +1,44 @@
 "use client";
+
 import { signOutAction } from "@/app/actions";
-import React, {useState} from "react";
+import { createClient } from "@/utils/supabase/client";
+import { UserMetadata } from "@supabase/supabase-js";
+import React, { useState, useEffect } from "react";
 
 export default function UserProfile() {
+  const supabase = createClient();
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState<UserMetadata | undefined>(undefined);
 
+  useEffect(() => {
+    (async () => {
+      const session = await supabase.auth.getSession();
+      setUser(session.data.session?.user.user_metadata);
+    })();
+  }, []);
 
-    const user = {
-        firstName:  name ,
-        email: email,
+  const handleFavorite = () => {
+    // Navigate to wishlist page or show wishlist data
+    console.log("Favorites clicked");
+  };
 
-    }
+  const handleHistory = () => {
+    // Navigate to order history page or show order history data
+    console.log("History clicked");
+  };
 
-    const handleEditProfile = () => {
-        setIsEditing(!isEditing);
-      };
-    
-      const handleSaveProfile = () => {
-        // Save edited profile details to backend or state
-        setIsEditing(false);
-      };
-    
-      const handleFavorite = () => {
-        // Navigate to wishlist page or show wishlist data
-      };
-    
-      const handleHistory = () => {
-        // Navigate to order history page or show order history data
-      };
-
-    return (
-
+  return (
     <div>
       <h1>Personal Details</h1>
       <div>
-        <input
-          type="text"
-          placeholder="First Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={!isEditing}
-        />
-        <p> Email: {user.email}</p> 
-
-        {isEditing ? (
-          <button onClick={handleSaveProfile}>
-            Save Profile
-          </button>
-        ) : (
-          <button onClick={handleEditProfile}>
-            Edit Profile
-          </button>
-        )}
+        <p> Name: {user && user.display_name}</p>
+        <p> Email: {user && user.email}</p>
       </div>
       <div>
-        <button onClick={handleFavorite}>
-          ⭐️ Favorite
-        </button>
-        <button onClick={handleHistory}>
-          ↺ History
-        </button>
-        <button onClick={signOutAction}>
-          Log Out
-        </button>
+        <button onClick={handleFavorite}>⭐️ Favorite</button>
+        <button onClick={handleHistory}>↺ History</button>
+        <button onClick={signOutAction}>Log Out</button>
       </div>
     </div>
-    );
+  );
 }
-  
