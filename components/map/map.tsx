@@ -59,21 +59,7 @@ export default function Map() {
       };
 
       const map = new Map(mapRef.current as HTMLDivElement, mapOptions);
-      // display with marker
-      // const { AdvancedMarkerElement, PinElement } =
-      //   (await google.maps.importLibrary(
-      //     "marker"
-      //   )) as google.maps.MarkerLibrary;
-
-      // const pin = new PinElement({
-      //   borderColor: "black",
-      //   glyphColor: "black",
-      // });
-      // const marker = new AdvancedMarkerElement({
-      //   map,
-      //   position:location,
-      //   content:pin.element
-      // })
+     
       nearbySearch();
     };
     if (location) {
