@@ -13,3 +13,9 @@ type Truck = {
   created_by_profile_id: string;
   avatar: string;
 };
+
+type Favorite = {
+  food_truck_id: number;
+  profile_id: string;
+  food_truck_profiles: {name: string};
+}
