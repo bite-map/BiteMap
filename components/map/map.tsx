@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
-
+import FoodTruckProfile from "../food-truck-profile";
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
 const createInfoCard = (title: string, body: string) =>
@@ -23,6 +23,7 @@ export default function Map() {
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number }>();
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
+  const [truckProfile, setTruckProfile] = useState<any>(null);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -42,8 +43,8 @@ export default function Map() {
     }
   };
 
-  // loads nearby places
-  async function nearbySearch() {
+  // searchFoodTruck
+  async function searchFoodTruck() {
     //@ts-ignore
     const { Place } = (await google.maps.importLibrary(
       "places"
@@ -59,12 +60,48 @@ export default function Map() {
     const { places } = await Place.searchByText(request);
     if (places.length) {
       setPlaces(places);
-      console.log(places);
     } else {
       console.error("No results");
     }
   }
 
+  function displayMarkerForTruck(places: google.maps.places.Place[]) {
+    if (!map) return;
+    places.map((place) => {
+      // Style:
+      const pinScaled = new google.maps.marker.PinElement({
+        scale: 1.5,
+        background: "#FBBC04",
+        borderColor: "#137333",
+        glyphColor: "white",
+        glyph: "T",
+      });
+      // Place marker in map
+      const marker = new google.maps.marker.AdvancedMarkerElement({
+        map: map,
+        position: place.location,
+        title: place.displayName,
+        content: pinScaled.element,
+      });
+      marker.addListener("click", () => {
+        // TODO: pop up food truck info
+        // FETCH from DB
+        // pop up
+        console.log(place.displayName);
+        setTruckProfile(true);
+      });
+    });
+  }
+  async function addSighting() {
+    // TODO: get user data
+    // TODO: call route,
+    // TODO - Route:
+    //      1:decide if valid sighting
+    //      2:insert to table
+    console.log("new sighting");
+  }
+
+  // -----Effect-----
   useEffect(() => {
     getLocation();
   }, []);
@@ -110,9 +147,6 @@ export default function Map() {
 
       setMap(gMap);
       setAutoComplete(gAutoComplete);
-
-      // uncomment if needed
-      //nearbySearch();
     }
   }, [isLoaded, location]);
 
@@ -128,6 +162,12 @@ export default function Map() {
       });
     }
   }, [autoComplete]);
+
+  useEffect(() => {
+    if (places) {
+      displayMarkerForTruck(places);
+    }
+  }, [places]);
 
   function placeMarker(location: google.maps.LatLng, name: string) {
     if (!map) return;
@@ -150,11 +190,29 @@ export default function Map() {
       anchor: marker,
     });
   }
+  // -----Effect-----
 
   return (
     <>
       {isLoaded && location ? (
         <>
+          {truckProfile && (
+            <FoodTruckProfile
+              setTruckProfile={setTruckProfile}
+            ></FoodTruckProfile>
+          )}
+          <button
+            onClick={searchFoodTruck}
+            className="outline outline-2 outline-solid"
+          >
+            Search trucks
+          </button>
+          <button
+            onClick={addSighting}
+            className="outline outline-2 outline-solid"
+          >
+            Confirm Sighting
+          </button>
           <div
             id="map"
             ref={mapRef}
