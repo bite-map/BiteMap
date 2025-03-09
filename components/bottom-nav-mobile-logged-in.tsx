@@ -13,7 +13,7 @@ export default function BottomNavMobileLoggedIn() {
     <BottomNavMobile
       NavButtons={[
         { icon: AiOutlineHome, text: "Home", href: "/" },
-        { icon: GrMapLocation, text: "Map", href: "/truckmap" },
+        { icon: GrMapLocation, text: "Map", href: "/truck-map" },
         { icon: AiOutlineUser, text: "Account", href: "/user-profile" },
       ]}
     />
