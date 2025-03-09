@@ -26,7 +26,7 @@ export default function UserProfile() {
     const session = await supabase.auth.getSession();
     const profileId = session.data?.session?.user.id;
  
-    // If the user is connected, it will retrieve the favorite trucks for the user
+    // if user is connected, will retrieve the favorites trucks from the user
     if(profileId) {
       const favoriteTruckData = await getFavoriteTruck(profileId);
       setFavoriteTrucks(favoriteTruckData);
@@ -56,10 +56,10 @@ export default function UserProfile() {
         <p> Email: {user && user.email}</p>
       </div>
       <div>
-        <button onClick={handleFavorite}>⭐️ Favorite</button>
-        <button onClick={handleReviews}>Reviews</button>
-        <button onClick={handleSightingHistory}>↺ Sighting History</button>
-        <button onClick={signOutAction}>Log Out</button>
+        <button className = "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded" onClick={handleFavorite}>⭐️ Favorite</button>
+        <button className = "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded" onClick={handleReviews}>Reviews</button>
+        <button className = "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded" onClick={handleSightingHistory}>↺ Sighting History</button>
+        <button className = "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded" onClick={signOutAction}>Log Out</button>
       </div>
       
       {showFavorites && (
