@@ -1,14 +1,18 @@
 "use client";
-
+import React, { useState, useEffect } from "react";
 import { signOutAction } from "@/app/actions";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
-import React, { useState, useEffect } from "react";
+import { getFavoriteTruck } from "@/app/database-actions";
+import FavoriteTruckCard from "./favorite-truck-card";
+
 
 export default function UserProfile() {
   const supabase = createClient();
 
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
+  const [favoriteTrucks, setFavoriteTrucks] = useState<any[]>([]);
+  const [showFavorites, setShowFavorites] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -17,14 +21,31 @@ export default function UserProfile() {
     })();
   }, []);
 
-  const handleFavorite = () => {
-    // Navigate to wishlist page or show wishlist data
-    console.log("Favorites clicked");
+  const handleFavorite = async () => {
+
+    const session = await supabase.auth.getSession();
+    const profileId = session.data?.session?.user.id;
+ 
+    // If the user is connected, it will retrieve the favorite trucks for the user
+    if(profileId) {
+      const favoriteTruckData = await getFavoriteTruck(profileId);
+      setFavoriteTrucks(favoriteTruckData);
+      setShowFavorites(true);
+    }
+
+    // if we click the favorite button after displaying it, it will return and hide the favorite trucks
+    if(showFavorites) {
+      setShowFavorites(false);
+      return;
+    }
   };
 
-  const handleHistory = () => {
-    // Navigate to order history page or show order history data
-    console.log("History clicked");
+  const handleReviews = () => {
+    console.log("Reviews clicked");
+  };
+
+  const handleSightingHistory = () => {
+    console.log("Sighting History clicked");
   };
 
   return (
@@ -36,9 +57,23 @@ export default function UserProfile() {
       </div>
       <div>
         <button onClick={handleFavorite}>⭐️ Favorite</button>
-        <button onClick={handleHistory}>↺ History</button>
+        <button onClick={handleReviews}>Reviews</button>
+        <button onClick={handleSightingHistory}>↺ Sighting History</button>
         <button onClick={signOutAction}>Log Out</button>
       </div>
+      
+      {showFavorites && (
+        <div>
+          <h1>Favorite Trucks</h1>
+          {favoriteTrucks.length > 0 ? (
+            favoriteTrucks.map((truck) => (
+              <FavoriteTruckCard key={truck.food_truck_id} favoriteTruck={truck} />
+            ))
+          ) : (
+            <p>No favorite trucks found</p>
+          )}
+          </div>
+      )}
     </div>
   );
 }
