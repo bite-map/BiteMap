@@ -25,7 +25,7 @@ export default function Map() {
     const { Place } = (await google.maps.importLibrary(
       "places"
     )) as google.maps.PlacesLibrary;
-    // Search parameters
+
     const request = {
       textQuery: "Curry",
       fields: ["displayName", "location", "businessStatus"],
@@ -57,6 +57,7 @@ export default function Map() {
         zoom: 20,
         mapId: "3f60e97302b8c3",
       };
+
       const map = new Map(mapRef.current as HTMLDivElement, mapOptions);
       // display with marker
       // const { AdvancedMarkerElement, PinElement } =
