@@ -1,9 +1,10 @@
 import React from "react";
-import { Truck } from "./global-component-types";
+import { Truck } from "./../global-component-types";
 import Image from "next/image";
 
 type FoodTruckCardProps = {
   foodTruck: Truck;
+  // context: display img / display detialed / display as small
 };
 
 export default function FoodTruckCard({ foodTruck }: FoodTruckCardProps) {
@@ -17,6 +18,7 @@ export default function FoodTruckCard({ foodTruck }: FoodTruckCardProps) {
         width={600}
         height={600}
       ></Image>
+      {/* <></FOODTRUCKSIGHTING> */}
     </div>
   );
 }
