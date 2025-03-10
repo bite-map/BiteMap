@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { signOutAction } from "@/app/actions";
-import NavButtonMobile from "./nav-button-mobile";
+import NavSidebarMobile from "./sidebar-button-mobile";
 import { NavButton } from "./global-component-types";
 import { GrLogout } from "react-icons/gr";
 
-type BottomNavMobileProps = {
+type SidebarMobileProps = {
   NavButtons: NavButton[];
 };
 
-export default function BottomNavMobile({ NavButtons }: BottomNavMobileProps) {
+export default function SidebarMobile({ NavButtons }: SidebarMobileProps) {
   const [useSidebar, setUseSidebar] = useState(false);
 
   const toggleSidebar = () => {
@@ -30,7 +30,7 @@ export default function BottomNavMobile({ NavButtons }: BottomNavMobileProps) {
       {/* creates a button for each button passed to the component */}
       <nav className="pt-8">
       {NavButtons.map((NavButton, index) => (
-        <NavButtonMobile key={index} NavButton={NavButton} />
+        <NavSidebarMobile key={index} NavButton={NavButton} />
       ))}
       </nav>
       <button className = "fixed bottom-4 left-4 bg-transparent hover:border-transparent rounded" onClick={signOutAction}>  <GrLogout className=" " />Log Out</button>

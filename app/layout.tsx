@@ -1,7 +1,7 @@
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import BottomNavMobileLoggedIn from "@/components/bottom-nav-mobile-logged-in";
-import BottomNavMobileLoggedOut from "@/components/bottom-nav-mobile-logged-out";
+import SidebarNavMobileLoggedIn from "@/components/sidebar-mobile-logged-in";
+import SidebarNavMobileLoggedOut from "@/components/sidebar-mobile-logged-out";
 import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
 import logo from "../public/logo.svg";
@@ -47,7 +47,7 @@ export default async function RootLayout({
               ></Image>
             </header>
             <main className="flex-1 relative">{children}</main>
-            {user ? <BottomNavMobileLoggedIn /> : <BottomNavMobileLoggedOut />}
+            {user ? <SidebarNavMobileLoggedIn /> : <SidebarNavMobileLoggedOut />}
           </div>
         </ThemeProvider>
       </body>
