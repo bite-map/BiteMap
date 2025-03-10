@@ -1,4 +1,4 @@
-import FoodTruckCard from "@/components/food-truck-card";
+import FoodTruckCard from "@/components/food-truck/food-truck-card";
 import React from "react";
 import { getFoodTruckData } from "@/app/database-actions";
 

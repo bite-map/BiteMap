@@ -10,7 +10,7 @@ import { FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
 // components
-import FoodTruckProfile from "../food-truck-profile";
+import FoodTruckProfile from "../food-truck/food-truck-profile";
 // types
 import { Location } from "../global-component-types";
 
