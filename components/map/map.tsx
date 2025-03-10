@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 import FoodTruckProfile from "../food-truck-profile";
+import { Location } from "../global-component-types";
+import { METHODS } from "http";
+import { title } from "process";
+
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
 const createInfoCard = (title: string, body: string) =>
@@ -21,7 +25,7 @@ export default function Map() {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
-  const [location, setLocation] = useState<{ lat: number; lng: number }>();
+  const [location, setLocation] = useState<Location>();
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
   const [truckProfile, setTruckProfile] = useState<any>(null);
 
@@ -51,7 +55,7 @@ export default function Map() {
     )) as google.maps.PlacesLibrary;
 
     const request = {
-      textQuery: "Curry",
+      textQuery: "Food Truck",
       fields: ["displayName", "location", "businessStatus"],
       locationBias: location,
       includedType: "restaurant",
@@ -65,40 +69,72 @@ export default function Map() {
     }
   }
 
-  function displayMarkerForTruck(places: google.maps.places.Place[]) {
+  function displayMarkerForTruck(
+    location: Location,
+    title: string = "",
+    color: string = "#FBBC04"
+  ) {
     if (!map) return;
-    places.map((place) => {
-      // Style:
-      const pinScaled = new google.maps.marker.PinElement({
-        scale: 1.5,
-        background: "#FBBC04",
-        borderColor: "#137333",
-        glyphColor: "white",
-        glyph: "T",
-      });
-      // Place marker in map
-      const marker = new google.maps.marker.AdvancedMarkerElement({
-        map: map,
-        position: place.location,
-        title: place.displayName,
-        content: pinScaled.element,
-      });
-      marker.addListener("click", () => {
-        // TODO: pop up food truck info
-        // FETCH from DB
-        // pop up
-        console.log(place.displayName);
-        setTruckProfile(true);
-      });
+    const LatLng = new google.maps.LatLng(location.lat, location.lng);
+    // Style:
+    const pinScaled = new google.maps.marker.PinElement({
+      scale: 1.5,
+      background: color,
+      borderColor: "#137333",
+      glyphColor: "white",
+      glyph: "T",
+    });
+    // Place marker in map
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      map: map,
+      position: LatLng,
+      title: title,
+      content: pinScaled.element,
+    });
+    marker.addListener("click", () => {
+      // TODO: pop up food truck info
+      // FETCH from DB
+      // pop up
+      setTruckProfile(true);
     });
   }
   async function addSighting() {
-    // TODO: get user data
-    // TODO: call route,
-    // TODO - Route:
-    //      1:decide if valid sighting
-    //      2:insert to table
+    if (!location) {
+      return;
+    }
+    const res = await fetch(
+      `../api/sighting?lat=${location.lat}&lng=${location.lng}`,
+      {
+        method: "POST",
+      }
+    );
+    const data = await res.json();
+    console.log(data);
     console.log("new sighting");
+  }
+
+  async function getSighting() {
+    if (!location) {
+      return;
+    }
+    // const data = await addSightingToDb(location);
+    const res = await fetch(
+      `../api/sighting?lat=${location.lat}&lng=${location.lng}`
+    );
+    const places = await res.json();
+
+    console.log(places);
+    if (places.length > 0) {
+      places.map((place: any) => {
+        const location: Location = {
+          lat: place.lat as number,
+          lng: place.lng as number,
+        };
+        displayMarkerForTruck(location, place.displayName as string, "#a2b7f1");
+      });
+    }
+    // TODO: display sightings and use user location as center
+    console.log("get sightings");
   }
 
   // -----Effect-----
@@ -165,7 +201,14 @@ export default function Map() {
 
   useEffect(() => {
     if (places) {
-      displayMarkerForTruck(places);
+      places.forEach((place) => {
+        const location: Location = {
+          lat: place.location?.lat() as number,
+          lng: place.location?.lng() as number,
+        };
+
+        displayMarkerForTruck(location, place.displayName as string);
+      });
     }
   }, [places]);
 
@@ -211,7 +254,13 @@ export default function Map() {
             onClick={addSighting}
             className="outline outline-2 outline-solid"
           >
-            Confirm Sighting
+            Add Sighting
+          </button>
+          <button
+            onClick={getSighting}
+            className="outline outline-2 outline-solid"
+          >
+            Get Sighting Near Me
           </button>
           <div
             id="map"
