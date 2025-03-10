@@ -15,7 +15,7 @@ const createInfoCard = (title: string, body: string) =>
 export default function Map() {
   // references
   const mapRef = useRef<HTMLDivElement>(null);
-  const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
+  // const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
 
   // state varaibles
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -99,9 +99,12 @@ export default function Map() {
         strictBounds: false,
       };
 
+      const autoCompleteEl = document.getElementById("search-bar");
+
       // setup autocomplete
       const gAutoComplete = new google.maps.places.Autocomplete(
-        placeAutoCompleteRef.current as HTMLInputElement,
+        //placeAutoCompleteRef.current as HTMLInputElement,
+        autoCompleteEl as HTMLInputElement,
         autocompleteOptions
       );
 
@@ -118,7 +121,6 @@ export default function Map() {
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
         const position = place.geometry?.location;
-        console.log("POSITION", position);
 
         if (position) {
           placeMarker(position, place.name as string);
@@ -156,13 +158,13 @@ export default function Map() {
           <div
             id="map"
             ref={mapRef}
-            className="w-full h-[600px] relative overflow-hidden"
+            className="w-full h-full relative overflow-hidden"
           ></div>
-          <input
+          {/* <input
             className="mt-3 bg-slate-300"
             type="text"
             ref={placeAutoCompleteRef}
-          />
+          /> */}
         </>
       ) : (
         <p>Loading map...</p>
