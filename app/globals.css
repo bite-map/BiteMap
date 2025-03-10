@@ -5,7 +5,13 @@
 @layer base {
   :root {
     --primary: 0, 81%, 66%;
+    --secondary: 248, 31%, 23%;
+    --tertiary: 194, 17%, 60%;
     --background: 0, 0%, 100%;
+    --foreground: 245, 9%, 27%;
+    --primary-foreground: 0, 0%, 100%;
+    --input: 220, 14%, 96%;
+    --muted: 0, 78%, 96%;
     /* --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
