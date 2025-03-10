@@ -1,5 +1,5 @@
 import React from "react";
-import { Truck } from "./..//global-component-types";
+import { Truck } from "./../global-component-types";
 import Image from "next/image";
 
 type FoodTruckCardProps = {
