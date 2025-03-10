@@ -4,11 +4,11 @@ import { NavButton } from "./global-component-types";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
-type NavButtonMobileProps = {
+type NavSidebarMobileProps = {
   NavButton: NavButton;
 };
 
-export default function NavButtonMobile({ NavButton }: NavButtonMobileProps) {
+export default function NavButtonMobile({ NavButton }: NavSidebarMobileProps) {
   const pathname = usePathname();
 
   const Icon = NavButton.icon;

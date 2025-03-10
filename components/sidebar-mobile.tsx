@@ -1,17 +1,17 @@
 import React from "react";
-import NavButtonMobile from "./nav-button-mobile";
+import NavSidebarMobile from "./nav-sidebar-mobile";
 import { NavButton } from "./global-component-types";
 
-type BottomNavMobileProps = {
+type SidebarMobileProps = {
   NavButtons: NavButton[];
 };
 
-export default function BottomNavMobile({ NavButtons }: BottomNavMobileProps) {
+export default function SidebarMobile({ NavButtons }: SidebarMobileProps) {
   return (
     <div className="fixed bottom-0 flex justify-around items-center w-full h-16 bg-gray-300">
       {/* creates a button for each button passed to the component */}
       {NavButtons.map((NavButton, index) => (
-        <NavButtonMobile key={index} NavButton={NavButton} />
+        <NavSidebarMobile key={index} NavButton={NavButton} />
       ))}
     </div>
   );
