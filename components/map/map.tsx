@@ -6,6 +6,7 @@ import { Library } from "@googlemaps/js-api-loader";
 import FoodTruckProfile from "../food-truck-profile";
 import { LuRefreshCw } from "react-icons/lu";
 import { GiConfirmed } from "react-icons/gi";
+import { FaSpinner } from "react-icons/fa";
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
 const libs: Library[] = ["core", "maps", "places", "marker"];
@@ -220,7 +221,10 @@ export default function Map() {
           ></div>
         </>
       ) : (
-        <p>Loading map...</p>
+        <div className="flex justify-center items-center gap-2 text-lg mt-2">
+          Loading map{" "}
+          <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
+        </div>
       )}
     </>
   );
