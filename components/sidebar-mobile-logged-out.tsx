@@ -1,21 +1,25 @@
 "use client";
 
 import React from "react";
-import BottomNavMobile from "./bottom-nav-mobile";
-import { signOutAction } from "@/app/actions";
+import SidebarMobile from "./sidebar-nav-mobile";
 
 // Icons
 import { AiOutlineHome } from "react-icons/ai";
 import { GrMapLocation } from "react-icons/gr";
-import { AiOutlineUser } from "react-icons/ai";
+import { GrLogin } from "react-icons/gr";
 
-export default function BottomNavMobileLoggedIn() {
+
+export default function SidebarNavMobileLoggedOut() {
   return (
-    <BottomNavMobile
+    <SidebarMobile
       NavButtons={[
         { icon: AiOutlineHome, text: "Home", href: "/" },
         { icon: GrMapLocation, text: "Map", href: "/truck-map" },
-        { icon: AiOutlineUser, text: "Account", href: "/user-profile" },
+        {
+          icon: GrLogin,
+          text: "Login",
+          href: "/sign-in",
+        },
       ]}
     />
   );
