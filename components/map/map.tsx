@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 import FoodTruckProfile from "../food-truck-profile";
+import { LuRefreshCw } from "react-icons/lu";
+import { GiConfirmed } from "react-icons/gi";
+import { Input } from "../ui/input";
+import IconButton from "../icon-button";
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
 const createInfoCard = (title: string, body: string) =>
@@ -15,7 +19,7 @@ const createInfoCard = (title: string, body: string) =>
 export default function Map() {
   // references
   const mapRef = useRef<HTMLDivElement>(null);
-  // const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
+  const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
 
   // state varaibles
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -136,12 +140,9 @@ export default function Map() {
         strictBounds: false,
       };
 
-      const autoCompleteEl = document.getElementById("search-bar");
-
       // setup autocomplete
       const gAutoComplete = new google.maps.places.Autocomplete(
-        //placeAutoCompleteRef.current as HTMLInputElement,
-        autoCompleteEl as HTMLInputElement,
+        placeAutoCompleteRef.current as HTMLInputElement,
         autocompleteOptions
       );
 
@@ -201,28 +202,22 @@ export default function Map() {
               setTruckProfile={setTruckProfile}
             ></FoodTruckProfile>
           )}
-          <button
-            onClick={searchFoodTruck}
-            className="outline outline-2 outline-solid"
-          >
-            Search trucks
-          </button>
-          <button
-            onClick={addSighting}
-            className="outline outline-2 outline-solid"
-          >
-            Confirm Sighting
-          </button>
+          <div className="flex p-2  bg-muted">
+            <div className="flex gap-1">
+              <IconButton Icon={LuRefreshCw} callback={searchFoodTruck} />
+              <IconButton Icon={GiConfirmed} callback={addSighting} />
+            </div>
+            <Input
+              className="h-9 w-[250px] ml-auto"
+              type="text"
+              ref={placeAutoCompleteRef}
+            />
+          </div>
           <div
             id="map"
             ref={mapRef}
             className="w-full h-full relative overflow-hidden"
           ></div>
-          {/* <input
-            className="mt-3 bg-slate-300"
-            type="text"
-            ref={placeAutoCompleteRef}
-          /> */}
         </>
       ) : (
         <p>Loading map...</p>

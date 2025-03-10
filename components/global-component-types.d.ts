@@ -17,5 +17,5 @@ type Truck = {
 type Favorite = {
   food_truck_id: number;
   profile_id: string;
-  food_truck_profiles: {name: string};
-}
+  food_truck_profiles: { name: string };
+};
