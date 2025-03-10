@@ -1,5 +1,5 @@
 import React from "react";
-
+// this is temperary component for displying in map when marker clicked
 type FoodTruckProfileProps = {
   // location
   // review

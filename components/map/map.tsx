@@ -1,14 +1,19 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
+// api imports
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
-import FoodTruckProfile from "../food-truck-profile";
+// ui imports
 import { LuRefreshCw } from "react-icons/lu";
 import { GiConfirmed } from "react-icons/gi";
-import { FaSpinner } from "react-icons/fa";
+import { FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
+// components
+import FoodTruckProfile from "../food-truck-profile";
+// types
+import { Location } from "../global-component-types";
+
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
 const createInfoCard = (title: string, body: string) =>
@@ -26,8 +31,9 @@ export default function Map() {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
-  const [location, setLocation] = useState<{ lat: number; lng: number }>();
+  const [location, setLocation] = useState<Location>();
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
+  const [sightings, setSightings] = useState<any>();
   const [truckProfile, setTruckProfile] = useState<any>(null);
 
   const { isLoaded } = useJsApiLoader({
@@ -56,7 +62,7 @@ export default function Map() {
     )) as google.maps.PlacesLibrary;
 
     const request = {
-      textQuery: "Curry",
+      textQuery: "Food Truck",
       fields: ["displayName", "location", "businessStatus"],
       locationBias: location,
       includedType: "restaurant",
@@ -70,40 +76,73 @@ export default function Map() {
     }
   }
 
-  function displayMarkerForTruck(places: google.maps.places.Place[]) {
+  function displayMarkerForTruck(
+    location: Location,
+    title: string = "",
+    color: string = "#FBBC04"
+  ) {
     if (!map) return;
-    places.map((place) => {
-      // Style:
-      const pinScaled = new google.maps.marker.PinElement({
-        scale: 1.5,
-        background: "#FBBC04",
-        borderColor: "#137333",
-        glyphColor: "white",
-        glyph: "T",
-      });
-      // Place marker in map
-      const marker = new google.maps.marker.AdvancedMarkerElement({
-        map: map,
-        position: place.location,
-        title: place.displayName,
-        content: pinScaled.element,
-      });
-      marker.addListener("click", () => {
-        // TODO: pop up food truck info
-        // FETCH from DB
-        // pop up
-        console.log(place.displayName);
-        setTruckProfile(true);
-      });
+    const LatLng = new google.maps.LatLng(location.lat, location.lng);
+    // Style:
+    const pinScaled = new google.maps.marker.PinElement({
+      scale: 1.5,
+      background: color,
+      borderColor: "#137333",
+      glyphColor: "white",
+      glyph: "T",
+    });
+    // Place marker in map
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      map: map,
+      position: LatLng,
+      title: title,
+      content: pinScaled.element,
+    });
+    marker.addListener("click", () => {
+      // TODO: pop up food truck info
+      // FETCH from DB
+      // pop up
+      setTruckProfile(true);
     });
   }
   async function addSighting() {
-    // TODO: get user data
-    // TODO: call route,
-    // TODO - Route:
-    //      1:decide if valid sighting
-    //      2:insert to table
+    if (!location) {
+      return;
+    }
+    const res = await fetch(
+      `../api/sighting?lat=${location.lat}&lng=${location.lng}`,
+      {
+        method: "POST",
+      }
+    );
+    const data = await res.json();
+    console.log(data);
     console.log("new sighting");
+  }
+
+  async function getSighting() {
+    if (!location) {
+      return;
+    }
+    const res = await fetch(
+      `../api/sighting?lat=${location.lat}&lng=${location.lng}`
+    );
+    const sightings = await res.json();
+
+    if (sightings.length > 0) {
+      setSightings(sightings);
+      sightings.map((sighting: any) => {
+        const location: Location = {
+          lat: sighting.lat as number,
+          lng: sighting.lng as number,
+        };
+        displayMarkerForTruck(
+          location,
+          sighting.displayName as string,
+          "#a2b7f1"
+        );
+      });
+    }
   }
 
   // -----Effect-----
@@ -167,7 +206,13 @@ export default function Map() {
 
   useEffect(() => {
     if (places) {
-      displayMarkerForTruck(places);
+      places.forEach((place) => {
+        const location: Location = {
+          lat: place.location?.lat() as number,
+          lng: place.location?.lng() as number,
+        };
+        displayMarkerForTruck(location, place.displayName as string);
+      });
     }
   }, [places]);
 
@@ -207,6 +252,7 @@ export default function Map() {
             <div className="flex gap-1">
               <IconButton Icon={LuRefreshCw} callback={searchFoodTruck} />
               <IconButton Icon={GiConfirmed} callback={addSighting} />
+              <IconButton Icon={FaMapMarkerAlt} callback={getSighting} />
             </div>
             <Input
               className="h-9 w-[250px] ml-auto"
@@ -214,6 +260,7 @@ export default function Map() {
               ref={placeAutoCompleteRef}
             />
           </div>
+
           <div
             id="map"
             ref={mapRef}

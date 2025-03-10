@@ -19,3 +19,7 @@ type Favorite = {
   profile_id: string;
   food_truck_profiles: { name: string };
 };
+type Location = {
+  lat: number;
+  lng: number;
+};
