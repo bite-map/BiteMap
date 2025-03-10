@@ -1,10 +1,6 @@
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { createClient } from "@/utils/supabase/server";
-import Image from "next/image";
-import logo from "../public/logo.svg";
-import Link from "next/link";
-import { LuMenu } from "react-icons/lu";
 import Header from "@/components/header";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -23,6 +19,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
+
   // gets information about logged in user
   const {
     data: { user },

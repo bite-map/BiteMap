@@ -9,9 +9,6 @@ export default function FavoriteTruckCard({
   favoriteTruck,
 }: FavoriteTruckCardProps) {
   return (
-    // <div>
-    //   <h2>{favoriteTruck.food_truck_profiles.name}</h2>
-    // </div>
     <table className="table-fixed">
       <thead>
         <tr>

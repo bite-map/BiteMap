@@ -1,10 +1,14 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { signOutAction } from "@/app/actions";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { getFavoriteTruck } from "@/app/database-actions";
 import FavoriteTruckCard from "./food-truck/favorite-truck-card";
+import { IoHeart } from "react-icons/io5";
+import { MdOutlineRateReview } from "react-icons/md";
+import { LuHistory } from "react-icons/lu";
 
 export default function UserProfile() {
   const supabase = createClient();
@@ -47,33 +51,40 @@ export default function UserProfile() {
   };
 
   return (
-    <div>
-      <h1>Personal Details</h1>
+    <div className="p-1">
+      <h2 className="text-xl font-semibold text-primary">Personal Details</h2>
       <div>
-        <p> Name: {user && user.display_name}</p>
-        <p> Email: {user && user.email}</p>
+        <p>
+          {" "}
+          <span className="font-semibold">Name:</span>{" "}
+          {user && user.display_name}
+        </p>
+        <p>
+          {" "}
+          <span className="font-semibold">Email:</span> {user && user.email}
+        </p>
       </div>
-      <div>
+      <div className="flex flex-wrap justify-evenly gap-1 p-2">
         <button
-          className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded"
+          className="flex jusitfy-center items-center gap-1 bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
           onClick={handleFavorite}
         >
-          ⭐️ Favorite
+          <IoHeart /> Favorite
         </button>
         <button
-          className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded"
+          className="flex jusitfy-center items-center gap-1 bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
           onClick={handleReviews}
         >
-          Reviews
+          <MdOutlineRateReview /> Reviews
         </button>
         <button
-          className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded"
+          className="flex jusitfy-center items-center gap-1 bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
           onClick={handleSightingHistory}
         >
-          ↺ Sighting History
+          <LuHistory /> Sighting History
         </button>
         <button
-          className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-0.5 px-1 border border-blue-500 hover:border-transparent rounded"
+          className="bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
           onClick={signOutAction}
         >
           Log Out
