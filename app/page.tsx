@@ -8,7 +8,11 @@ export default async function Home() {
   return (
     <div className="pb-16">
       {foodTruckData?.map((foodTruck) => (
-        <FoodTruckCard key={foodTruck.id} foodTruck={foodTruck} />
+        <FoodTruckCard
+          key={foodTruck.id}
+          foodTruck={foodTruck}
+          context={"landing"}
+        />
       ))}
     </div>
   );

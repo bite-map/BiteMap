@@ -6,18 +6,24 @@ import clsx from "clsx";
 
 type NavSidebarMobileProps = {
   NavButton: NavButton;
+  handleToggle: () => void;
 };
 
-export default function NavButtonMobile({ NavButton }: NavSidebarMobileProps) {
+export default function NavButtonMobile({
+  NavButton,
+  handleToggle,
+}: NavSidebarMobileProps) {
   const pathname = usePathname();
 
   const Icon = NavButton.icon;
   return (
-    <Link href={NavButton.href}>
+    <Link onClick={handleToggle} href={NavButton.href}>
       <div
         className={clsx(
-          "flex flex-col justify-center items-center w-[80px] h-[60px] mt-8",
-          { "bg-gray-400": pathname === NavButton.href }
+          "flex flex-col justify-center items-center w-16 h-16 text-sm",
+          {
+            "bg-gray-400": pathname === NavButton.href,
+          }
         )}
       >
         <Icon className="size-6 " />
