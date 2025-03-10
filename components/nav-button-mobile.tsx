@@ -16,7 +16,7 @@ export default function NavButtonMobile({ NavButton }: NavButtonMobileProps) {
     <Link href={NavButton.href}>
       <div
         className={clsx(
-          "flex flex-col justify-center items-center w-[80px] h-[50px]",
+          "flex flex-col justify-center items-center w-[80px] h-[60px] mt-8",
           { "bg-gray-400": pathname === NavButton.href }
         )}
       >

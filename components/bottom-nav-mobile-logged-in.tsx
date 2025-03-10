@@ -2,6 +2,7 @@
 
 import React from "react";
 import BottomNavMobile from "./bottom-nav-mobile";
+import { signOutAction } from "@/app/actions";
 
 // Icons
 import { AiOutlineHome } from "react-icons/ai";
