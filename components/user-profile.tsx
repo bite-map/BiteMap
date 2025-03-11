@@ -1,21 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { signOutAction } from "@/app/actions";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { getFavoriteTruck } from "@/app/database-actions";
 import FavoriteTruckCard from "./food-truck/favorite-truck-card";
-import { IoHeart } from "react-icons/io5";
-import { MdOutlineRateReview } from "react-icons/md";
-import { LuHistory } from "react-icons/lu";
+import Image from "next/image";
+
 
 export default function UserProfile() {
   const supabase = createClient();
 
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
   const [favoriteTrucks, setFavoriteTrucks] = useState<any[]>([]);
-  const [showFavorites, setShowFavorites] = useState(false);
+  const [activeTab, setActiveTab] = useState<"favorites" | "sightings" | "reviews">("favorites");
 
   useEffect(() => {
     (async () => {
@@ -24,76 +22,68 @@ export default function UserProfile() {
     })();
   }, []);
 
-  const handleFavorite = async () => {
-    const session = await supabase.auth.getSession();
-    const profileId = session.data?.session?.user.id;
-
-    // if user is connected, will retrieve the favorites trucks from the user
-    if (profileId) {
-      const favoriteTruckData = await getFavoriteTruck(profileId);
-      setFavoriteTrucks(favoriteTruckData);
-      setShowFavorites(true);
-    }
-
-    // if we click the favorite button after displaying it, it will return and hide the favorite trucks
-    if (showFavorites) {
-      setShowFavorites(false);
-      return;
-    }
-  };
-
-  const handleReviews = () => {
-    console.log("Reviews clicked");
-  };
-
-  const handleSightingHistory = () => {
-    console.log("Sighting History clicked");
-  };
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (activeTab === "favorites") {
+        const session = await supabase.auth.getSession();
+        const profileId = session.data?.session?.user.id;
+        if (profileId) {
+          const favoriteTruckData = await getFavoriteTruck(profileId);
+          setFavoriteTrucks(favoriteTruckData);
+        }
+      }
+    };
+  
+    fetchFavorites(); // Call the async function
+  }, [activeTab]);
 
   return (
-    <div className="p-1">
-      <h2 className="text-xl font-semibold text-primary">Personal Details</h2>
+    <div className="p-4">
+      {/* center profile image */}
+      <div className="flex justify-center mb-2">
+
+        {/* from joe code (food truck card) */}
+      <Image
+        className="rounded-full items-center h-[125px] w-[125px] object-cover"
+        src={"https://qieslzondvbkbokewujq.supabase.co/storage/v1/object/public/BiteMap//avatar.png"}
+        alt="Profile picture"
+        width={200}
+        height={200}
+      ></Image>
+      </div>
+      {/* <h1>Personal Details</h1> */}
       <div>
-        <p>
+        <p className="flex justify-center mb-2">
           {" "}
           <span className="font-semibold">Name:</span>{" "}
           {user && user.display_name}
         </p>
-        <p>
+        <p className="flex justify-center mb-2">
           {" "}
           <span className="font-semibold">Email:</span> {user && user.email}
         </p>
       </div>
-      <div className="flex flex-wrap justify-evenly gap-1 p-2">
-        <button
-          className="flex jusitfy-center items-center gap-1 bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
-          onClick={handleFavorite}
-        >
-          <IoHeart /> Favorite
-        </button>
-        <button
-          className="flex jusitfy-center items-center gap-1 bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
-          onClick={handleReviews}
-        >
-          <MdOutlineRateReview /> Reviews
-        </button>
-        <button
-          className="flex jusitfy-center items-center gap-1 bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
-          onClick={handleSightingHistory}
-        >
-          <LuHistory /> Sighting History
-        </button>
-        <button
-          className="bg-muted text-primary font-semibold hover:text-white py-0.5 px-1 border border-primary hover:border-transparent rounded"
-          onClick={signOutAction}
-        >
-          Log Out
-        </button>
-      </div>
 
-      {showFavorites && (
+      <div className="border-b border-gray-200 mt-4">
+    <nav className="flex -mb-px">
+      {["favorites", "sightings", "reviews"].map((tab) => (
+        <button
+          key={tab}
+          onClick={() => setActiveTab(tab as any)}
+          className={`flex-1 px-4 py-3 text-center text-sm font-medium ${
+            activeTab === tab
+              ? "border-b-2 border-primary text-primary"
+              : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          } transition-colors duration-200`}
+        >
+          {tab.charAt(0).toUpperCase() + tab.slice(1)}
+        </button>
+      ))}
+    </nav>
+  </div>
+  <div className="p-6">
+      {activeTab === "favorites" && (
         <div>
-          <h1>Favorite Trucks</h1>
           {favoriteTrucks.length > 0 ? (
             favoriteTrucks.map((truck) => (
               <FavoriteTruckCard
@@ -104,8 +94,21 @@ export default function UserProfile() {
           ) : (
             <p>No favorite trucks found</p>
           )}
+          </div>
+      )}
+
+      {activeTab === "sightings" && (
+        <div>
+            <p>No sighting available</p>
+        </div>
+      )}
+
+      {activeTab === "reviews" && (
+        <div>
+          <p>No reviews available</p>
         </div>
       )}
     </div>
-  );
-}
+</div>
+)}
+
