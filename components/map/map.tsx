@@ -14,9 +14,16 @@ import FoodTruckProfile from "../food-truck/food-truck-profile";
 // types
 import { Location } from "../global-component-types";
 
+import {
+  createTruckPin,
+  createCurrentLocationPin,
+  createSightingPin,
+} from "./createPinStyles";
+// Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
 const createInfoCard = (title: string, body: string) =>
+  // TODO: a link, route to google map in new page to navigate to place
   `<div class="map_infocard_content">
     <div class="map_infocard_title">${title}</div>
     <div class="map_infocard_body">${body}</div>
@@ -33,8 +40,10 @@ export default function Map() {
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<Location>();
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
-  const [sightings, setSightings] = useState<any>();
-  const [truckProfile, setTruckProfile] = useState<any>(null);
+  // current id of sighting to display
+  const [sightingId, setSightingId] = useState<number>();
+  // Toggle display
+  const [truckProfileDisplay, setTruckProfileDisplay] = useState<boolean>();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -53,6 +62,25 @@ export default function Map() {
       });
     }
   };
+
+  function createMarker(
+    location: Location,
+    title: string = "",
+    createPin: Function
+  ): google.maps.marker.AdvancedMarkerElement | undefined {
+    if (!map) return;
+    const LatLng = new google.maps.LatLng(location.lat, location.lng);
+    // create pin style:
+    const pin = createPin(google);
+    // Place marker in map
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      map: map,
+      position: LatLng,
+      title: title,
+      content: pin.element,
+    });
+    return marker;
+  }
 
   // searchFoodTruck
   async function searchFoodTruck() {
@@ -76,48 +104,18 @@ export default function Map() {
     }
   }
 
-  function displayMarkerForTruck(
-    location: Location,
-    title: string = "",
-    color: string = "#FBBC04"
-  ) {
-    if (!map) return;
-    const LatLng = new google.maps.LatLng(location.lat, location.lng);
-    // Style:
-    const pinScaled = new google.maps.marker.PinElement({
-      scale: 1.5,
-      background: color,
-      borderColor: "#137333",
-      glyphColor: "white",
-      glyph: "T",
-    });
-    // Place marker in map
-    const marker = new google.maps.marker.AdvancedMarkerElement({
-      map: map,
-      position: LatLng,
-      title: title,
-      content: pinScaled.element,
-    });
-    marker.addListener("click", () => {
-      // TODO: pop up food truck info
-      // FETCH from DB
-      // pop up
-      setTruckProfile(true);
-    });
-  }
-  async function addSighting() {
+  async function addSighting(truck_id: number = 2) {
     if (!location) {
       return;
     }
     const res = await fetch(
-      `../api/sighting?lat=${location.lat}&lng=${location.lng}`,
+      `../api/sighting?lat=${location.lat}&lng=${location.lng}&truck_id=${truck_id}`,
       {
         method: "POST",
       }
     );
     const data = await res.json();
-    console.log(data);
-    console.log("new sighting");
+    // TODO: inform add data successfully and disappear(use effect and clean up)
   }
 
   async function getSighting() {
@@ -130,17 +128,24 @@ export default function Map() {
     const sightings = await res.json();
 
     if (sightings.length > 0) {
-      setSightings(sightings);
-      sightings.map((sighting: any) => {
+      // store sightings
+
+      sightings.forEach((sighting: any) => {
         const location: Location = {
           lat: sighting.lat as number,
           lng: sighting.lng as number,
         };
-        displayMarkerForTruck(
+        const marker = createMarker(
           location,
           sighting.displayName as string,
-          "#a2b7f1"
+          createSightingPin
         );
+        if (marker) {
+          marker.addListener("click", () => {
+            setSightingId(sighting.id);
+            setTruckProfileDisplay(true);
+          });
+        }
       });
     }
   }
@@ -193,12 +198,34 @@ export default function Map() {
 
   useEffect(() => {
     if (autoComplete) {
+      // set center to place in auto complete
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
-        const position = place.geometry?.location;
-
+        const position = {
+          lat: place.geometry?.location?.lat(),
+          lng: place.geometry?.location?.lng(),
+        } as Location;
+        // drop marker
         if (position) {
-          placeMarker(position, place.name as string);
+          const marker = createMarker(
+            position,
+            place.name as string,
+            createCurrentLocationPin
+          );
+          map?.setCenter(place.geometry?.location as google.maps.LatLng);
+          // set info card and open
+          const infoCard = new google.maps.InfoWindow({
+            position: location,
+            content: createInfoCard(
+              place.name as string,
+              place.adr_address as string
+            ),
+            maxWidth: 200,
+          });
+          infoCard.open({
+            map: map,
+            anchor: marker,
+          });
         }
       });
     }
@@ -211,42 +238,49 @@ export default function Map() {
           lat: place.location?.lat() as number,
           lng: place.location?.lng() as number,
         };
-        displayMarkerForTruck(location, place.displayName as string);
+        const marker = createMarker(
+          location,
+          place.displayName as string,
+          createTruckPin
+        );
+        if (marker) {
+          const infoCard = new google.maps.InfoWindow({
+            position: location,
+            content: createInfoCard(
+              place.displayName as string,
+              place.adrFormatAddress as string
+            ),
+            maxWidth: 200,
+          });
+          marker.addListener("click", () => {
+            infoCard.open({
+              map: map,
+              anchor: marker,
+            });
+          });
+        }
       });
     }
+    // TODO: clean up effect
   }, [places]);
 
-  function placeMarker(location: google.maps.LatLng, name: string) {
-    if (!map) return;
-
-    map.setCenter(location);
-    const marker = new google.maps.marker.AdvancedMarkerElement({
-      map: map,
-      position: location,
-      title: "Marker",
-    });
-
-    const infoCard = new google.maps.InfoWindow({
-      position: location,
-      content: createInfoCard(name, name),
-      maxWidth: 200,
-    });
-
-    infoCard.open({
-      map: map,
-      anchor: marker,
-    });
-  }
   // -----Effect-----
 
   return (
     <>
       {isLoaded && location ? (
         <>
-          {truckProfile && (
-            <FoodTruckProfile
-              setTruckProfile={setTruckProfile}
-            ></FoodTruckProfile>
+          {truckProfileDisplay && sightingId && (
+            <div className="w-full h-full items-center ">
+              <div
+                className="fixed inset-0 bg-gray-500/75 transition-opacity"
+                aria-hidden="true"
+              ></div>
+              <FoodTruckProfile
+                setTruckProfileDisplay={setTruckProfileDisplay}
+                sightingId={sightingId}
+              />
+            </div>
           )}
           <div className="flex p-2  bg-muted">
             <div className="flex gap-1">
