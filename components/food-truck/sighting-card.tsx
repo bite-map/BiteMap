@@ -5,9 +5,7 @@ type SightingCardProps = {
   sightingData: Sighting;
 };
 
-export default function SightingCard({
-  sightingData,
-}: SightingCardProps) {
+export default function SightingCard({ sightingData }: SightingCardProps) {
   return (
     <table className="table-fixed">
       <thead>
@@ -16,9 +14,7 @@ export default function SightingCard({
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>{sightingData.food_truck_profiles.name}</td>
-        </tr>
+        <tr>{<td>{sightingData.food_truck_profiles.name}</td>}</tr>
       </tbody>
     </table>
   );
