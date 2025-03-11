@@ -135,7 +135,6 @@ export const addSighting = async (
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log(user);
   const { data, error } = await supabase
     .from("food_truck_sightings")
     .insert([
@@ -160,6 +159,19 @@ export const getSighting = async (location: Location) => {
   } = await supabase.auth.getUser();
   const { data, error } = await supabase
     .rpc("nearby_sightings", { lat: location.lat, lng: location.lng })
+    .select();
+  if (error) return error;
+
+  return data;
+};
+
+export const getSightingBySightingId = async (sighting_id: number = 17) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .rpc("select_sightings_id", { sighting_id: sighting_id })
     .select();
   if (error) return error;
 
