@@ -276,10 +276,6 @@ export default function Map() {
                 className="fixed inset-0 bg-gray-500/75 transition-opacity"
                 aria-hidden="true"
               ></div>
-              <FoodTruckProfile
-                setTruckProfileDisplay={setTruckProfileDisplay}
-                sightingId={sightingId}
-              />
             </div>
           )}
           <div className="flex p-2  bg-muted">
