@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
+import { Truck } from "../components/global-component-types";
 
 // gets information about all food trucks
 export const getFoodTruckData = async () => {
@@ -16,36 +17,71 @@ export const getFavoriteTruck = async (profileId: string) => {
 
   const { data, error } = await supabase
     .from("favorite_trucks")
-    .select(
-      "food_truck_id, profiles_id, food_truck_profiles(name, food_style, avatar)"
-    )
+    .select("food_truck_id, profiles_id, food_truck_profiles(name)")
     .eq("profiles_id", profileId);
 
   if (error) return [];
 
   return data;
 };
-
 // gets information about sightings made by the user
-export const getSightingData = async(profileId: string) => {
+export const getSightingData = async (profileId: string) => {
   const supabase = await createClient();
 
-  const { data, error} = await supabase 
+  const { data, error } = await supabase
     .from("food_truck_sightings")
-    .select("id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)")
+    .select(
+      "id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)"
+    )
     .eq("created_by_profile_id", profileId);
 
-    if(error) return [];
+  if (error) return [];
 
-    return data;
-}
+  return data;
+};
+
+export const addTruck = async (truck: Truck) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .from("food_truck_profiles")
+    .insert({
+      name: truck.name,
+      food_style: truck.food_style,
+      created_by_profile_id: user?.id,
+      avatar: null,
+    })
+    .select();
+
+  if (error) return error;
+
+  return data;
+};
+
+export const getTruckBySightingId = async (sighitngId: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("food_truck_sightings")
+    .select()
+    .eq("id", sighitngId);
+  if (data) {
+    console.log(data);
+  }
+  // TODO
+};
+
+export const getSightingByTruckId = async () => {
+  const supabase = await createClient();
+  // TODO
+};
 
 export const addSighting = async (location: Location) => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log(location);
   const { data, error } = await supabase
     .from("food_truck_sightings")
     .insert([
@@ -58,6 +94,7 @@ export const addSighting = async (location: Location) => {
   return data;
 };
 
+// get all sightings
 export const getSighting = async (location: Location) => {
   const supabase = await createClient();
   const {

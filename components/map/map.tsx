@@ -23,6 +23,7 @@ import {
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
 const createInfoCard = (title: string, body: string) =>
+  // TODO: a link, route to google map in new page to navigate to place
   `<div class="map_infocard_content">
     <div class="map_infocard_title">${title}</div>
     <div class="map_infocard_body">${body}</div>
@@ -39,8 +40,10 @@ export default function Map() {
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<Location>();
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
-  const [sightings, setSightings] = useState<any>();
-  const [truckProfile, setTruckProfile] = useState<any>(null);
+  // current id of sighting to display
+  const [sightingId, setSightingId] = useState<number>();
+  // Toggle display
+  const [truckProfileDisplay, setTruckProfileDisplay] = useState<boolean>();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -59,6 +62,25 @@ export default function Map() {
       });
     }
   };
+
+  function createMarker(
+    location: Location,
+    title: string = "",
+    createPin: Function
+  ): google.maps.marker.AdvancedMarkerElement | undefined {
+    if (!map) return;
+    const LatLng = new google.maps.LatLng(location.lat, location.lng);
+    // create pin style:
+    const pin = createPin(google);
+    // Place marker in map
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      map: map,
+      position: LatLng,
+      title: title,
+      content: pin.element,
+    });
+    return marker;
+  }
 
   // searchFoodTruck
   async function searchFoodTruck() {
@@ -81,31 +103,7 @@ export default function Map() {
       console.error("No results");
     }
   }
-  // TODO: refactor
-  function createMarker(
-    location: Location,
-    title: string = "",
-    createPin: Function
-  ) {
-    if (!map) return;
-    const LatLng = new google.maps.LatLng(location.lat, location.lng);
-    // Pin Style:
-    const pin = createPin(google);
-    // Place marker in map
-    const marker = new google.maps.marker.AdvancedMarkerElement({
-      map: map,
-      position: LatLng,
-      title: title,
-      content: pin.element,
-    });
-    marker.addListener("click", () => {
-      // TODO: pop up food truck info
-      // FETCH from DB
-      // pop up
-      setTruckProfile(true);
-    });
-    return marker;
-  }
+
   async function addSighting() {
     if (!location) {
       return;
@@ -117,7 +115,7 @@ export default function Map() {
       }
     );
     const data = await res.json();
-    console.log(data);
+    // TODO: inform add data successfully and disappear(use effect and clean up)
   }
 
   async function getSighting() {
@@ -130,17 +128,24 @@ export default function Map() {
     const sightings = await res.json();
 
     if (sightings.length > 0) {
-      setSightings(sightings);
+      // store sightings
+
       sightings.forEach((sighting: any) => {
         const location: Location = {
           lat: sighting.lat as number,
           lng: sighting.lng as number,
         };
-        createMarker(
+        const marker = createMarker(
           location,
           sighting.displayName as string,
           createSightingPin
         );
+        if (marker) {
+          marker.addListener("click", () => {
+            setSightingId(sighting.id);
+            setTruckProfileDisplay(true);
+          });
+        }
       });
     }
   }
@@ -233,9 +238,30 @@ export default function Map() {
           lat: place.location?.lat() as number,
           lng: place.location?.lng() as number,
         };
-        createMarker(location, place.displayName as string, createTruckPin);
+        const marker = createMarker(
+          location,
+          place.displayName as string,
+          createTruckPin
+        );
+        if (marker) {
+          const infoCard = new google.maps.InfoWindow({
+            position: location,
+            content: createInfoCard(
+              place.displayName as string,
+              place.adrFormatAddress as string
+            ),
+            maxWidth: 200,
+          });
+          marker.addListener("click", () => {
+            infoCard.open({
+              map: map,
+              anchor: marker,
+            });
+          });
+        }
       });
     }
+    // TODO: clean up effect
   }, [places]);
 
   // -----Effect-----
@@ -244,10 +270,18 @@ export default function Map() {
     <>
       {isLoaded && location ? (
         <>
-          {truckProfile && (
-            <FoodTruckProfile
-              setTruckProfile={setTruckProfile}
-            ></FoodTruckProfile>
+          {truckProfileDisplay && sightingId && (
+            <div className="w-full h-full items-center ">
+              <div
+                className="fixed inset-0 bg-gray-500/75 transition-opacity"
+                aria-hidden="true"
+              ></div>
+
+              <FoodTruckProfile
+                setTruckProfileDisplay={setTruckProfileDisplay}
+                sightingId={sightingId}
+              />
+            </div>
           )}
           <div className="flex p-2  bg-muted">
             <div className="flex gap-1">
