@@ -3,22 +3,22 @@ import { useEffect, useRef, useState } from "react";
 // api imports
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
-// ui imports
+// components / UI
 import { LuRefreshCw } from "react-icons/lu";
 import { GiConfirmed } from "react-icons/gi";
 import { FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
-// components
-import FoodTruckProfile from "../food-truck/food-truck-profile";
-// types
-import { Location } from "../global-component-types";
-
+import Link from "next/link";
 import {
   createTruckPin,
   createCurrentLocationPin,
   createSightingPin,
 } from "./createPinStyles";
+// types
+import { Location } from "../global-component-types";
+import { getTruckBySightingId } from "@/app/database-actions";
+
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
@@ -43,7 +43,6 @@ export default function Map() {
   // current id of sighting to display
   const [sightingId, setSightingId] = useState<number>();
   // Toggle display
-  const [truckProfileDisplay, setTruckProfileDisplay] = useState<boolean>();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -142,8 +141,8 @@ export default function Map() {
         );
         if (marker) {
           marker.addListener("click", () => {
+            // await supabase get truck id by sighting id
             setSightingId(sighting.id);
-            setTruckProfileDisplay(true);
           });
         }
       });
@@ -270,12 +269,9 @@ export default function Map() {
     <>
       {isLoaded && location ? (
         <>
-          {truckProfileDisplay && sightingId && (
+          {sightingId && (
             <div className="w-full h-full items-center ">
-              <div
-                className="fixed inset-0 bg-gray-500/75 transition-opacity"
-                aria-hidden="true"
-              ></div>
+              <Link href={`/truck-profile/${1}`}></Link>
             </div>
           )}
           <div className="flex p-2  bg-muted">

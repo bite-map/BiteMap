@@ -133,7 +133,6 @@ export const addSighting = async (
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log(user);
   const { data, error } = await supabase
     .from("food_truck_sightings")
     .insert([
