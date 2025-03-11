@@ -4,7 +4,7 @@ import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-import { getSightingBySightingId } from "@/app/database-actions";
+import { getSightingBySightingId, addSighting } from "@/app/database-actions";
 
 type SightingCardProps = {
   sightingData: Sighting;
@@ -16,11 +16,10 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
   useEffect(() => {
     const parseSighting = async () => {
       const parsedSighting = await getSightingBySightingId(sightingData.id);
-      console.log(parsedSighting);
+      setLocation(parsedSighting);
     };
     parseSighting();
-  });
-
+  }, []);
   return (
     <div className="flex rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <div className="grow overflow-hidden px-2 py-1">

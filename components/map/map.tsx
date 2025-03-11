@@ -46,8 +46,6 @@ export default function Map() {
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
   // current id of sighting to display
   const [sightingId, setSightingId] = useState<number>();
-  const [truckId, setTruckId] = useState<number>();
-  const [displayLinkToTruck, setDisplayLinkToTruck] = useState();
   // Toggle display
 
   const { isLoaded } = useJsApiLoader({
@@ -284,9 +282,14 @@ export default function Map() {
   return (
     <>
       {isLoaded && location ? (
+<<<<<<< HEAD
         <div className="flex flex-col h-full">
           <div className="flex p-2  bg-muted gap-1">
 
+=======
+        <>
+          <div className="flex p-2  bg-muted">
+>>>>>>> 315b1da (chore:re order database actions)
             <div className="flex gap-1">
               <IconButton Icon={LuRefreshCw} callback={searchFoodTruck} />
               <IconButton

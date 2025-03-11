@@ -3,7 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
 import { Truck } from "../components/global-component-types";
-
+// -------------- FOOD TRUCK --------------
 // gets information about all food trucks
 export const getFoodTruckData = async () => {
   const supabase = await createClient();
@@ -43,21 +43,6 @@ export const getFavoriteTruck = async (profileId: string) => {
   return data;
 };
 
-export const getSightingData = async (profileId: string) => {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("food_truck_sightings")
-    .select(
-      "id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)"
-    )
-    .eq("created_by_profile_id", profileId);
-
-  if (error) return [];
-
-  return data;
-};
-
 export const addTruck = async (truck: Truck) => {
   const supabase = await createClient();
   const {
@@ -74,25 +59,6 @@ export const addTruck = async (truck: Truck) => {
     .select();
   if (error) return error;
 
-  return data;
-};
-
-export const getReviewsData = async (profileId: string) => {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("reviews")
-    .select(
-      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name)"
-    )
-    .eq("created_by_profile_id", profileId);
-
-  if (error) {
-    console.error("Error fetching reviews:", error);
-    return [];
-  }
-
-  console.log("Supabase Reviews Data:", data);
   return data;
 };
 
@@ -118,6 +84,40 @@ export const getTruckBySightingId = async (sighitngId: number) => {
   }
 };
 
+// -------------- FOOD TRUCK --------------
+
+// -------------- SIGHTING --------------
+
+// get specific user's sighting
+export const getSightingData = async (profileId: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("food_truck_sightings")
+    .select(
+      "id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)"
+    )
+    .eq("created_by_profile_id", profileId);
+
+  if (error) return [];
+
+  return data;
+};
+
+// get all sightings
+export const getSighting = async (location: Location) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .rpc("nearby_sightings", { lat: location.lat, lng: location.lng })
+    .select();
+  if (error) return error;
+
+  return data;
+};
+
 export const getSightingByTruckId = async (truckId: number) => {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -126,6 +126,20 @@ export const getSightingByTruckId = async (truckId: number) => {
       "id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)"
     )
     .eq("food_truck_id", truckId);
+  return data;
+};
+
+export const getSightingBySightingId = async (sighting_id: number = 17) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .rpc("select_sightings_id", { sighting_id: sighting_id })
+    .select()
+    .single();
+  if (error) return error;
+
   return data;
 };
 
@@ -153,30 +167,26 @@ export const addSighting = async (
   return data;
 };
 
-// get all sightings
-export const getSighting = async (location: Location) => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .rpc("nearby_sightings", { lat: location.lat, lng: location.lng })
-    .select();
-  if (error) return error;
+// -------------- SIGHTING --------------
 
+// -------------- REVIEW --------------
+
+export const getReviewsData = async (profileId: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select(
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name)"
+    )
+    .eq("created_by_profile_id", profileId);
+
+  if (error) {
+    console.error("Error fetching reviews:", error);
+    return [];
+  }
+  console.log("Supabase Reviews Data:", data);
   return data;
 };
 
-export const getSightingBySightingId = async (sighting_id: number = 17) => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .rpc("select_sightings_id", { sighting_id: sighting_id })
-    .select()
-    .single();
-  if (error) return error;
-
-  return data;
-};
+// -------------- REVIEW --------------
