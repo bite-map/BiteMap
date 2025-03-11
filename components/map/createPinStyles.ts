@@ -33,10 +33,10 @@ export function createCurrentLocationPin(google: any) {
 // ----- Pin for trucks -----
 export function createTruckPin(google: any) {
   const truckPin = new google.maps.marker.PinElement({
-    scale: 1.5,
-    background: "#ff915b",
-    borderColor: "#aa613e",
-    glyphColor: "aa613e",
+    scale: 1.3,
+    background: "#f8c471",
+    borderColor: "#af601a",
+    glyphColor: "#af601a",
   });
   return truckPin;
 }
@@ -53,7 +53,7 @@ const activityLevel = {
 };
 // TODO: change sighting by frequency, calculate a relative number by ranking in whole table(which sighitng is the most popular one), and send that rate within route to frontend
 // temperary default activity level as 3
-export default function createSightingPin(google: any, activity: number = 3) {
+export function createSightingPin(google: any, activity: number = 3) {
   const sightingPin = new google.maps.marker.PinElement({
     scale: 1,
     background: activityLevel[

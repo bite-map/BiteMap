@@ -14,7 +14,11 @@ import FoodTruckProfile from "../food-truck/food-truck-profile";
 // types
 import { Location } from "../global-component-types";
 
-import { createTruckPin } from "./createPinStyles";
+import {
+  createTruckPin,
+  createCurrentLocationPin,
+  createSightingPin,
+} from "./createPinStyles";
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
@@ -78,17 +82,21 @@ export default function Map() {
     }
   }
   // TODO: refactor
-  function displayMarkerForTruck(location: Location, title: string = "") {
+  function createMarker(
+    location: Location,
+    title: string = "",
+    createPin: Function
+  ) {
     if (!map) return;
     const LatLng = new google.maps.LatLng(location.lat, location.lng);
     // Pin Style:
-    const testPin = createTruckPin(google);
+    const pin = createPin(google);
     // Place marker in map
     const marker = new google.maps.marker.AdvancedMarkerElement({
       map: map,
       position: LatLng,
       title: title,
-      content: testPin.element,
+      content: pin.element,
     });
     marker.addListener("click", () => {
       // TODO: pop up food truck info
@@ -96,6 +104,7 @@ export default function Map() {
       // pop up
       setTruckProfile(true);
     });
+    return marker;
   }
   async function addSighting() {
     if (!location) {
@@ -127,7 +136,11 @@ export default function Map() {
           lat: sighting.lat as number,
           lng: sighting.lng as number,
         };
-        displayMarkerForTruck(location, sighting.displayName as string);
+        createMarker(
+          location,
+          sighting.displayName as string,
+          createSightingPin
+        );
       });
     }
   }
@@ -180,12 +193,34 @@ export default function Map() {
 
   useEffect(() => {
     if (autoComplete) {
+      // set center to place in auto complete
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
-        const position = place.geometry?.location;
-
+        const position = {
+          lat: place.geometry?.location?.lat(),
+          lng: place.geometry?.location?.lng(),
+        } as Location;
+        // drop marker
         if (position) {
-          placeMarker(position, place.name as string);
+          const marker = createMarker(
+            position,
+            place.name as string,
+            createCurrentLocationPin
+          );
+          map?.setCenter(place.geometry?.location as google.maps.LatLng);
+          // set info card and open
+          const infoCard = new google.maps.InfoWindow({
+            position: location,
+            content: createInfoCard(
+              place.name as string,
+              place.adr_address as string
+            ),
+            maxWidth: 200,
+          });
+          infoCard.open({
+            map: map,
+            anchor: marker,
+          });
         }
       });
     }
@@ -198,33 +233,11 @@ export default function Map() {
           lat: place.location?.lat() as number,
           lng: place.location?.lng() as number,
         };
-        displayMarkerForTruck(location, place.displayName as string);
+        createMarker(location, place.displayName as string, createTruckPin);
       });
     }
   }, [places]);
 
-  // TODO: clean up this marker maker
-  function placeMarker(location: google.maps.LatLng, name: string) {
-    if (!map) return;
-
-    map.setCenter(location);
-    const marker = new google.maps.marker.AdvancedMarkerElement({
-      map: map,
-      position: location,
-      title: "Marker",
-    });
-
-    const infoCard = new google.maps.InfoWindow({
-      position: location,
-      content: createInfoCard(name, name),
-      maxWidth: 200,
-    });
-
-    infoCard.open({
-      map: map,
-      anchor: marker,
-    });
-  }
   // -----Effect-----
 
   return (
