@@ -32,3 +32,11 @@ type Sighting = {
   created_by_profile_id: string;
   food_truck_profiles: { name: string };
 }
+
+type Review = {
+  id: number;
+  food_truck_profile_id: number;
+  content: string;
+  created_by_profile_id: string;
+  food_truck_profiles: { name: string };
+}

@@ -74,8 +74,25 @@ export const addTruck = async (truck: Truck) => {
     .select();
   if (error) return error;
 
-  return data;
-};
+    return data;
+}
+
+export const getReviewsData = async(profileId: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name)")
+    .eq("created_by_profile_id", profileId);
+
+    if(error) {
+      console.error("Error fetching reviews:", error);
+    return [];
+    }
+
+    console.log("Supabase Reviews Data:", data);
+    return data;
+}
 
 export const getTruckBySightingId = async (sighitngId: number) => {
   const supabase = await createClient();
