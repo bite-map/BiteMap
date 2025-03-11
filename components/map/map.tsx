@@ -14,6 +14,8 @@ import FoodTruckProfile from "../food-truck/food-truck-profile";
 // types
 import { Location } from "../global-component-types";
 
+import { createTruckPin } from "./createPinStyles";
+// Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
 const createInfoCard = (title: string, body: string) =>
@@ -75,28 +77,18 @@ export default function Map() {
       console.error("No results");
     }
   }
-
-  function displayMarkerForTruck(
-    location: Location,
-    title: string = "",
-    color: string = "#FBBC04"
-  ) {
+  // TODO: refactor
+  function displayMarkerForTruck(location: Location, title: string = "") {
     if (!map) return;
     const LatLng = new google.maps.LatLng(location.lat, location.lng);
-    // Style:
-    const pinScaled = new google.maps.marker.PinElement({
-      scale: 1.5,
-      background: color,
-      borderColor: "#137333",
-      glyphColor: "white",
-      glyph: "T",
-    });
+    // Pin Style:
+    const testPin = createTruckPin(google);
     // Place marker in map
     const marker = new google.maps.marker.AdvancedMarkerElement({
       map: map,
       position: LatLng,
       title: title,
-      content: pinScaled.element,
+      content: testPin.element,
     });
     marker.addListener("click", () => {
       // TODO: pop up food truck info
@@ -117,7 +109,6 @@ export default function Map() {
     );
     const data = await res.json();
     console.log(data);
-    console.log("new sighting");
   }
 
   async function getSighting() {
@@ -131,16 +122,12 @@ export default function Map() {
 
     if (sightings.length > 0) {
       setSightings(sightings);
-      sightings.map((sighting: any) => {
+      sightings.forEach((sighting: any) => {
         const location: Location = {
           lat: sighting.lat as number,
           lng: sighting.lng as number,
         };
-        displayMarkerForTruck(
-          location,
-          sighting.displayName as string,
-          "#a2b7f1"
-        );
+        displayMarkerForTruck(location, sighting.displayName as string);
       });
     }
   }
@@ -216,6 +203,7 @@ export default function Map() {
     }
   }, [places]);
 
+  // TODO: clean up this marker maker
   function placeMarker(location: google.maps.LatLng, name: string) {
     if (!map) return;
 

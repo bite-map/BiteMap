@@ -9,6 +9,7 @@ type FoodTruckProfileProps = {
 export default function FoodTruckProfile({
   setTruckProfile,
 }: FoodTruckProfileProps) {
+  // TODO: make food truck toggle when click outside
   return (
     <div className="w-5/6 h-5/6 bg-gray-50">
       <button
