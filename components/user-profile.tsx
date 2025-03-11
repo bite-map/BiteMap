@@ -27,32 +27,27 @@ export default function UserProfile() {
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      if (activeTab === "favorites") {
         const session = await supabase.auth.getSession();
         const profileId = session.data?.session?.user.id;
         if (profileId) {
           const favoriteTruckData = await getFavoriteTruck(profileId);
           setFavoriteTrucks(favoriteTruckData);
         }
-      }
     };
 
     const fetchSighting = async () => {
-      if(activeTab === "sightings") {
         const session = await supabase.auth.getSession();
         const profileId = session.data?.session?.user.id;
         if(profileId) {
           const sightingData = await getSightingData(profileId);
           setSightingData(sightingData);
         }
-      }
     }
-    fetchSighting();
-  
-    fetchFavorites(); // Call the async function
-  }, [activeTab]);
 
-  console.log(sightingData)
+    fetchSighting();
+    fetchFavorites(); // Call the async function
+  }, []);
+
 
   return (
     <div className="p-4">
