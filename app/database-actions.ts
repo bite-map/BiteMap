@@ -26,6 +26,20 @@ export const getFavoriteTruck = async (profileId: string) => {
   return data;
 };
 
+// gets information about sightings made by the user
+export const getSightingData = async(profileId: string) => {
+  const supabase = await createClient();
+
+  const { data, error} = await supabase 
+    .from("food_truck_sightings")
+    .select("id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)")
+    .eq("created_by_profile_id", profileId);
+
+    if(error) return [];
+
+    return data;
+}
+
 export const addSighting = async (location: Location) => {
   const supabase = await createClient();
   const {

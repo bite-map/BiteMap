@@ -5,7 +5,9 @@ import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { getFavoriteTruck } from "@/app/database-actions";
 import FavoriteTruckCard from "./food-truck/favorite-truck-card";
+import { getSightingData } from "@/app/database-actions";
 import Image from "next/image";
+import SightingCard from "./food-truck/sighting-card";
 import FoodTruckCardProfile from "./food-truck/food-truck-card-profile";
 
 export default function UserProfile() {
@@ -13,9 +15,8 @@ export default function UserProfile() {
 
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
   const [favoriteTrucks, setFavoriteTrucks] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<
-    "favorites" | "sightings" | "reviews"
-  >("favorites");
+  const [sightingData, setSightingData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"favorites" | "sightings" | "reviews">("favorites");
 
   useEffect(() => {
     (async () => {
@@ -36,8 +37,22 @@ export default function UserProfile() {
       }
     };
 
+    const fetchSighting = async () => {
+      if(activeTab === "sightings") {
+        const session = await supabase.auth.getSession();
+        const profileId = session.data?.session?.user.id;
+        if(profileId) {
+          const sightingData = await getSightingData(profileId);
+          setSightingData(sightingData);
+        }
+      }
+    }
+    fetchSighting();
+  
     fetchFavorites(); // Call the async function
   }, [activeTab]);
+
+  console.log(sightingData)
 
   return (
     <div className="p-4">
@@ -94,11 +109,21 @@ export default function UserProfile() {
           </div>
         )}
 
-        {activeTab === "sightings" && (
-          <div>
-            <p>No sighting available</p>
-          </div>
+      {activeTab === "sightings" && (
+        <div>
+          {sightingData.length > 0 ? (
+          sightingData.map((sighting) => (
+            <SightingCard
+              key={sighting.id}
+              sightingData={sighting}
+            />
+          ))
+        ) : (
+          <p>No sighting available</p>
         )}
+           
+        </div>
+      )}
 
         {activeTab === "reviews" && (
           <div>

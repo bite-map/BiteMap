@@ -24,3 +24,11 @@ type Location = {
   lat: number;
   lng: number;
 };
+
+type Sighting = {
+  id: number;
+  food_truck_id: number;
+  location: geography;
+  created_by_profile_id: string;
+  food_truck_profiles: { name: string };
+}
