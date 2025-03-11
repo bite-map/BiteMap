@@ -5,9 +5,11 @@ import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { getFavoriteTruck } from "@/app/database-actions";
 import { getSightingData } from "@/app/database-actions";
+import { getReviewsData } from "@/app/database-actions";
 import Image from "next/image";
 import SightingCard from "./food-truck/sighting-card";
 import FoodTruckCardProfile from "./food-truck/food-truck-card-profile";
+import ReviewCard from "./food-truck/reviews-card";
 
 export default function UserProfile() {
   const supabase = createClient();
@@ -15,9 +17,8 @@ export default function UserProfile() {
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
   const [favoriteTrucks, setFavoriteTrucks] = useState<any[]>([]);
   const [sightingData, setSightingData] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<
-    "favorites" | "sightings" | "reviews"
-  >("favorites");
+  const [reviewsData, setReviewsData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"favorites" | "sightings" | "reviews">("favorites");
 
   useEffect(() => {
     (async () => {
@@ -36,16 +37,31 @@ export default function UserProfile() {
       }
     };
 
-    const fetchSighting = async () => {
-      const session = await supabase.auth.getSession();
-      const profileId = session.data?.session?.user.id;
-      if (profileId) {
-        const sightingData = await getSightingData(profileId);
-        setSightingData(sightingData);
-      }
-    };
+    const fetchSightings = async () => {
+        const session = await supabase.auth.getSession();
+        const profileId = session.data?.session?.user.id;
+        if(profileId) {
+          const sightingData = await getSightingData(profileId);
+          setSightingData(sightingData);
+        }
+    }
 
-    fetchSighting();
+    const fetchReviews = async () => {
+      const session = await supabase.auth.getSession();
+      const profileId  = session.data?.session?.user.id;
+
+      console.log("Fetching reviews for profile:", profileId); 
+
+      if(profileId) {
+        const reviewsData = await getReviewsData(profileId);
+        console.log("Fetched Reviews Data:", reviewsData);
+        setReviewsData(reviewsData)
+      }
+    }
+
+
+    fetchReviews();
+    fetchSightings();
     fetchFavorites(); // Call the async function
   }, []);
 
@@ -88,7 +104,7 @@ export default function UserProfile() {
           ))}
         </nav>
       </div>
-      <div className="pt-3">
+      <div className="relative pt-3">
         {activeTab === "favorites" && (
           <div className="grid grid-cols-2 gap-4">
             {favoriteTrucks.length > 0 ? (
@@ -104,21 +120,34 @@ export default function UserProfile() {
           </div>
         )}
 
-        {activeTab === "sightings" && (
-          <div>
-            {sightingData.length > 0 ? (
-              sightingData.map((sighting) => (
-                <SightingCard key={sighting.id} sightingData={sighting} />
-              ))
-            ) : (
-              <p>No sighting available</p>
-            )}
-          </div>
+      {activeTab === "sightings" && (
+        <div className="grid grid-cols-1 gap-y-2">
+          {sightingData.length > 0 ? (
+          sightingData.map((sighting) => (
+            <SightingCard
+              key={sighting.id}
+              sightingData={sighting}
+            />
+          ))
+        ) : (
+          <p>No sighting available</p>
         )}
+           
+        </div>
+      )}
 
         {activeTab === "reviews" && (
-          <div>
-            <p>No reviews available</p>
+          <div className="grid grid-cols-1 gap-y-3">
+          {reviewsData.length > 0 ? (
+          reviewsData.map((review) => (
+            <ReviewCard
+              key={review.id}
+              reviewsData={review}
+            />
+          ))
+        ) : (
+          <p>No reviews available</p>
+        )}
           </div>
         )}
       </div>
