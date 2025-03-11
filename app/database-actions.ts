@@ -17,14 +17,16 @@ export const getFavoriteTruck = async (profileId: string) => {
 
   const { data, error } = await supabase
     .from("favorite_trucks")
-    .select("food_truck_id, profiles_id, food_truck_profiles(name)")
+    .select(
+      "food_truck_id, profiles_id, food_truck_profiles(name, food_style, avatar)"
+    )
     .eq("profiles_id", profileId);
 
   if (error) return [];
 
   return data;
 };
-// gets information about sightings made by the user
+
 export const getSightingData = async (profileId: string) => {
   const supabase = await createClient();
 
@@ -54,7 +56,6 @@ export const addTruck = async (truck: Truck) => {
       avatar: null,
     })
     .select();
-
   if (error) return error;
 
   return data;
@@ -67,25 +68,31 @@ export const getTruckBySightingId = async (sighitngId: number) => {
     .select()
     .eq("id", sighitngId);
   if (data) {
-    console.log(data);
+    //
   }
-  // TODO
 };
 
 export const getSightingByTruckId = async () => {
   const supabase = await createClient();
-  // TODO
 };
 
-export const addSighting = async (location: Location) => {
+export const addSighting = async (
+  location: Location,
+  food_truck_id: number
+) => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  console.log(user);
   const { data, error } = await supabase
     .from("food_truck_sightings")
     .insert([
-      { food_truck_id: 3, location: `POINT(${location.lng} ${location.lat})` },
+      {
+        food_truck_id: food_truck_id,
+        location: `POINT(${location.lng} ${location.lat})`,
+        created_by_profile_id: user?.id,
+      },
     ])
     .select();
 

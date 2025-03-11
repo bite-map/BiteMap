@@ -104,12 +104,12 @@ export default function Map() {
     }
   }
 
-  async function addSighting() {
+  async function addSighting(truck_id: number = 2) {
     if (!location) {
       return;
     }
     const res = await fetch(
-      `../api/sighting?lat=${location.lat}&lng=${location.lng}`,
+      `../api/sighting?lat=${location.lat}&lng=${location.lng}&truck_id=${truck_id}`,
       {
         method: "POST",
       }
@@ -276,7 +276,6 @@ export default function Map() {
                 className="fixed inset-0 bg-gray-500/75 transition-opacity"
                 aria-hidden="true"
               ></div>
-
               <FoodTruckProfile
                 setTruckProfileDisplay={setTruckProfileDisplay}
                 sightingId={sightingId}
