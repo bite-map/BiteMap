@@ -120,7 +120,9 @@ export const getSightingByTruckId = async (truckId: number) => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("food_truck_sightings")
-    .select()
+    .select(
+      "id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)"
+    )
     .eq("food_truck_id", truckId);
   return data;
 };

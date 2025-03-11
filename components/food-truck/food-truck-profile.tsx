@@ -2,8 +2,12 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { Truck } from "../global-component-types";
-import { getFoodTruckDataById } from "@/app/database-actions";
+import { Sighting, Truck } from "../global-component-types";
+import {
+  getFoodTruckDataById,
+  getSightingByTruckId,
+} from "@/app/database-actions";
+import SightingCard from "./sighting-card";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -14,12 +18,23 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     "sightings"
   );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
+  const [sightings, setSightings] = useState<any[] | null>(null);
 
   useEffect(() => {
     (async () => {
       setFoodTruck(await getFoodTruckDataById(truckId));
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      setSightings(await getSightingByTruckId(truckId));
+    })();
+  }, [foodTruck]);
+
+  useEffect(() => {
+    console.log(sightings);
+  }, [sightings]);
 
   return (
     <div className="p-3">
@@ -64,14 +79,13 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         {activeTab === "sightings" && (
           <div>
             {/* need to fetch sighting data */}
-            {/* {sightingData.length > 0 ? (
-              sightingData.map((sighting) => (
+            {sightings ? (
+              sightings.map((sighting) => (
                 <SightingCard key={sighting.id} sightingData={sighting} />
               ))
             ) : (
               <p>No sighting available</p>
-            )} */}
-            <p>TEST TAB 1</p>
+            )}
           </div>
         )}
 

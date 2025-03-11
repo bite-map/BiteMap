@@ -44,7 +44,7 @@ export default function SidebarMobile({
           />
         ))}
         {/* displays logout button if a user is logged in */}
-        {user ? <LogoutButton /> : null}
+        {user ? <LogoutButton handleToggle={handleToggle} /> : null}
       </div>
     </div>
   );
