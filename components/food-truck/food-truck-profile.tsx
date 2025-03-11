@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Truck } from "../global-component-types";
+import { getFoodTruckDataById } from "@/app/database-actions";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -11,28 +13,40 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [activeTab, setActiveTab] = useState<
     "favorites" | "sightings" | "reviews"
   >("favorites");
+  const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      setFoodTruck(await getFoodTruckDataById(truckId));
+    })();
+  }, []);
+
+  useEffect(() => {
+    console.log("FOOD TRUCK DATA", foodTruck);
+  }, [foodTruck]);
 
   return (
     <div className="p-3">
-      <div className="rounded-xl bg-background overflow-clip shadow-md">
-        <Image
-          className="h-[200px] object-cover"
-          src={
-            "https://qieslzondvbkbokewujq.supabase.co/storage/v1/object/public/BiteMap//foodtruck.webp"
-          }
-          alt="Picture of a food truck"
-          width={600}
-          height={600}
-        ></Image>
-        <div className="flex">
-          <div className="p-3">
-            <h2 className="text-lg font-semibold text-primary">
-              {"Test Truck"}
-            </h2>
-            <p>{"Test Style"}</p>
+      {foodTruck && (
+        <div className="rounded-xl bg-background overflow-clip shadow-md">
+          <Image
+            className="h-[200px] object-cover"
+            src={foodTruck.avatar as string}
+            alt="Picture of a food truck"
+            width={600}
+            height={600}
+          ></Image>
+
+          <div className="flex">
+            <div className="p-3">
+              <h2 className="text-lg font-semibold text-primary">
+                {foodTruck.name}
+              </h2>
+              <p>{foodTruck.food_style}</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <div className="border-b border-gray-200 mt-4">
         <nav className="flex -mb-px">
           {["sightings", "reviews"].map((tab) => (

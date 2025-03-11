@@ -7,9 +7,11 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-4 p-3 bg-muted">
-      {foodTruckData?.map((foodTruck) => (
-        <FoodTruckCardLanding key={foodTruck.id} foodTruck={foodTruck} />
-      ))}
+      {Array.isArray(foodTruckData)
+        ? foodTruckData?.map((foodTruck) => (
+            <FoodTruckCardLanding key={foodTruck.id} foodTruck={foodTruck} />
+          ))
+        : null}
     </div>
   );
 }

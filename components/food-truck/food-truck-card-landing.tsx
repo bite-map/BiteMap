@@ -29,7 +29,7 @@ export default function FoodTruckCardLanding({
         </div>
         {/* we need to fix the link here currently just the map */}
         <Link
-          href="/truck-map"
+          href={`/truck-profile/${foodTruck.id}`}
           className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16"
         >
           <TiArrowForward />

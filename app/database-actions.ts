@@ -7,8 +7,24 @@ import { Truck } from "../components/global-component-types";
 // gets information about all food trucks
 export const getFoodTruckData = async () => {
   const supabase = await createClient();
-  const { data } = await supabase.from("food_truck_profiles").select();
+  const { data, error } = await supabase.from("food_truck_profiles").select();
+
+  if (error) console.error(error);
+
   return data;
+};
+
+// gets information for a given food truck by ID
+export const getFoodTruckDataById = async (truckId: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("food_truck_profiles")
+    .select()
+    .eq("id", truckId);
+
+  if (error) console.error(error);
+
+  return data ? data[0] : null;
 };
 
 // gets information about the respective favorites from determined user
@@ -66,14 +82,30 @@ export const getTruckBySightingId = async (sighitngId: number) => {
   const { data, error } = await supabase
     .from("food_truck_sightings")
     .select()
-    .eq("id", sighitngId);
+    .eq("id", sighitngId)
+    .single();
+  console.log(data);
+  const truckId = data.food_truck_id;
   if (data) {
-    //
+    const { data, error } = await supabase
+      .from("food_truck_profiles")
+      .select()
+      .eq("id", truckId)
+      .single();
+    console.log(data);
+    if (data) {
+      return data;
+    }
   }
 };
 
-export const getSightingByTruckId = async () => {
+export const getSightingByTruckId = async (truckId: number) => {
   const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("food_truck_sightings")
+    .select()
+    .eq("food_truck_id", truckId);
+  return data;
 };
 
 export const addSighting = async (
