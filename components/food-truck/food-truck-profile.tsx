@@ -1,30 +1,74 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
-// type FoodTruckProfileProps = {
-//   // location
-//   // review
-//   setTruckProfile: Function;
-// };
+type FoodTruckProfileProps = {
+  truckId: number;
+};
 
-export default function FoodTruckProfile({}) {
+export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
+  const [activeTab, setActiveTab] = useState<
+    "favorites" | "sightings" | "reviews"
+  >("favorites");
+
   return (
-    <div className="rounded-xl bg-background overflow-clip shadow-md">
-      <Image
-        className="h-[200px] object-cover"
-        src={
-          "https://qieslzondvbkbokewujq.supabase.co/storage/v1/object/public/BiteMap//foodtruck.webp"
-        }
-        alt="Picture of a food truck"
-        width={600}
-        height={600}
-      ></Image>
-      <div className="flex">
-        <div className="p-3">
-          <h2 className="text-lg font-semibold text-primary">{"Test Truck"}</h2>
-          <p>{"Test Style"}</p>
+    <div className="p-3">
+      <div className="rounded-xl bg-background overflow-clip shadow-md">
+        <Image
+          className="h-[200px] object-cover"
+          src={
+            "https://qieslzondvbkbokewujq.supabase.co/storage/v1/object/public/BiteMap//foodtruck.webp"
+          }
+          alt="Picture of a food truck"
+          width={600}
+          height={600}
+        ></Image>
+        <div className="flex">
+          <div className="p-3">
+            <h2 className="text-lg font-semibold text-primary">
+              {"Test Truck"}
+            </h2>
+            <p>{"Test Style"}</p>
+          </div>
         </div>
+      </div>
+      <div className="border-b border-gray-200 mt-4">
+        <nav className="flex -mb-px">
+          {["sightings", "reviews"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
+              className={`flex-1 px-4 py-3 text-center text-sm font-medium ${
+                activeTab === tab
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              } transition-colors duration-200`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </nav>
+      </div>
+      <div className="pt-3">
+        {activeTab === "sightings" && (
+          <div>
+            {/* {sightingData.length > 0 ? (
+              sightingData.map((sighting) => (
+                <SightingCard key={sighting.id} sightingData={sighting} />
+              ))
+            ) : (
+              <p>No sighting available</p>
+            )} */}
+            <p>TEST TAB 1</p>
+          </div>
+        )}
+
+        {activeTab === "reviews" && (
+          <div>
+            <p>TEST TAB 2</p>
+          </div>
+        )}
       </div>
     </div>
   );
