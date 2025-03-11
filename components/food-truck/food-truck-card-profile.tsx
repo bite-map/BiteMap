@@ -13,7 +13,7 @@ export default function FoodTruckCardProfile({
   foodTruck,
 }: FoodTruckCardProps) {
   return (
-    <div className="relative flex flex-col rounded-xl bg-background overflow-clip shadow-md">
+    <div className="relative flex flex-col rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <IoMdHeart className="absolute left-1 top-1 text-primary text-xl shadow-lg" />
       <Image
         className="h-[100px] object-cover"
