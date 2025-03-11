@@ -162,3 +162,16 @@ export const getSighting = async (location: Location) => {
 
   return data;
 };
+
+export const getSightingBySightingId = async (sighting_id: number = 17) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .rpc("select_sightings_id", { sighting_id: sighting_id })
+    .select();
+  if (error) return error;
+
+  return data;
+};

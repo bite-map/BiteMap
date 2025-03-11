@@ -17,7 +17,10 @@ import {
 } from "./createPinStyles";
 // types
 import { Location } from "../global-component-types";
-import { getTruckBySightingId } from "@/app/database-actions";
+import {
+  getTruckBySightingId,
+  getSightingBySightingId,
+} from "@/app/database-actions";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
@@ -26,6 +29,7 @@ const createInfoCard = (title: string, body: string) =>
   // TODO: a link, route to google map in new page to navigate to place
   `<div class="map_infocard_content">
     <div class="map_infocard_title">${title}</div>
+       <Link href="/truck-profile/${1}"></Link>
     <div class="map_infocard_body">${body}</div>
   </div>`;
 
@@ -42,6 +46,8 @@ export default function Map() {
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
   // current id of sighting to display
   const [sightingId, setSightingId] = useState<number>();
+  const [truckId, setTruckId] = useState<number>();
+  const [displayLinkToTruck, setDisplayLinkToTruck] = useState();
   // Toggle display
 
   const { isLoaded } = useJsApiLoader({
@@ -107,6 +113,7 @@ export default function Map() {
     if (!location) {
       return;
     }
+
     const res = await fetch(
       `../api/sighting?lat=${location.lat}&lng=${location.lng}&truck_id=${truck_id}`,
       {
@@ -114,6 +121,7 @@ export default function Map() {
       }
     );
     const data = await res.json();
+    console.log(data);
     // TODO: inform add data successfully and disappear(use effect and clean up)
   }
 
@@ -128,7 +136,6 @@ export default function Map() {
 
     if (sightings.length > 0) {
       // store sightings
-
       sightings.forEach((sighting: any) => {
         const location: Location = {
           lat: sighting.lat as number,
@@ -140,9 +147,18 @@ export default function Map() {
           createSightingPin
         );
         if (marker) {
-          marker.addListener("click", () => {
+          marker.addListener("click", async () => {
+            const foodTruck = await getTruckBySightingId(sighting.id);
+            const infoWindowContent = `
+      <div>
+         <a href="/truck-profile/${foodTruck.id}" >GO TRUCK</a>
+      </div>
+    `;
+            const infoWindow = new window.google.maps.InfoWindow({
+              content: infoWindowContent,
+            });
+            infoWindow.open(map, marker);
             // await supabase get truck id by sighting id
-            setSightingId(sighting.id);
           });
         }
       });
@@ -270,14 +286,19 @@ export default function Map() {
       {isLoaded && location ? (
         <>
           {sightingId && (
-            <div className="w-full h-full items-center ">
+            <div className="w-full h-full items-center absolute ">
               <Link href={`/truck-profile/${1}`}></Link>
             </div>
           )}
           <div className="flex p-2  bg-muted">
             <div className="flex gap-1">
               <IconButton Icon={LuRefreshCw} callback={searchFoodTruck} />
-              <IconButton Icon={GiConfirmed} callback={addSighting} />
+              <IconButton
+                Icon={GiConfirmed}
+                callback={() => {
+                  addSighting();
+                }}
+              />
               <IconButton Icon={FaMapMarkerAlt} callback={getSighting} />
             </div>
             <Input
