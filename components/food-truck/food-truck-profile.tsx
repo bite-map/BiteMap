@@ -10,9 +10,9 @@ type FoodTruckProfileProps = {
 };
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
-  const [activeTab, setActiveTab] = useState<
-    "favorites" | "sightings" | "reviews"
-  >("favorites");
+  const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
+    "sightings"
+  );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
 
   useEffect(() => {
@@ -20,10 +20,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       setFoodTruck(await getFoodTruckDataById(truckId));
     })();
   }, []);
-
-  useEffect(() => {
-    console.log("FOOD TRUCK DATA", foodTruck);
-  }, [foodTruck]);
 
   return (
     <div className="p-3">
@@ -67,6 +63,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       <div className="pt-3">
         {activeTab === "sightings" && (
           <div>
+            {/* need to fetch sighting data */}
             {/* {sightingData.length > 0 ? (
               sightingData.map((sighting) => (
                 <SightingCard key={sighting.id} sightingData={sighting} />
