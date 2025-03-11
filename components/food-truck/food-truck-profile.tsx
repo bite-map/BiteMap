@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { Truck } from "../global-component-types";
-import { getFoodTruckDataById } from "@/app/database-actions";
+import { Sighting, Truck } from "../global-component-types";
+import {
+  getFoodTruckDataById,
+  getSightingByTruckId,
+} from "@/app/database-actions";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -14,12 +17,23 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     "sightings"
   );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
+  const [sightings, setSightings] = useState<Sighting[] | null>(null);
 
   useEffect(() => {
     (async () => {
       setFoodTruck(await getFoodTruckDataById(truckId));
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      setSightings(await getSightingByTruckId(truckId));
+    })();
+  }, [foodTruck]);
+
+  useEffect(() => {
+    console.log(sightings);
+  }, [sightings]);
 
   return (
     <div className="p-3">
