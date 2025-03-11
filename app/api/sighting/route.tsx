@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
     lat: Number(searchParams.get("lat")),
     lng: Number(searchParams.get("lng")),
   };
-  //
 
   const data = await getSighting(location);
 
@@ -21,9 +20,9 @@ export async function POST(request: NextRequest) {
     lat: Number(searchParams.get("lat")),
     lng: Number(searchParams.get("lng")),
   };
-  //
+  const food_truck_profiles_id = Number(searchParams.get("truck_id"));
 
-  const data = await addSighting(location);
+  const data = await addSighting(location, food_truck_profiles_id);
 
   return NextResponse.json(data, { status: 200 });
 }
