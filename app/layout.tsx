@@ -34,9 +34,9 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen h-[100svh] flex flex-col bg-background mt-16">
+          <div className="min-h-screen h-[100svh] flex flex-col bg-background pt-16">
             <Header user={user} />
-            <main className="flex-1 relative">{children}</main>
+            <main className="flex-1">{children}</main>
           </div>
         </ThemeProvider>
       </body>

@@ -269,16 +269,8 @@ export default function Map() {
   return (
     <>
       {isLoaded && location ? (
-        <>
-          {truckProfileDisplay && sightingId && (
-            <div className="w-full h-full items-center ">
-              <div
-                className="fixed inset-0 bg-gray-500/75 transition-opacity"
-                aria-hidden="true"
-              ></div>
-            </div>
-          )}
-          <div className="flex p-2  bg-muted">
+        <div className="flex flex-col h-full">
+          <div className="flex p-2  bg-muted gap-1">
             <div className="flex gap-1">
               <IconButton Icon={LuRefreshCw} callback={searchFoodTruck} />
               <IconButton Icon={GiConfirmed} callback={addSighting} />
@@ -290,13 +282,8 @@ export default function Map() {
               ref={placeAutoCompleteRef}
             />
           </div>
-
-          <div
-            id="map"
-            ref={mapRef}
-            className="w-full h-full relative overflow-hidden"
-          ></div>
-        </>
+          <div id="map" ref={mapRef} className="grow"></div>
+        </div>
       ) : (
         <div className="flex justify-center items-center gap-2 text-lg mt-2">
           Loading map{" "}
