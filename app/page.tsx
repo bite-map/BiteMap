@@ -1,18 +1,14 @@
-import FoodTruckCard from "@/components/food-truck/food-truck-card";
 import React from "react";
 import { getFoodTruckData } from "@/app/database-actions";
+import FoodTruckCardLanding from "@/components/food-truck/food-truck-card-landing";
 
 export default async function Home() {
   const foodTruckData = await getFoodTruckData();
 
   return (
-    <div className="pb-16">
+    <div className="flex flex-col gap-4 p-3 bg-muted">
       {foodTruckData?.map((foodTruck) => (
-        <FoodTruckCard
-          key={foodTruck.id}
-          foodTruck={foodTruck}
-          context={"landing"}
-        />
+        <FoodTruckCardLanding key={foodTruck.id} foodTruck={foodTruck} />
       ))}
     </div>
   );

@@ -16,7 +16,9 @@ export const getFavoriteTruck = async (profileId: string) => {
 
   const { data, error } = await supabase
     .from("favorite_trucks")
-    .select("food_truck_id, profiles_id, food_truck_profiles(name)")
+    .select(
+      "food_truck_id, profiles_id, food_truck_profiles(name, food_style, avatar)"
+    )
     .eq("profiles_id", profileId);
 
   if (error) return [];
