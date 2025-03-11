@@ -4,20 +4,27 @@ import { NavButton } from "./global-component-types";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
-type NavSidebarMobileProps = {
+type NavButtonMobileProps = {
   NavButton: NavButton;
+  handleToggle: () => void;
 };
 
-export default function NavSidebarMobile({ NavButton }: NavSidebarMobileProps) {
+export default function NavButtonMobile({
+  NavButton,
+  handleToggle,
+}: NavButtonMobileProps) {
   const pathname = usePathname();
 
   const Icon = NavButton.icon;
+
   return (
-    <Link href={NavButton.href}>
+    <Link onClick={handleToggle} href={NavButton.href}>
       <div
         className={clsx(
-          "flex flex-col justify-center items-center w-[80px] h-[60px] mt-8",
-          { "bg-gray-400": pathname === NavButton.href }
+          "flex flex-col justify-center font-semibold items-center w-16 py-[6px] mt-3 text-sm",
+          {
+            "bg-primary text-background": pathname === NavButton.href,
+          }
         )}
       >
         <Icon className="size-6 " />

@@ -1,10 +1,7 @@
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import SidebarNavMobileLoggedIn from "@/components/sidebar-mobile-logged-in";
-import SidebarNavMobileLoggedOut from "@/components/sidebar-mobile-logged-out";
 import { createClient } from "@/utils/supabase/server";
-import Image from "next/image";
-import logo from "../public/logo.svg";
+import Header from "@/components/header";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -22,6 +19,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
+
   // gets information about logged in user
   const {
     data: { user },
@@ -36,18 +34,9 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen h-[100svh] flex flex-col bg-background">
-            <header className="sticky top-0 left-0 z-10 bg-background w-full flex shrink-0 items-center h-16 p-2">
-              <Image
-                className="w-[100px]"
-                src={logo}
-                alt="BiteMap's Logo"
-                width={400}
-                height={140}
-              ></Image>
-            </header>
+          <div className="min-h-screen h-[100svh] flex flex-col bg-background mt-16">
+            <Header user={user} />
             <main className="flex-1 relative">{children}</main>
-            {user ? <SidebarNavMobileLoggedIn /> : <SidebarNavMobileLoggedOut />}
           </div>
         </ThemeProvider>
       </body>

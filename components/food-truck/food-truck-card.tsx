@@ -4,12 +4,15 @@ import Image from "next/image";
 
 type FoodTruckCardProps = {
   foodTruck: Truck;
-  // context: display img / display detialed / display as small
+  context: string;
 };
 
-export default function FoodTruckCard({ foodTruck }: FoodTruckCardProps) {
+export default function FoodTruckCard({
+  foodTruck,
+  context,
+}: FoodTruckCardProps) {
   return (
-    <div>
+    <div className="mx-2">
       <h2>{foodTruck.name}</h2>
       <Image
         className="h-[300px] object-cover"
