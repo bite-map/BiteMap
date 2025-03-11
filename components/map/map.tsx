@@ -282,14 +282,8 @@ export default function Map() {
   return (
     <>
       {isLoaded && location ? (
-<<<<<<< HEAD
         <div className="flex flex-col h-full">
           <div className="flex p-2  bg-muted gap-1">
-
-=======
-        <>
-          <div className="flex p-2  bg-muted">
->>>>>>> 315b1da (chore:re order database actions)
             <div className="flex gap-1">
               <IconButton Icon={LuRefreshCw} callback={searchFoodTruck} />
               <IconButton

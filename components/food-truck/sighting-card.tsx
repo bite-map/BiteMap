@@ -4,6 +4,7 @@ import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+
 import { getSightingBySightingId, addSighting } from "@/app/database-actions";
 
 type SightingCardProps = {
