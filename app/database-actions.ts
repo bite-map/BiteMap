@@ -74,25 +74,27 @@ export const addTruck = async (truck: Truck) => {
     .select();
   if (error) return error;
 
-    return data;
-}
+  return data;
+};
 
-export const getReviewsData = async(profileId: string) => {
+export const getReviewsData = async (profileId: string) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("reviews")
-    .select("id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name)")
+    .select(
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name)"
+    )
     .eq("created_by_profile_id", profileId);
 
-    if(error) {
-      console.error("Error fetching reviews:", error);
+  if (error) {
+    console.error("Error fetching reviews:", error);
     return [];
-    }
+  }
 
-    console.log("Supabase Reviews Data:", data);
-    return data;
-}
+  console.log("Supabase Reviews Data:", data);
+  return data;
+};
 
 export const getTruckBySightingId = async (sighitngId: number) => {
   const supabase = await createClient();
@@ -172,7 +174,8 @@ export const getSightingBySightingId = async (sighting_id: number = 17) => {
   } = await supabase.auth.getUser();
   const { data, error } = await supabase
     .rpc("select_sightings_id", { sighting_id: sighting_id })
-    .select();
+    .select()
+    .single();
   if (error) return error;
 
   return data;

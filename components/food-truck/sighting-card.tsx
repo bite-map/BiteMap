@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Sighting } from "../global-component-types";
 import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+import { getSightingBySightingId } from "@/app/database-actions";
 
 type SightingCardProps = {
   sightingData: Sighting;
@@ -11,6 +12,14 @@ type SightingCardProps = {
 
 export default function SightingCard({ sightingData }: SightingCardProps) {
   const pathname = usePathname();
+  const [location, setLocation] = useState<any>();
+  useEffect(() => {
+    const parseSighting = async () => {
+      const parsedSighting = await getSightingBySightingId(sightingData.id);
+      console.log(parsedSighting);
+    };
+    parseSighting();
+  });
 
   return (
     <div className="flex rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
