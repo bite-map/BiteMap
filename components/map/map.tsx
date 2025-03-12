@@ -138,12 +138,6 @@ export default function Map() {
       `../api/sighting?lat=${location.lat}&lng=${location.lng}`
     );
     const sightings = await res.json();
-    // test
-    const data = await getConfirmationBySightingId(17);
-    console.log(data);
-    const data1 = await addSightingConfirmation(17, 1);
-    console.log(data, data1);
-    // test
 
     if (sightings.length > 0) {
       // store sightings
