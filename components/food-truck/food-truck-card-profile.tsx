@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Favorite, Truck } from "./../global-component-types";
 import Image from "next/image";
 import { TiArrowForward } from "react-icons/ti";
 import Link from "next/link";
-import { IoMdHeart } from "react-icons/io";
+import FavoriteButton from "../favorite-button";
+import { IoMdHeart } from "react-icons/io"
 
 type FoodTruckCardProps = {
   foodTruck: Favorite;
@@ -12,6 +13,8 @@ type FoodTruckCardProps = {
 export default function FoodTruckCardProfile({
   foodTruck,
 }: FoodTruckCardProps) {
+  const [isFavorited, setIsFavorited] = useState(true);
+
   return (
     <div className="relative flex flex-col rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <IoMdHeart className="absolute left-1 top-1 text-primary text-xl shadow-lg" />

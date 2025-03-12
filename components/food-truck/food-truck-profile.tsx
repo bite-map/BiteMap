@@ -8,6 +8,7 @@ import {
   getSightingByTruckId,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
+import FavoriteButton from "../favorite-button";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -19,6 +20,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
+  const [isFavorited, setIsFavorited] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -36,6 +38,10 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     console.log(sightings);
   }, [sightings]);
 
+  const handleToggleFavorite = () => {
+    setIsFavorited((previous) => !previous)
+  }
+
   return (
     <div className="p-3">
       {foodTruck && (
@@ -48,13 +54,14 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
             height={600}
           ></Image>
 
-          <div className="flex">
-            <div className="p-3">
+          <div className="flex justify-between p-3">
+            <div>
               <h2 className="text-lg font-semibold text-primary">
                 {foodTruck.name}
               </h2>
               <p>{foodTruck.food_style}</p>
             </div>
+            <FavoriteButton handleToggle={handleToggleFavorite}/>
           </div>
         </div>
       )}
