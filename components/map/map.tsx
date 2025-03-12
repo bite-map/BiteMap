@@ -21,6 +21,7 @@ import {
   getConfirmationBySightingId,
   addSightingConfirmation,
 } from "@/app/database-actions";
+import { SubmitButton } from "../submit-button";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
@@ -44,6 +45,7 @@ export default function Map() {
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<Location>();
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
+  const [isDisplayed, setIsDisplayed] = useState<boolean>(false);
   // current id of sighting to display
   const [sightingId, setSightingId] = useState<number>();
   // Toggle display
@@ -84,6 +86,11 @@ export default function Map() {
     });
     return marker;
   }
+
+  // toggle display to add sighting
+  const handleToggle = () => {
+    setIsDisplayed(!isDisplayed);
+  };
 
   // searchFoodTruck
   async function searchFoodTruck() {
@@ -289,13 +296,14 @@ export default function Map() {
     <>
       {isLoaded && location ? (
         <div className="flex flex-col h-full">
-          <div className="flex p-2  bg-muted gap-1 border-b-[1.5px] border-primary">
+          <div className="relative flex p-2  bg-muted gap-1 border-b-[1.5px] border-primary">
             <div className="flex gap-1">
               <IconButton Icon={FaMapMarkerAlt} callback={searchFoodTruck} />
               <IconButton
                 Icon={FaPlus}
                 callback={() => {
-                  addSighting();
+                  handleToggle();
+                  //addSighting();
                 }}
               />
               <IconButton Icon={LuRefreshCw} callback={getSighting} />
@@ -305,6 +313,24 @@ export default function Map() {
               type="text"
               ref={placeAutoCompleteRef}
             />
+            {isDisplayed && (
+              <div className="absolute bottom-[-5.6rem] flex flex-col justify-center items-center gap-1 p-2 left-0 z-10 h-[5.6rem] bg-muted w-full border-y-[1.5px] border-primary">
+                <Input
+                  className="h-9 w-[250px] "
+                  type="text"
+                  placeholder="Search for a truck (WIP)"
+                />
+                <button
+                  onClick={() => {
+                    addSighting();
+                    handleToggle();
+                  }}
+                  className="bg-primary p-2 text-primary-foreground rounded-xl flex-none h-9 flex justify-center items-center"
+                >
+                  Submit Sighting
+                </button>
+              </div>
+            )}
           </div>
           <div id="map" ref={mapRef} className="grow"></div>
         </div>

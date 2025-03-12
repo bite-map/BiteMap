@@ -8,15 +8,12 @@ import {
   getSightingByTruckId,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
-import { usePathname } from "next/navigation";
 
 type FoodTruckProfileProps = {
   truckId: number;
 };
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
-  const pathname = usePathname();
-
   const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
     "sightings"
   );

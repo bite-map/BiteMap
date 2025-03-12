@@ -19,7 +19,7 @@ export default function SidebarMobile({
 }: SidebarMobileProps) {
   return (
     <div
-      className={clsx("fixed top-16 right-0 z-10 flex w-full h-screen", {
+      className={clsx("fixed top-16 right-0 z-20 flex w-full h-screen", {
         hidden: !isDisplayed,
       })}
     >
