@@ -8,12 +8,15 @@ import {
   getSightingByTruckId,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
+import { usePathname } from "next/navigation";
 
 type FoodTruckProfileProps = {
   truckId: number;
 };
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
+  const pathname = usePathname();
+
   const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
     "sightings"
   );
@@ -77,8 +80,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       </div>
       <div className="pt-3">
         {activeTab === "sightings" && (
-          <div>
-            {/* need to fetch sighting data */}
+          <div className="flex flex-col gap-y-2">
             {sightings ? (
               sightings.map((sighting) => (
                 <SightingCard key={sighting.id} sightingData={sighting} />
@@ -91,7 +93,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
 
         {activeTab === "reviews" && (
           <div>
-            <p>TEST TAB 2</p>
+            <p>No reviews available</p>
           </div>
         )}
       </div>

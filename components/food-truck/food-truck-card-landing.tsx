@@ -12,7 +12,7 @@ export default function FoodTruckCardLanding({
   foodTruck,
 }: FoodTruckCardProps) {
   return (
-    <div className="rounded-xl bg-background overflow-clip shadow-md">
+    <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <Image
         className="h-[200px] object-cover"
         src={foodTruck.avatar}
