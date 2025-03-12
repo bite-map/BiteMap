@@ -4,6 +4,7 @@ import Image from "next/image";
 import { TiArrowForward } from "react-icons/ti";
 import Link from "next/link";
 import FavoriteButton from "../favorite-button";
+import { IoMdHeart } from "react-icons/io"
 
 type FoodTruckCardProps = {
   foodTruck: Favorite;
