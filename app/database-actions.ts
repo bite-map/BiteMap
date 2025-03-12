@@ -230,7 +230,7 @@ export const getReviewsData = async (profileId: string) => {
 
 // -------------- FAVORITE --------------
 
-export const addFavorite = async (truckId: number) => {
+export const toggleFavorite = async (truckId: number) => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -247,6 +247,26 @@ export const addFavorite = async (truckId: number) => {
   // true: added
   // false: deleted
   console.log(data);
+  return data;
+};
+
+export const getIsFavorite = async (truckId: number) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from("favorite_trucks")
+    .select()
+    .eq("food_truck_id", truckId)
+    .eq("profiles_id", user?.id)
+    .maybeSingle();
+  if (error) {
+    console.error("Error toggle favorite :", error);
+    return [];
+  }
+  // return the whole favorite obj
   return data;
 };
 // -------------- FAVORITE --------------
