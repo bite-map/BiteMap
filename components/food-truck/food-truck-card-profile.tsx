@@ -4,6 +4,7 @@ import Image from "next/image";
 import { TiArrowForward } from "react-icons/ti";
 import Link from "next/link";
 import { IoMdHeart } from "react-icons/io";
+import { toggleFavorite } from "@/app/database-actions";
 
 type FoodTruckCardProps = {
   foodTruck: Favorite;
