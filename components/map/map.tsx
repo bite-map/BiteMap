@@ -289,7 +289,7 @@ export default function Map() {
     <>
       {isLoaded && location ? (
         <div className="flex flex-col h-full">
-          <div className="flex p-2  bg-muted gap-1">
+          <div className="flex p-2  bg-muted gap-1 border-b-[1.5px] border-primary">
             <div className="flex gap-1">
               <IconButton Icon={FaMapMarkerAlt} callback={searchFoodTruck} />
               <IconButton

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Sighting } from "../global-component-types";
 import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
-import { FaPlus } from "react-icons/fa";
+import { FaSpinner, FaThumbsUp } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import {
   getSightingBySightingId,
@@ -33,7 +33,10 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
         {location ? (
           <p className="truncate">{`lat: ${location.lat}, lng: ${location.lng}`}</p>
         ) : (
-          <p>loading location</p>
+          <p className="flex items-center gap-2">
+            Loading location{" "}
+            <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
+          </p>
         )}
       </div>
       {pathname === "/user-profile" ? (
@@ -49,9 +52,9 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
             const truckId = Number(pathname.split("/").pop());
             addSightingConfirmation(sightingData.id, truckId);
           }}
-          className=" flex justify-center items-center text-background text-2xl bg-primary w-20"
+          className=" flex flex-none justify-center items-center text-background text-2xl bg-primary w-16"
         >
-          <FaPlus size={16} />
+          <FaThumbsUp size={20} />
         </button>
       )}
     </div>
