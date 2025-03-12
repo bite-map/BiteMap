@@ -5,8 +5,7 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { LuRefreshCw } from "react-icons/lu";
-import { GiConfirmed } from "react-icons/gi";
-import { FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
+import { FaSpinner, FaPlus, FaMapMarkerAlt } from "react-icons/fa";
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
 import Link from "next/link";
@@ -286,16 +285,15 @@ export default function Map() {
       {isLoaded && location ? (
         <div className="flex flex-col h-full">
           <div className="flex p-2  bg-muted gap-1">
-
             <div className="flex gap-1">
-              <IconButton Icon={LuRefreshCw} callback={searchFoodTruck} />
+              <IconButton Icon={FaMapMarkerAlt} callback={searchFoodTruck} />
               <IconButton
-                Icon={GiConfirmed}
+                Icon={FaPlus}
                 callback={() => {
                   addSighting();
                 }}
               />
-              <IconButton Icon={FaMapMarkerAlt} callback={getSighting} />
+              <IconButton Icon={LuRefreshCw} callback={getSighting} />
             </div>
             <Input
               className="h-9 w-[250px] ml-auto"
