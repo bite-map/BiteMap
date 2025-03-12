@@ -9,7 +9,6 @@ import { GiConfirmed } from "react-icons/gi";
 import { FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
-import Link from "next/link";
 import {
   createTruckPin,
   createCurrentLocationPin,
@@ -20,6 +19,8 @@ import { Location } from "../global-component-types";
 import {
   getTruckBySightingId,
   getSightingBySightingId,
+  getConfirmationBySightingId,
+  addSightingConfirmation,
 } from "@/app/database-actions";
 
 // Load api library
@@ -131,6 +132,12 @@ export default function Map() {
       `../api/sighting?lat=${location.lat}&lng=${location.lng}`
     );
     const sightings = await res.json();
+    // test
+    const data = await getConfirmationBySightingId(17);
+    console.log(data);
+    const data1 = await addSightingConfirmation(17, 1);
+    console.log(data, data1);
+    // test
 
     if (sightings.length > 0) {
       // store sightings

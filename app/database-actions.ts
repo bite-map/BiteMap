@@ -160,7 +160,46 @@ export const addSighting = async (
         created_by_profile_id: user?.id,
       },
     ])
+    .select()
+    .single();
+
+  if (error) return error;
+
+  return data;
+};
+
+export const addSightingConfirmation = async (
+  sightingId: number,
+  truckId: number
+) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from("sighting_confirmations")
+    .insert([
+      {
+        food_truck_sighting_id: sightingId,
+        food_truck_id: truckId,
+        confirmed_by_profile_id: user?.id,
+      },
+    ])
     .select();
+
+  if (error) return error;
+
+  return data;
+};
+
+export const getConfirmationBySightingId = async (sightingId: number) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("sighting_confirmations")
+    .select()
+    .eq("food_truck_sighting_id", sightingId);
 
   if (error) return error;
 

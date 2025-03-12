@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { Sighting } from "../global-component-types";
 import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-
 import { getSightingBySightingId, addSighting } from "@/app/database-actions";
 
 type SightingCardProps = {
@@ -27,7 +27,11 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
         <h2 className="text-lg font-semibold text-primary">
           {sightingData.food_truck_profiles.name}
         </h2>
-        <p className="truncate">{sightingData.location}</p>
+        {location ? (
+          <p className="truncate">{`lat: ${location.lat}, lng: ${location.lng}`}</p>
+        ) : (
+          <p>loading location</p>
+        )}
       </div>
       {pathname === "/user-profile" ? (
         <Link
