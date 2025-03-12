@@ -4,7 +4,10 @@ import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { getFavoriteTruck } from "@/app/database-actions";
-import { getSightingData } from "@/app/database-actions";
+import {
+  getSightingData,
+  getSightingBySightingId,
+} from "@/app/database-actions";
 import { getReviewsData } from "@/app/database-actions";
 import Image from "next/image";
 import SightingCard from "./food-truck/sighting-card";
@@ -18,7 +21,9 @@ export default function UserProfile() {
   const [favoriteTrucks, setFavoriteTrucks] = useState<any[]>([]);
   const [sightingData, setSightingData] = useState<any[]>([]);
   const [reviewsData, setReviewsData] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"favorites" | "sightings" | "reviews">("favorites");
+  const [activeTab, setActiveTab] = useState<
+    "favorites" | "sightings" | "reviews"
+  >("favorites");
 
   useEffect(() => {
     (async () => {
@@ -38,27 +43,26 @@ export default function UserProfile() {
     };
 
     const fetchSightings = async () => {
-        const session = await supabase.auth.getSession();
-        const profileId = session.data?.session?.user.id;
-        if(profileId) {
-          const sightingData = await getSightingData(profileId);
-          setSightingData(sightingData);
-        }
-    }
+      const session = await supabase.auth.getSession();
+      const profileId = session.data?.session?.user.id;
+      if (profileId) {
+        const sightingData = await getSightingData(profileId);
+        setSightingData(sightingData);
+      }
+    };
 
     const fetchReviews = async () => {
       const session = await supabase.auth.getSession();
-      const profileId  = session.data?.session?.user.id;
+      const profileId = session.data?.session?.user.id;
 
-      console.log("Fetching reviews for profile:", profileId); 
+      console.log("Fetching reviews for profile:", profileId);
 
-      if(profileId) {
+      if (profileId) {
         const reviewsData = await getReviewsData(profileId);
         console.log("Fetched Reviews Data:", reviewsData);
-        setReviewsData(reviewsData)
+        setReviewsData(reviewsData);
       }
-    }
-
+    };
 
     fetchReviews();
     fetchSightings();
@@ -120,34 +124,27 @@ export default function UserProfile() {
           </div>
         )}
 
-      {activeTab === "sightings" && (
-        <div className="grid grid-cols-1 gap-y-2">
-          {sightingData.length > 0 ? (
-          sightingData.map((sighting) => (
-            <SightingCard
-              key={sighting.id}
-              sightingData={sighting}
-            />
-          ))
-        ) : (
-          <p>No sighting available</p>
+        {activeTab === "sightings" && (
+          <div className="grid grid-cols-1 gap-y-2">
+            {sightingData.length > 0 ? (
+              sightingData.map((sighting) => (
+                <SightingCard key={sighting.id} sightingData={sighting} />
+              ))
+            ) : (
+              <p>No sighting available</p>
+            )}
+          </div>
         )}
-           
-        </div>
-      )}
 
         {activeTab === "reviews" && (
           <div className="grid grid-cols-1 gap-y-3">
-          {reviewsData.length > 0 ? (
-          reviewsData.map((review) => (
-            <ReviewCard
-              key={review.id}
-              reviewsData={review}
-            />
-          ))
-        ) : (
-          <p>No reviews available</p>
-        )}
+            {reviewsData.length > 0 ? (
+              reviewsData.map((review) => (
+                <ReviewCard key={review.id} reviewsData={review} />
+              ))
+            ) : (
+              <p>No reviews available</p>
+            )}
           </div>
         )}
       </div>
