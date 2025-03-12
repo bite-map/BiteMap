@@ -47,6 +47,7 @@ export default function UserProfile() {
       const profileId = session.data?.session?.user.id;
       if (profileId) {
         const sightingData = await getSightingData(profileId);
+
         setSightingData(sightingData);
       }
     };
@@ -63,10 +64,10 @@ export default function UserProfile() {
         setReviewsData(reviewsData);
       }
     };
-
+    // Call the async function
     fetchReviews();
     fetchSightings();
-    fetchFavorites(); // Call the async function
+    fetchFavorites();
   }, []);
 
   return (

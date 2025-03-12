@@ -223,8 +223,30 @@ export const getReviewsData = async (profileId: string) => {
     console.error("Error fetching reviews:", error);
     return [];
   }
-  console.log("Supabase Reviews Data:", data);
   return data;
 };
 
 // -------------- REVIEW --------------
+
+// -------------- FAVORITE --------------
+
+export const addFavorite = async (truckId: number) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase.rpc("toggle_favorite", {
+    user_id: user?.id,
+    truck_id: truckId,
+  });
+  if (error) {
+    console.error("Error toggle favorite :", error);
+    return [];
+  }
+  // true: added
+  // false: deleted
+  console.log(data);
+  return data;
+};
+// -------------- FAVORITE --------------
