@@ -5,7 +5,10 @@ import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
 import { FaPlus } from "react-icons/fa";
 import { usePathname } from "next/navigation";
-import { getSightingBySightingId, addSighting } from "@/app/database-actions";
+import {
+  getSightingBySightingId,
+  addSightingConfirmation,
+} from "@/app/database-actions";
 
 type SightingCardProps = {
   sightingData: Sighting;
@@ -43,7 +46,8 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
       ) : (
         <button
           onClick={() => {
-            console.log("Confirm Sighting");
+            const truckId = Number(pathname.split("/").pop());
+            addSightingConfirmation(sightingData.id, truckId);
           }}
           className=" flex justify-center items-center text-background text-2xl bg-primary w-20"
         >

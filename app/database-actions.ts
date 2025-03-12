@@ -187,7 +187,6 @@ export const addSightingConfirmation = async (
       },
     ])
     .select();
-
   if (error) return error;
 
   return data;
