@@ -223,8 +223,48 @@ export const getReviewsData = async (profileId: string) => {
     console.error("Error fetching reviews:", error);
     return [];
   }
-  console.log("Supabase Reviews Data:", data);
   return data;
 };
 
 // -------------- REVIEW --------------
+
+// -------------- FAVORITE --------------
+
+export const toggleFavorite = async (truckId: number) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase.rpc("toggle_favorite", {
+    user_id: user?.id,
+    truck_id: truckId,
+  });
+  if (error) {
+    console.error("Error toggle favorite :", error);
+    return [];
+  }
+
+  return data;
+};
+
+export const getIsFavorite = async (truckId: number) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from("favorite_trucks")
+    .select()
+    .eq("food_truck_id", truckId)
+    .eq("profiles_id", user?.id)
+    .maybeSingle();
+  if (error) {
+    console.error("Error toggle favorite :", error);
+    return [];
+  }
+  // return the whole favorite obj
+  return data;
+};
+// -------------- FAVORITE --------------

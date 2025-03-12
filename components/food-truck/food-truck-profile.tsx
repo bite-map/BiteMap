@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Sighting, Truck } from "../global-component-types";
 import {
   getFoodTruckDataById,
   getSightingByTruckId,
+  toggleFavorite,
+  getIsFavorite,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
-import FavoriteButton from "../favorite-button";
+import { IoMdHeart } from "react-icons/io";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -20,11 +22,13 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
       setFoodTruck(await getFoodTruckDataById(truckId));
+      // get current favorite state
+      setIsFavorite(await getIsFavorite(truckId));
     })();
   }, []);
 
@@ -35,12 +39,14 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   }, [foodTruck]);
 
   useEffect(() => {
-    console.log(sightings);
-  }, [sightings]);
+    // reload to switch btn
+  }, [isFavorite]);
 
-  const handleToggleFavorite = () => {
-    setIsFavorited((previous) => !previous)
-  }
+  // incoming
+
+  // const handleToggleFavorite = () => {
+  // setIsFavorited((previous) => !previous);
+  // };
 
   return (
     <div className="p-3">
@@ -61,7 +67,21 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
               </h2>
               <p>{foodTruck.food_style}</p>
             </div>
-            <FavoriteButton handleToggle={handleToggleFavorite}/>
+            <button
+              style={{
+                color: isFavorite ? "red" : "gray",
+              }}
+              onClick={async () => {
+                try {
+                  const data = await toggleFavorite(truckId);
+                  setIsFavorite(data);
+                } catch (error) {
+                  console.error(error);
+                }
+              }}
+            >
+              <IoMdHeart />
+            </button>
           </div>
         </div>
       )}

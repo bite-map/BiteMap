@@ -1,5 +1,6 @@
 import React from "react";
 import { Favorite } from "../global-component-types";
+import { toggleFavorite } from "@/app/database-actions";
 
 type FavoriteTruckCardProps = {
   favoriteTruck: Favorite;
@@ -18,6 +19,15 @@ export default function FavoriteTruckCard({
       <tbody>
         <tr>
           <td>{favoriteTruck.food_truck_profiles.name}</td>
+          <td>
+            <button
+              onClick={async () => {
+                toggleFavorite(favoriteTruck.food_truck_id);
+              }}
+            >
+              favorite / unfavorite
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
