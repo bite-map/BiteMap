@@ -10,7 +10,7 @@ import {
   getIsFavorite,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
-import FavoriteButton from "../favorite-button";
+import { IoMdHeart } from "react-icons/io";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -23,7 +23,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  // const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -42,11 +41,9 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   useEffect(() => {
     // reload to switch btn
   }, [isFavorite]);
+
   // incoming
-  // useEffect(() => {
-  // console.log(sightings);
-  // }, [sightings]);
-  //
+
   // const handleToggleFavorite = () => {
   // setIsFavorited((previous) => !previous);
   // };
@@ -71,6 +68,9 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
               <p>{foodTruck.food_style}</p>
             </div>
             <button
+              style={{
+                color: isFavorite ? "red" : "gray",
+              }}
               onClick={async () => {
                 try {
                   const data = await toggleFavorite(truckId);
@@ -80,9 +80,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
                 }
               }}
             >
-              {isFavorite ? "(colored heart)" : "(empty heart)"}
+              <IoMdHeart />
             </button>
-            {/* <FavoriteButton handleToggle={handleToggleFavorite} /> */}
           </div>
         </div>
       )}

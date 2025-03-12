@@ -244,9 +244,7 @@ export const toggleFavorite = async (truckId: number) => {
     console.error("Error toggle favorite :", error);
     return [];
   }
-  // true: added
-  // false: deleted
-  console.log(data);
+
   return data;
 };
 
