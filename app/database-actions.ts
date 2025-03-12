@@ -69,7 +69,6 @@ export const getTruckBySightingId = async (sighitngId: number) => {
     .select()
     .eq("id", sighitngId)
     .single();
-  console.log(data);
   const truckId = data.food_truck_id;
   if (data) {
     const { data, error } = await supabase
@@ -77,7 +76,6 @@ export const getTruckBySightingId = async (sighitngId: number) => {
       .select()
       .eq("id", truckId)
       .single();
-    console.log(data);
     if (data) {
       return data;
     }
@@ -244,9 +242,9 @@ export const toggleFavorite = async (truckId: number) => {
     console.error("Error toggle favorite :", error);
     return [];
   }
+  // data:
   // true: added
   // false: deleted
-  console.log(data);
   return data;
 };
 

@@ -118,7 +118,7 @@ export default function Map() {
     if (!location) {
       return;
     }
-
+    // fetch sighting ordered by distance
     const res = await fetch(
       `../api/sighting?lat=${location.lat}&lng=${location.lng}&truck_id=${truck_id}`,
       {
@@ -126,7 +126,6 @@ export default function Map() {
       }
     );
     const data = await res.json();
-    console.log(data);
     // TODO: inform add data successfully and disappear(use effect and clean up)
   }
 

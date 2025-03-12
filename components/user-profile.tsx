@@ -55,7 +55,7 @@ export default function UserProfile() {
     const fetchReviews = async () => {
       const session = await supabase.auth.getSession();
       const profileId = session.data?.session?.user.id;
-
+      // confirm fetcher works , when no reviews
       console.log("Fetching reviews for profile:", profileId);
 
       if (profileId) {
