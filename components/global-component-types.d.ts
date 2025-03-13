@@ -31,7 +31,7 @@ type Sighting = {
   location: geography;
   created_by_profile_id: string;
   food_truck_profiles: { name: string };
-}
+};
 
 type Review = {
   id: number;
@@ -39,4 +39,10 @@ type Review = {
   content: string;
   created_by_profile_id: string;
   food_truck_profiles: { name: string };
-}
+};
+
+type ProfileImage = {
+  id: string;
+  path: string;
+  fullPath: string;
+};

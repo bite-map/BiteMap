@@ -2,21 +2,44 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
-import { Truck } from "../components/global-component-types";
+import { Truck, ProfileImage } from "../components/global-component-types";
+import {
+  addFoodTruckProfileImage,
+  getPublicUrlForImage,
+} from "./storage-actions";
 
 // -------------- FOOD TRUCK --------------
-// adds a food truck to the database
-export const addFoodTruck = async (formData: FormData) => {
-  const truckName = formData.get("truck-name")?.toString();
-  const foodStyle = formData.get("food-style")?.toString();
-  const truckProfilePicture = formData.get("truck-profile-picture")?.toString();
+// adds a profile image to an existing food truck profile
+export const addProfileImageToFoodTruck = async (
+  truckId: number,
+  url: string
+) => {
+  const supabase = await createClient();
 
+  console.log("Truck ID", truckId);
+  console.log("Public URL", url);
+
+  const { error } = await supabase
+    .from("food_truck_profiles")
+    .update({ avatar: url })
+    .eq("id", truckId);
+
+  if (error) console.error(error);
+};
+
+// adds a food truck to the database
+export const addFoodTruck = async (
+  truckName: string,
+  foodStyle: string,
+  file: File
+) => {
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // add new food truck to the database
   const { data, error } = await supabase
     .from("food_truck_profiles")
     .insert({
@@ -25,9 +48,26 @@ export const addFoodTruck = async (formData: FormData) => {
       created_by_profile_id: user?.id,
     })
     .select();
+
   if (error) console.error(error);
 
-  console.log("New truck added:", data);
+  let truckId;
+
+  if (data) {
+    truckId = data[0].id;
+  }
+
+  // add profile image to storage and store returned data
+  const profileImage = await addFoodTruckProfileImage(truckId, file);
+
+  const { publicUrl } = await getPublicUrlForImage(
+    profileImage as ProfileImage
+  );
+
+  addProfileImageToFoodTruck(truckId, publicUrl);
+
+  if (error) console.error(error);
+
   return data;
 };
 
