@@ -3,7 +3,8 @@
 import { ProfileImage } from "@/components/global-component-types";
 import { createClient } from "@/utils/supabase/server";
 
-// gets all files in the bucket root
+// gets all files in the bucket's root directory
+// we probably won't use this but it might be a good reference
 export const getAllFilesInBucketRoot = async () => {
   const supabase = await createClient();
 
@@ -13,14 +14,17 @@ export const getAllFilesInBucketRoot = async () => {
     sortBy: { column: "name", order: "asc" },
   });
 
-  if (error) console.error(error);
-
-  console.log("Bucket contents:", data);
+  if (error)
+    console.error("Error getting files from bucket's root directory: ", error);
 
   return data;
 };
 
-export const addFoodTruckProfileImage = async (truckId: number, file: File) => {
+// adds a profile image associated with a trucks id to the bucket
+export const addFoodTruckProfileImageToBucket = async (
+  truckId: number,
+  file: File
+) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase.storage
@@ -30,7 +34,8 @@ export const addFoodTruckProfileImage = async (truckId: number, file: File) => {
       upsert: false,
     });
 
-  if (error) console.error(error);
+  if (error)
+    console.error("Error adding food truck profile picture to bucket: ", error);
 
   return data;
 };
