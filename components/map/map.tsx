@@ -22,6 +22,7 @@ import {
   addSightingConfirmation,
 } from "@/app/database-actions";
 import { SubmitButton } from "../submit-button";
+import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
@@ -45,7 +46,10 @@ export default function Map() {
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<Location>();
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
-  const [isDisplayed, setIsDisplayed] = useState<boolean>(false);
+  const [isDisplayedAddSighting, setIsDisplayedAddSighting] =
+    useState<boolean>(false);
+  const [isDisplayedAddTruck, setIsDisplayedAddTruck] =
+    useState<boolean>(false);
   // current id of sighting to display
   const [sightingId, setSightingId] = useState<number>();
   // Toggle display
@@ -88,8 +92,13 @@ export default function Map() {
   }
 
   // toggle display to add sighting
-  const handleToggle = () => {
-    setIsDisplayed(!isDisplayed);
+  const handleToggleAddSighting = () => {
+    setIsDisplayedAddSighting(!isDisplayedAddSighting);
+  };
+
+  // toggle display to add sighting
+  const handleToggleAddTruck = () => {
+    setIsDisplayedAddTruck(!isDisplayedAddTruck);
   };
 
   // searchFoodTruck
@@ -296,7 +305,7 @@ export default function Map() {
               <IconButton
                 Icon={FaPlus}
                 callback={() => {
-                  handleToggle();
+                  handleToggleAddSighting();
                   //addSighting();
                 }}
               />
@@ -307,7 +316,7 @@ export default function Map() {
               type="text"
               ref={placeAutoCompleteRef}
             />
-            {isDisplayed && (
+            {isDisplayedAddSighting && (
               <div className="absolute bottom-[-5.6rem] flex flex-col justify-center items-center gap-1 p-2 left-0 z-10 h-[5.6rem] bg-muted w-full border-y-[1.5px] border-primary">
                 <Input
                   className="h-9 w-[250px] "
@@ -317,7 +326,7 @@ export default function Map() {
                 <button
                   onClick={() => {
                     addSighting();
-                    handleToggle();
+                    handleToggleAddSighting();
                   }}
                   className="bg-primary p-2 text-primary-foreground rounded-xl flex-none h-9 flex justify-center items-center"
                 >
@@ -327,6 +336,10 @@ export default function Map() {
             )}
           </div>
           <div id="map" ref={mapRef} className="grow"></div>
+          <button onClick={handleToggleAddTruck}>Add truck (TEST)</button>
+          {isDisplayedAddTruck && (
+            <AddNewFoodTruckForm handleToggle={handleToggleAddTruck} />
+          )}
         </div>
       ) : (
         <div className="flex justify-center items-center gap-2 text-lg mt-2">
