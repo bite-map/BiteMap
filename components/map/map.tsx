@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 // api imports
-import { useJsApiLoader } from "@react-google-maps/api";
+import { InfoWindow, useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { LuRefreshCw } from "react-icons/lu";
@@ -15,15 +15,12 @@ import {
 } from "./createPinStyles";
 // types
 import { Location } from "../global-component-types";
-import {
-  getTruckBySightingId,
-  getSightingBySightingId,
-  getConfirmationBySightingId,
-  addSightingConfirmation,
-} from "@/app/database-actions";
+import { getTruckBySightingId } from "@/app/database-actions";
 import { SubmitButton } from "../submit-button";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
-
+import AddSighting from "./add-sighting";
+import { mapStyles } from "./style-setting";
+import { clear } from "./geo-utils";
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
@@ -45,6 +42,7 @@ export default function Map() {
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<Location>();
+  //
   const [places, setPlaces] = useState<google.maps.places.Place[]>();
   const [isDisplayedAddSighting, setIsDisplayedAddSighting] =
     useState<boolean>(false);
@@ -53,6 +51,12 @@ export default function Map() {
   // current id of sighting to display
   const [sightingId, setSightingId] = useState<number>();
   // Toggle display
+  // store sighting markers , display or remove
+  const [sightings, setSighting] = useState<any[]>();
+  // Used to clean up markers
+  const [placeMarker, setPlaceMarker] = useState<google.maps.places.Place[]>();
+  const [locationMarker, setLocationMarker] = useState<any[]>();
+  const [userLocationMarker, setUserLocationMarker] = useState<any[]>();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -71,7 +75,7 @@ export default function Map() {
       });
     }
   };
-
+  // Create marker
   function createMarker(
     location: Location,
     title: string = "",
@@ -150,6 +154,7 @@ export default function Map() {
 
     if (sightings.length > 0) {
       // store sightings
+
       sightings.forEach((sighting: any) => {
         const location: Location = {
           lat: sighting.lat as number,
@@ -190,6 +195,10 @@ export default function Map() {
         center: location,
         zoom: 17,
         mapId: "3f60e97302b8c3",
+        styles: mapStyles,
+        disableDefaultUI: true,
+        zoomControl: true,
+        clickableIcons: false,
       };
 
       // setup the map
@@ -261,6 +270,8 @@ export default function Map() {
   }, [autoComplete]);
 
   useEffect(() => {
+    const markers: any = [];
+    // clean
     if (places) {
       places.forEach((place) => {
         const location: Location = {
@@ -281,17 +292,18 @@ export default function Map() {
             ),
             maxWidth: 200,
           });
-          marker.addListener("click", () => {
+          const clickListener = marker.addListener("click", () => {
             infoCard.open({
               map: map,
               anchor: marker,
             });
           });
+
+          markers.push({ marker, infoCard, clickListener });
         }
       });
     }
-    // TODO: clean up effect
-  }, [places]);
+  }, [places, map, sightings]);
 
   // -----Effect-----
 
@@ -306,7 +318,6 @@ export default function Map() {
                 Icon={FaPlus}
                 callback={() => {
                   handleToggleAddSighting();
-                  //addSighting();
                 }}
               />
               <IconButton Icon={LuRefreshCw} callback={getSighting} />
@@ -317,24 +328,10 @@ export default function Map() {
               ref={placeAutoCompleteRef}
             />
             {isDisplayedAddSighting && (
-              <div className="absolute bottom-[-5.6rem] flex flex-col justify-center items-center gap-1 p-2 left-0 z-10 h-[5.6rem] bg-muted w-full border-y-[1.5px] border-primary">
-                <Input
-                  className="h-9 w-[250px] "
-                  type="text"
-                  placeholder="Search for a truck (WIP)"
-                />
-                <button
-                  onClick={() => {
-                    addSighting();
-                    handleToggleAddSighting();
-                  }}
-                  className="bg-primary p-2 text-primary-foreground rounded-xl flex-none h-9 flex justify-center items-center"
-                >
-                  Submit Sighting
-                </button>
-              </div>
+              <AddSighting handleToggleAddSighting={handleToggleAddSighting} />
             )}
           </div>
+
           <div id="map" ref={mapRef} className="grow"></div>
           <button
             className="bg-primary text-background"

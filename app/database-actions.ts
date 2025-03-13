@@ -156,6 +156,26 @@ export const getTruckBySightingId = async (sighitngId: number) => {
     }
   }
 };
+
+export const getNearbyFoodTrucks = async (lat: number, lng: number) => {
+  const supabase = await createClient();
+  const radius = 0.025 // aprox.. 11km
+
+  const { data, error } = await supabase
+    .from("food_truck_sightings")
+    .select("*")
+    .gte("latitude", lat - radius)
+    .lte("latitude", lat + radius)
+    .gte("longitude", lng - radius)
+    .lte("longitude", lng + radius)
+
+    if(error) {
+      console.error("error fetching food trucks based on user location", error);
+      return [];
+    }
+
+    return data;
+}
 // -------------- FOOD TRUCK (END) --------------
 
 // -------------- SIGHTING (START) --------------
