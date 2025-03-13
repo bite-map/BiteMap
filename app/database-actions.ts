@@ -3,7 +3,34 @@
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
 import { Truck } from "../components/global-component-types";
+
 // -------------- FOOD TRUCK --------------
+// adds a food truck to the database
+export const addFoodTruck = async (formData: FormData) => {
+  const truckName = formData.get("truck-name")?.toString();
+  const foodStyle = formData.get("food-style")?.toString();
+  const truckProfilePicture = formData.get("truck-profile-picture")?.toString();
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from("food_truck_profiles")
+    .insert({
+      name: truckName,
+      food_style: foodStyle,
+      created_by_profile_id: user?.id,
+    })
+    .select();
+  if (error) console.error(error);
+
+  console.log("New truck added:", data);
+  return data;
+};
+
 // gets information about all food trucks
 export const getFoodTruckData = async () => {
   const supabase = await createClient();

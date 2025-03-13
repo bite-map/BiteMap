@@ -2,6 +2,7 @@ import React from "react";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { SubmitButton } from "../submit-button";
+import { addFoodTruck } from "@/app/database-actions";
 
 type AddNewFoodTruckFormProps = {
   handleToggle: () => void;
@@ -20,11 +21,11 @@ export default function AddNewFoodTruckForm({
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
           <Label
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            htmlFor="name"
+            htmlFor="truck-name"
           >
             Name
           </Label>
-          <Input name="name" placeholder="Food truck name" required />
+          <Input name="truck-name" placeholder="Food truck name" required />
           <Label
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             htmlFor="food-style"
@@ -34,12 +35,18 @@ export default function AddNewFoodTruckForm({
           <Input name="food-style" placeholder="What kind of food?" required />
           <Label
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            htmlFor="profile-picture"
+            htmlFor="truck-profile-picture"
           >
             Profile Picture
           </Label>
-          <Input type="file" name="profile-picture" required />
-          <SubmitButton pendingText="Adding truck...">
+          <Input type="file" name="truck-profile-picture" />
+          <SubmitButton
+            formAction={(formData) => {
+              addFoodTruck(formData);
+              handleToggle();
+            }}
+            pendingText="Adding truck..."
+          >
             Add Truck & Sighting
           </SubmitButton>
           <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8"></div>
