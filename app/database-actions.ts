@@ -2,21 +2,27 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
-import { Truck } from "../components/global-component-types";
+import { Truck, ProfileImage } from "../components/global-component-types";
+import {
+  addFoodTruckProfileImageToBucket,
+  getPublicUrlForImage,
+} from "./storage-actions";
 
-// -------------- FOOD TRUCK --------------
+// -------------- FOOD TRUCK (START) --------------
 // adds a food truck to the database
-export const addFoodTruck = async (formData: FormData) => {
-  const truckName = formData.get("truck-name")?.toString();
-  const foodStyle = formData.get("food-style")?.toString();
-  const truckProfilePicture = formData.get("truck-profile-picture")?.toString();
-
+export const addFoodTruck = async (
+  truckName: string,
+  foodStyle: string,
+  file: File
+) => {
   const supabase = await createClient();
 
+  // gets the currently logged in user so we can assign them as creator
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // add new food truck to the database
   const { data, error } = await supabase
     .from("food_truck_profiles")
     .insert({
@@ -25,10 +31,49 @@ export const addFoodTruck = async (formData: FormData) => {
       created_by_profile_id: user?.id,
     })
     .select();
+
   if (error) console.error(error);
 
-  console.log("New truck added:", data);
+  let truckId;
+
+  if (data) {
+    truckId = data[0].id;
+  }
+
+  // add profile image to storage and store returned data
+  const profileImage = await addFoodTruckProfileImageToBucket(truckId, file);
+
+  // get the public url for the profile image
+  const { publicUrl } = await getPublicUrlForImage(
+    profileImage as ProfileImage
+  );
+
+  // update food truck profile with public url for profile image
+  addProfileImageToFoodTruck(truckId, publicUrl);
+
+  if (error) console.error("Error adding food truck to database: ", error);
+
   return data;
+};
+
+// adds a profile image to an existing food truck profile
+export const addProfileImageToFoodTruck = async (
+  truckId: number,
+  url: string
+) => {
+  const supabase = await createClient();
+
+  // update food truck profile with public url for profile image
+  const { error } = await supabase
+    .from("food_truck_profiles")
+    .update({ avatar: url })
+    .eq("id", truckId);
+
+  if (error)
+    console.error(
+      `Error updating profile picture for food truck ${truckId}: `,
+      error
+    );
 };
 
 // gets information about all food trucks
@@ -36,7 +81,7 @@ export const getFoodTruckData = async () => {
   const supabase = await createClient();
   const { data, error } = await supabase.from("food_truck_profiles").select();
 
-  if (error) console.error(error);
+  if (error) console.error("Error fetching all food truck data", error);
 
   return data;
 };
@@ -49,7 +94,8 @@ export const getFoodTruckDataById = async (truckId: number) => {
     .select()
     .eq("id", truckId);
 
-  if (error) console.error(error);
+  if (error)
+    console.error(`Error fetching data for food truck ${truckId}: `, error);
 
   return data ? data[0] : null;
 };
@@ -111,8 +157,6 @@ export const getTruckBySightingId = async (sighitngId: number) => {
   }
 };
 
-// -------------- FOOD TRUCK --------------
-
 export const getNearbyFoodTrucks = async (lat: number, lng: number) => {
   const supabase = await createClient();
   const radius = 0.025 // aprox.. 11km
@@ -132,9 +176,9 @@ export const getNearbyFoodTrucks = async (lat: number, lng: number) => {
 
     return data;
 }
+// -------------- FOOD TRUCK (END) --------------
 
-// -------------- SIGHTING --------------
-
+// -------------- SIGHTING (START) --------------
 // get specific user's sighting
 export const getSightingData = async (profileId: string) => {
   const supabase = await createClient();
@@ -251,11 +295,9 @@ export const getConfirmationBySightingId = async (sightingId: number) => {
 
   return data;
 };
+// -------------- SIGHTING (END) --------------
 
-// -------------- SIGHTING --------------
-
-// -------------- REVIEW --------------
-
+// -------------- REVIEW (START) --------------
 export const getReviewsData = async (profileId: string) => {
   const supabase = await createClient();
 
@@ -272,11 +314,9 @@ export const getReviewsData = async (profileId: string) => {
   }
   return data;
 };
+// -------------- REVIEW (END) --------------
 
-// -------------- REVIEW --------------
-
-// -------------- FAVORITE --------------
-
+// -------------- FAVORITE (START) --------------
 export const toggleFavorite = async (truckId: number) => {
   const supabase = await createClient();
   const {
@@ -314,4 +354,4 @@ export const getIsFavorite = async (truckId: number) => {
   // return the whole favorite obj
   return data;
 };
-// -------------- FAVORITE --------------
+// -------------- FAVORITE (END) --------------

@@ -1,8 +1,11 @@
+"use client";
+
 import React from "react";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { SubmitButton } from "../submit-button";
 import { addFoodTruck } from "@/app/database-actions";
+import { useState } from "react";
 
 type AddNewFoodTruckFormProps = {
   handleToggle: () => void;
@@ -11,6 +14,8 @@ type AddNewFoodTruckFormProps = {
 export default function AddNewFoodTruckForm({
   handleToggle,
 }: AddNewFoodTruckFormProps) {
+  const [file, setFile] = useState<File | null>(null);
+
   return (
     <div className="pt-2">
       <form className="flex flex-col min-w-64 max-w-64 mx-auto">
@@ -39,10 +44,22 @@ export default function AddNewFoodTruckForm({
           >
             Profile Picture
           </Label>
-          <Input type="file" name="truck-profile-picture" />
+          <Input
+            type="file"
+            name="truck-profile-picture"
+            onChange={(e) => {
+              if (e.target.files) {
+                setFile(e.target.files[0]);
+              }
+            }}
+          />
           <SubmitButton
             formAction={(formData) => {
-              addFoodTruck(formData);
+              addFoodTruck(
+                formData.get("truck-name") as string,
+                formData.get("food-style") as string,
+                file as File
+              );
               handleToggle();
             }}
             pendingText="Adding truck..."
