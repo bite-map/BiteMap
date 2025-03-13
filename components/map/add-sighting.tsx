@@ -1,10 +1,5 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Sighting } from "../global-component-types";
-import Link from "next/link";
-import { TiArrowForward } from "react-icons/ti";
-import { FaSpinner, FaThumbsUp } from "react-icons/fa";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 //helpers
 import {
@@ -27,11 +22,13 @@ export default function AddSighting({
   //use this location when adding sighting
   const [sightingLocation, setSightingLocation] = useState<Location>();
   const [trucks, setTrucks] = useState<Truck[]>();
-  const [selectedTruck, setSelectedTruck] = useState<Truck>();
+  const [selectedTruck, setSelectedTruck] = useState<Truck | null>(null);
   const [searchResult, setSearchResult] = useState<any[]>();
   const [activeTab, setActiveTab] = useState<"listView" | "searchView">(
     "listView"
   );
+  //   use this and effect cleanup to popup toast message
+  const [success, setSuccess] = useState<boolean | null>(null);
 
   useEffect(() => {
     getLocation(setSightingLocation);
@@ -126,8 +123,12 @@ export default function AddSighting({
                 sightingLocation,
                 selectedTruck.id
               );
-              handleToggleAddSighting();
+              if (data) {
+                setSelectedTruck(null);
+                setSuccess(true);
+              }
             }
+            handleToggleAddSighting();
           }}
           className={
             (sightingLocation ? "" : "disabled:") +

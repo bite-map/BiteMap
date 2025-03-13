@@ -328,7 +328,7 @@ export default function Map() {
               ref={placeAutoCompleteRef}
             />
             {isDisplayedAddSighting && (
-              <AddSighting toggleDisplayAddSIghting={handleToggleAddSighting} />
+              <AddSighting handleToggleAddSighting={handleToggleAddSighting} />
             )}
           </div>
 
