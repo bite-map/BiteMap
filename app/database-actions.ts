@@ -2,11 +2,12 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
-import { Truck, ProfileImage } from "../components/global-component-types";
+import { Truck} from "../components/global-component-types";
 import {
   addFoodTruckProfileImageToBucket,
   getPublicUrlForImage,
 } from "./storage-actions";
+import { format } from "path";
 
 // -------------- FOOD TRUCK (START) --------------
 // adds a food truck to the database
@@ -316,7 +317,38 @@ export const getReviewsData = async (profileId: string) => {
 };
 // -------------- REVIEW (END) --------------
 
-// -------------- FAVORITE (START) --------------
+// -------------- REVIEW --------------
+// adds a review the database 
+
+export const AddFoodTruckReview = async (formData: FormData, truckId: number) => {
+  // const truckId = formData.get("truckId") as string;
+  const rating = formData.get("rating") as string;
+  const content = formData.get("content") as string;
+
+  const supabase = await createClient();
+  const { data: { user }} = await supabase.auth.getUser();
+
+    const { data, error } = await supabase
+    .from("reviews")
+    .insert ([
+      {
+        food_truck_profile_id: truckId,
+        created_by_profile_id: user?.id,
+        rating: rating,
+        content: content,
+      }
+    ])
+    .select();
+
+    if(error) throw error;
+
+    console.log("New review added:", data);
+    return data;
+  }
+
+
+// -------------- FAVORITE --------------
+
 export const toggleFavorite = async (truckId: number) => {
   const supabase = await createClient();
   const {
