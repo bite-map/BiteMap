@@ -97,7 +97,7 @@ export const searchFoodTruck = async (
           place.location as google.maps.LatLng,
           createTruckPin,
           place.displayName as string,
-          "<div>aaa</div>",
+          `<div>${place.displayName}</div>`,
           map
         );
         return obj;
