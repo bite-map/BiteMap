@@ -200,12 +200,14 @@ export default function Map() {
           </div>
 
           <div id="map" ref={mapRef} className="grow"></div>
+
           <button
             className="bg-primary text-background"
             onClick={handleToggleAddTruck}
           >
             Add truck (TEST)
           </button>
+
           {isDisplayedAddTruck && (
             <AddNewFoodTruckForm handleToggle={handleToggleAddTruck} />
           )}
