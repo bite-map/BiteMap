@@ -6,7 +6,7 @@ type FoodTruckCardProps = {
   foodTruck: Truck;
   context: string;
 };
-
+// uunused
 export default function FoodTruckCard({
   foodTruck,
   context,

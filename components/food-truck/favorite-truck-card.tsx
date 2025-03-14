@@ -5,7 +5,7 @@ import { toggleFavorite } from "@/app/database-actions";
 type FavoriteTruckCardProps = {
   favoriteTruck: Favorite;
 };
-
+// unused
 export default function FavoriteTruckCard({
   favoriteTruck,
 }: FavoriteTruckCardProps) {
