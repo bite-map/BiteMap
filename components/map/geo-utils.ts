@@ -11,6 +11,7 @@ import {
 } from "./createPinStyles";
 import { getSighting } from "@/app/database-actions";
 import { Location } from "../global-component-types";
+
 export const createMarkerOnMap = (
   location: google.maps.LatLng,
   createPin: Function,
@@ -58,6 +59,19 @@ export const getLocation = (setLocation: Function) => {
     });
   }
 };
+
+// very similar to getLocation but will update when the users position changes
+export const trackLocation = (setLocation: Function) => {
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition((position) => {
+      setLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    });
+  }
+};
+
 export const createInfoCard = (title: string, body: string) =>
   // TODO: a link, route to google map in new page to navigate to place
   `<div class="map_infocard_content">
