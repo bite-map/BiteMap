@@ -205,6 +205,9 @@ export default function Map() {
             className="bg-primary text-background"
             onClick={handleToggleAddTruck}
           >
+
+
+
             Add truck (TEST)
           </button>
 

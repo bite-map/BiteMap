@@ -11,6 +11,7 @@ import {
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
 import { IoMdHeart } from "react-icons/io";
+import AddReviewFoodTruckForm from "./add-or-edit-reviews";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -23,6 +24,12 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
+
+  const handleToggleAddReview = () => {
+    console.log("Toggling review form:", !isDisplayedAddReview);
+    setIsDisplayedAddReview((prev) => !prev)
+  }
 
   useEffect(() => {
     (async () => {
@@ -121,6 +128,16 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </div>
         )}
       </div>
+      <button
+          className="bg-primary text-background py-2 px-4 rounded mt-4"
+          onClick={handleToggleAddReview}
+          >
+          Add Review(TEST)
+        </button>
+
+        {isDisplayedAddReview && (
+          <AddReviewFoodTruckForm handleToggle={handleToggleAddReview} truckId={truckId}/>
+        )}
     </div>
   );
 }
