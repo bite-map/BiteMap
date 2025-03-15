@@ -10,7 +10,6 @@ import { Input } from "../ui/input";
 import IconButton from "../icon-button";
 import { createCurrentLocationPin } from "./createPinStyles";
 // types
-
 import { Location } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
 import AddSighting from "./add-sighting";
@@ -18,10 +17,11 @@ import {
   clear,
   createMarkerOnMap,
   createInfoCard,
-  getLocation,
   fetchSighting,
   searchFoodTruck,
+  trackLocation,
 } from "./geo-utils";
+
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
 
@@ -30,13 +30,16 @@ export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null);
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
 
+  // marker for tracking users location
+  let userMarker: google.maps.Circle;
+
   // state varaibles
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<Location>();
 
-  //goodle map food truck location with markers
+  //google map food truck location with markers
   const [places, setPlaces] = useState<any[]>();
   //sighting location with markers
   const [sightings, setSighting] = useState<any[]>();
@@ -57,6 +60,7 @@ export default function Map() {
     libraries: libs,
     version: "weekly",
   });
+
   // toggle display to add sighting
   const handleToggleAddSighting = () => {
     setIsDisplayedAddSighting(!isDisplayedAddSighting);
@@ -66,10 +70,32 @@ export default function Map() {
   const handleToggleAddTruck = () => {
     setIsDisplayedAddTruck(!isDisplayedAddTruck);
   };
+
   // -----Effect-----
   useEffect(() => {
-    getLocation(setLocation);
+    //getLocation(setLocation);
+    trackLocation(setLocation);
   }, []);
+
+  useEffect(() => {
+    // updates the users marker when position changes
+    if (userMarker) {
+      userMarker.setCenter(location as Location);
+    }
+
+    // if the user marker isn't already created, create one
+    if (map && !userMarker) {
+      userMarker = new google.maps.Circle({
+        map: map,
+        center: location,
+        radius: 10,
+        fillColor: "#ef6262",
+        fillOpacity: 0.6,
+        strokeColor: "#ef6262",
+        strokeWeight: 2,
+      });
+    }
+  }, [map, location]);
 
   useEffect(() => {
     if (isLoaded && location) {
@@ -81,6 +107,7 @@ export default function Map() {
         zoomControl: true,
         clickableIcons: false,
       };
+
       // setup the map
       const gMap = new google.maps.Map(
         mapRef.current as HTMLDivElement,
@@ -119,6 +146,7 @@ export default function Map() {
       // set center to place in auto complete
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
+
         if (place) {
           // drop marker
           const selectedLocationMarker = createMarkerOnMap(
@@ -138,7 +166,6 @@ export default function Map() {
       });
     }
   }, [autoComplete]);
-
   // -----Effect-----
 
   return (
