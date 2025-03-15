@@ -99,11 +99,12 @@ export const searchFoodTruck = async (
   const { Place } = (await google.maps.importLibrary(
     "places"
   )) as google.maps.PlacesLibrary;
-
+  const center = new google.maps.LatLng(location.lat, location.lng);
+  const circle = new google.maps.Circle({ center: center, radius: 5000 });
   const request = {
     textQuery: "Food Truck",
     fields: ["displayName", "location", "businessStatus"],
-    locationBias: location,
+    locationBias: circle,
     includedType: "restaurant",
   };
   //@ts-ignore

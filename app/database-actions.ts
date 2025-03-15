@@ -130,7 +130,8 @@ export const addTruck = async (truck: Truck) => {
       created_by_profile_id: user?.id,
       avatar: null,
     })
-    .select();
+    .select()
+    .single();
   if (error) return error;
 
   return data;

@@ -45,8 +45,8 @@ export default function AddSighting({
   }, []);
 
   return (
-    <div className="absolute bottom-[-5.6rem] top-full  flex flex-col justify-center items-center gap-1 p-2 left-0 z-10 h-[24rem] bg-muted w-full border-y-[1.5px] border-primary">
-      <div className="flex flex-row w-full h-1/6 top-0">
+    <div className="pt-2 ">
+      <div className=" flex flex-col min-w-64 max-w-64 mx-auto  w-full h-1/6 top-0">
         <nav className="flex w-full -mb-px">
           {["listView", "searchView"].map((tab) => (
             <button
@@ -66,27 +66,27 @@ export default function AddSighting({
       <div className="justify-center items-center overflow-scroll h-full w-full mb-1">
         {activeTab === "listView" && (
           <div className="overflow-scroll h-full w-full ">
-            <ul className="h-full w-full ">
+            <ul className="h-96 w-full ">
               {/* map */}
               {trucks?.length &&
                 trucks.map((truck) => {
                   return (
                     <li
                       key={truck.id}
-                      className="h-1/3 mb-1"
+                      className="h-1/4 mb-1 w-full justify-center items-center"
                       onClick={() => {
                         setSelectedTruck(truck);
                       }}
                     >
                       {/* link go to truck profile or get all sighitng? */}
                       <div className="flex flex-row items-start h-full w-full  bg-white border border-gray-200 rounded-lg shadow-sm   hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                        <Image
-                          className="object-cover rounded-t-lg h-full w-auto md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
+                        <img
+                          className="m-3 object-cover rounded-t-lg  md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
                           src={truck.avatar}
                           alt="image of a food truck"
                           width={60}
                           height={60}
-                        ></Image>
+                        />
                         <div className="flex flex-col justify-between leading-normal relative w-full">
                           <h5 className="mb-2 text-2xl font-bold className-tight text-gray-900 dark:text-white">
                             {truck.name}
@@ -103,7 +103,7 @@ export default function AddSighting({
           </div>
         )}
         {activeTab === "searchView" && (
-          <div className=" h-full w-full">
+          <div className=" h-full w-80">
             <div className="w-full">
               <input
                 type="text"
