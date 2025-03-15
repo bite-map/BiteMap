@@ -8,17 +8,15 @@ import { LuRefreshCw } from "react-icons/lu";
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
-import { createTruckPin, createCurrentLocationPin } from "./createPinStyles";
+import { createCurrentLocationPin } from "./createPinStyles";
 // types
 
-import { Location, Sighting } from "../global-component-types";
+import { Location } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
 import AddSighting from "./add-sighting";
-import { mapStyles } from "./style-setting";
 import {
   clear,
   createMarkerOnMap,
-  createInfoCardLink,
   createInfoCard,
   getLocation,
   fetchSighting,
@@ -79,12 +77,10 @@ export default function Map() {
         center: location,
         zoom: 17,
         mapId: "3f60e97302b8c3",
-        styles: mapStyles,
         disableDefaultUI: true,
         zoomControl: true,
         clickableIcons: false,
       };
-
       // setup the map
       const gMap = new google.maps.Map(
         mapRef.current as HTMLDivElement,
@@ -193,6 +189,7 @@ export default function Map() {
               className="h-9 w-[250px] ml-auto"
               type="text"
               ref={placeAutoCompleteRef}
+              placeholder="Search by location"
             />
             {isDisplayedAddSighting && (
               <AddSighting handleToggleAddSighting={handleToggleAddSighting} />
@@ -205,9 +202,6 @@ export default function Map() {
             className="bg-primary text-background"
             onClick={handleToggleAddTruck}
           >
-
-
-
             Add truck (TEST)
           </button>
 
