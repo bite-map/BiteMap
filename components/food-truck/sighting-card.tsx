@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { Sighting } from "../global-component-types";
 import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
-import { FaSpinner, FaThumbsUp } from "react-icons/fa";
+import { FaSpinner} from "react-icons/fa";
+import { GiCheckMark } from "react-icons/gi";
 import { usePathname } from "next/navigation";
 import {
   getSightingBySightingId,
@@ -54,7 +55,7 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
           }}
           className=" flex flex-none justify-center items-center text-background text-2xl bg-primary w-16"
         >
-          <FaThumbsUp size={20} />
+          <GiCheckMark size={20} />
         </button>
       )}
     </div>
