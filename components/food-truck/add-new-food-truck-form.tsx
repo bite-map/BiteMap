@@ -4,15 +4,18 @@ import React from "react";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { SubmitButton } from "../submit-button";
-import { addFoodTruck } from "@/app/database-actions";
+import { addFoodTruck, addSighting } from "@/app/database-actions";
 import { useState } from "react";
+import { Location } from "../global-component-types";
 
 type AddNewFoodTruckFormProps = {
   handleToggle: () => void;
+  location: Location;
 };
 
 export default function AddNewFoodTruckForm({
   handleToggle,
+  location,
 }: AddNewFoodTruckFormProps) {
   const [file, setFile] = useState<File | null>(null);
 
@@ -54,12 +57,17 @@ export default function AddNewFoodTruckForm({
             }}
           />
           <SubmitButton
-            formAction={(formData) => {
-              addFoodTruck(
+            formAction={async (formData) => {
+              const truckData = await addFoodTruck(
                 formData.get("truck-name") as string,
                 formData.get("food-style") as string,
                 file as File
               );
+              console.log(truckData);
+              // sighting
+              if (truckData) {
+                const sighitng = addSighting(location, truckData[0].id);
+              }
               handleToggle();
             }}
             pendingText="Adding truck..."

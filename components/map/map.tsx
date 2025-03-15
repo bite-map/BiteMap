@@ -73,12 +73,20 @@ export default function Map() {
   const handleToggleAddSighting = () => {
     setIsDisplayedAddSighting(!isDisplayedAddSighting);
   };
-
-  // toggle display to add sighting
+  // toggle display to add truck
   const handleToggleAddTruck = () => {
     setIsDisplayedAddTruck(!isDisplayedAddTruck);
   };
-
+  const handleToggleAddButton = () => {
+    // if is opening, close and set add sighting, add truck, add btn to false
+    if (isAddingActive) {
+      setIsDisplayedAddSighting(false);
+      setIsDisplayedAddTruck(false);
+    } else {
+      setIsDisplayedAddSighting(true);
+    }
+    setIsAddingActive(!isAddingActive);
+  };
   // -----Effect-----
   useEffect(() => {
     //getLocation(setLocation);
@@ -174,6 +182,12 @@ export default function Map() {
       });
     }
   }, [autoComplete]);
+  // turn off after adding truck / sighting
+  useEffect(() => {
+    if (!isDisplayedAddTruck && !isDisplayedAddSighting && isAddingActive) {
+      setIsAddingActive(false);
+    }
+  }, [isDisplayedAddSighting, isDisplayedAddTruck]);
   // -----Effect-----
 
   return (
@@ -183,87 +197,106 @@ export default function Map() {
           {/* MAP */}
           <div id="map" ref={mapRef} className="grow"></div>
           {/* MAP */}
-          <button
-            className="bg-primary text-background"
-            onClick={handleToggleAddTruck}
-          >
-            Add truck (TEST)
-          </button>
-          {isDisplayedAddTruck && (
-            <AddNewFoodTruckForm handleToggle={handleToggleAddTruck} />
-          )}
-          <div className="absolute flex p-2 gap-1 w-full">
-            {/* TODO: change into levitation button to avoid hiding map with a big rectangle */}
-            <div className="flex gap-1">
-              <IconButton
-                Icon={FaMapMarkerAlt}
-                callback={() => {
-                  if (!displayPlacesMarker) {
-                    searchFoodTruck(
-                      google,
-                      map as google.maps.Map,
-                      setPlaces,
-                      location
-                    );
-                    setDisplayPlacesMarker(true);
-                  }
-                  if (displayPlacesMarker && places) {
-                    clear(places);
-                    setDisplayPlacesMarker(false);
-                  }
-                }}
-              />
-              <IconButton
-                Icon={FaPlus}
-                callback={() => {
-                  handleToggleAddSighting();
-                }}
-              />
-              <IconButton
-                Icon={LuRefreshCw}
-                callback={() => {
-                  if (!displaySightingsMarker) {
-                    fetchSighting(
-                      location,
-                      map as google.maps.Map,
-                      setSighting
-                    );
-                    setDisplaySightingsMarker(true);
-                  }
-                  if (displaySightingsMarker && sightings) {
-                    clear(sightings);
-                    setDisplaySightingsMarker(false);
-                  }
-                }}
+
+          <div className="absolute w-full flex flex-row justify-center items-center">
+            <div className="relative flex p-2 gap-1 w-full">
+              {/* TODO: change into levitation button to avoid hiding map with a big rectangle */}
+              <div className="flex gap-1 w-full">
+                {/* display trucks fetched from google */}
+                <IconButton
+                  Icon={FaMapMarkerAlt}
+                  callback={() => {
+                    if (!displayPlacesMarker) {
+                      searchFoodTruck(
+                        google,
+                        map as google.maps.Map,
+                        setPlaces,
+                        location
+                      );
+                      setDisplayPlacesMarker(true);
+                    }
+                    if (displayPlacesMarker && places) {
+                      clear(places);
+                      setDisplayPlacesMarker(false);
+                    }
+                  }}
+                />
+                {/* display sighitngs */}
+                <IconButton
+                  Icon={LuRefreshCw}
+                  callback={() => {
+                    if (!displaySightingsMarker) {
+                      fetchSighting(
+                        location,
+                        map as google.maps.Map,
+                        setSighting
+                      );
+                      setDisplaySightingsMarker(true);
+                    }
+                    if (displaySightingsMarker && sightings) {
+                      clear(sightings);
+                      setDisplaySightingsMarker(false);
+                    }
+                  }}
+                />
+              </div>
+              <Input
+                className="h-9 w-[250px] ml-auto"
+                type="text"
+                ref={placeAutoCompleteRef}
               />
             </div>
-            <Input
-              className="h-9 w-[250px] ml-auto"
-              type="text"
-              ref={placeAutoCompleteRef}
-              placeholder="Search by location"
-            />
-            {isDisplayedAddSighting && (
-              <AddSighting handleToggleAddSighting={handleToggleAddSighting} />
+
+            {isAddingActive && (
+              <div className="absolute flex flex-col h-90 w-96 justify-center items-center top-16 ">
+                <div className="relative w-fit h-fit items-center">
+                  {isDisplayedAddSighting ? (
+                    <div className="relative w-80 h-fit bg-white p-2  border border-gray-300 rounded-xl ">
+                      <AddSighting
+                        handleToggleAddSighting={handleToggleAddSighting}
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      className="mt-3 mb-3 relative ml-2 mr-2 bg-white p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
+                      onClick={() => {
+                        handleToggleAddSighting();
+                        handleToggleAddTruck();
+                      }}
+                    >
+                      Add sighting to an existing truck
+                    </button>
+                  )}
+                </div>
+                <div className="relative w-fit h-fit items-center">
+                  {isDisplayedAddTruck ? (
+                    <div className="relative w-fit h-fit bg-white p-2  border border-gray-300 rounded-xl ">
+                      <AddNewFoodTruckForm
+                        handleToggle={handleToggleAddTruck}
+                        location={location}
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      className="mt-3 relative ml-2 mr-2 bg-white p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
+                      onClick={() => {
+                        handleToggleAddSighting();
+                        handleToggleAddTruck();
+                      }}
+                    >
+                      Cannot find truck? Add one
+                    </button>
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
-          <div id="map" ref={mapRef} className="grow"></div>
-          <button
-            className="bg-primary text-background"
-            onClick={handleToggleAddTruck}
-          >
-            Add truck (TEST)
-          </button>
-          {isDisplayedAddTruck && (
-            <AddNewFoodTruckForm handleToggle={handleToggleAddTruck} />
-          )}
           {/* add new button:  */}
           <div
             className="absolute bottom-0 right-0 m-3 inline-flex items-center justify-center bg-primary rounded-full w-14 h-14"
             onClick={() => {
-              console.log();
-              // handle toggle
+              handleToggleAddButton();
             }}
           >
             <FaPlus
