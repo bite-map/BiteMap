@@ -6,6 +6,7 @@ import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { LuRefreshCw } from "react-icons/lu";
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
+
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
 import { createCurrentLocationPin } from "./createPinStyles";
@@ -41,19 +42,26 @@ export default function Map() {
 
   //google map food truck location with markers
   const [places, setPlaces] = useState<any[]>();
+  const [displayPlacesMarker, setDisplayPlacesMarker] =
+    useState<boolean>(false);
+
   //sighting location with markers
   const [sightings, setSighting] = useState<any[]>();
+  const [displaySightingsMarker, setDisplaySightingsMarker] =
+    useState<boolean>(false);
+
   //autocomplete location with markers
   const [selectedLocation, setSelectedLocation] = useState<any>();
+  const [displaySelectedLocationMarker, setDisplaySelectedLocationMarker] =
+    useState<boolean>(false);
 
+  const [isAddingActive, setIsAddingActive] = useState<boolean>(false);
   //used to toggle add sighting / truck
   const [isDisplayedAddSighting, setIsDisplayedAddSighting] =
     useState<boolean>(false);
   const [isDisplayedAddTruck, setIsDisplayedAddTruck] =
     useState<boolean>(false);
   // current id of sighting to display
-  const [sightingId, setSightingId] = useState<number>();
-  // Toggle display
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -182,17 +190,37 @@ export default function Map() {
     <>
       {isLoaded && location ? (
         <div className="flex flex-col h-full">
-          <div className="relative flex p-2  bg-muted gap-1 border-b-[1.5px] border-primary">
+          {/* MAP */}
+          <div id="map" ref={mapRef} className="grow"></div>
+          {/* MAP */}
+          <button
+            className="bg-primary text-background"
+            onClick={handleToggleAddTruck}
+          >
+            Add truck (TEST)
+          </button>
+          {isDisplayedAddTruck && (
+            <AddNewFoodTruckForm handleToggle={handleToggleAddTruck} />
+          )}
+          <div className="absolute flex p-2 gap-1 w-full">
+            {/* TODO: change into levitation button to avoid hiding map with a big rectangle */}
             <div className="flex gap-1">
               <IconButton
                 Icon={FaMapMarkerAlt}
                 callback={() => {
-                  searchFoodTruck(
-                    google,
-                    map as google.maps.Map,
-                    setPlaces,
-                    location
-                  );
+                  if (!displayPlacesMarker) {
+                    searchFoodTruck(
+                      google,
+                      map as google.maps.Map,
+                      setPlaces,
+                      location
+                    );
+                    setDisplayPlacesMarker(true);
+                  }
+                  if (displayPlacesMarker && places) {
+                    clear(places);
+                    setDisplayPlacesMarker(false);
+                  }
                 }}
               />
               <IconButton
@@ -204,20 +232,17 @@ export default function Map() {
               <IconButton
                 Icon={LuRefreshCw}
                 callback={() => {
-                  fetchSighting(location, map as google.maps.Map, setSighting);
-                }}
-              />
-              <IconButton
-                Icon={FaMinus}
-                callback={() => {
-                  if (places) {
-                    clear(places);
+                  if (!displaySightingsMarker) {
+                    fetchSighting(
+                      location,
+                      map as google.maps.Map,
+                      setSighting
+                    );
+                    setDisplaySightingsMarker(true);
                   }
-                  if (sightings) {
+                  if (displaySightingsMarker && sightings) {
                     clear(sightings);
-                  }
-                  if (selectedLocation) {
-                    clear([selectedLocation]);
+                    setDisplaySightingsMarker(false);
                   }
                 }}
               />
@@ -234,17 +259,29 @@ export default function Map() {
           </div>
 
           <div id="map" ref={mapRef} className="grow"></div>
-
           <button
             className="bg-primary text-background"
             onClick={async () => handleToggleAddTruck}
           >
             Add truck (TEST)
           </button>
-
           {isDisplayedAddTruck && (
             <AddNewFoodTruckForm handleToggle={handleToggleAddTruck} />
           )}
+          {/* add new button:  */}
+          <div
+            className="absolute bottom-0 right-0 m-3 inline-flex items-center justify-center bg-primary rounded-full w-14 h-14"
+            onClick={() => {
+              console.log();
+              // handle toggle
+            }}
+          >
+            <FaPlus
+              className="focus:outline-none focus:ring-4 focus:shadow font-sans rounded-full  "
+              color="white"
+              fontSize={16}
+            />
+          </div>
         </div>
       ) : (
         <div className="flex justify-center items-center gap-2 text-lg mt-2">
