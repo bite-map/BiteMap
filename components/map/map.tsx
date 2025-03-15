@@ -208,7 +208,6 @@ export default function Map() {
 
 
 
-            {/* GOING TO USE THIS LATE */}
             Add truck (TEST)
           </button>
 
