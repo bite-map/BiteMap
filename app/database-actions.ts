@@ -2,12 +2,13 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
-import { Truck} from "../components/global-component-types";
+import { Truck, ProfileImage} from "../components/global-component-types";
 import {
   addFoodTruckProfileImageToBucket,
   getPublicUrlForImage,
 } from "./storage-actions";
 import { format } from "path";
+
 
 // -------------- FOOD TRUCK (START) --------------
 // adds a food truck to the database
