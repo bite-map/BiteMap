@@ -20,7 +20,6 @@ export default function SightingConfirmCard({
     const getTruck = async () => {
       const truck = await getFoodTruckDataById(sighting.food_truck_id);
       setTruck(truck);
-      // console.log(truck);
     };
     getTruck();
   });
@@ -45,7 +44,6 @@ export default function SightingConfirmCard({
               sighting.id,
               sighting.food_truck_id
             );
-            console.log(data);
             setSelectedSighting(null);
             // TOAST
           }}
