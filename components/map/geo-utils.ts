@@ -63,12 +63,16 @@ export const getLocation = (setLocation: Function) => {
 // very similar to getLocation but will update when the users position changes
 export const trackLocation = (setLocation: Function) => {
   if (navigator.geolocation) {
-    navigator.geolocation.watchPosition((position) => {
-      setLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
-    });
+    return navigator.geolocation.watchPosition(
+      (position) => {
+        setLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => console.error(error),
+      { enableHighAccuracy: true }
+    );
   }
 };
 
