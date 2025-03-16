@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Sighting, Truck } from "../global-component-types";
 import {
   getFoodTruckDataById,
@@ -18,26 +18,37 @@ type FoodTruckProfileProps = {
 };
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
-  const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
-    "sightings"
-  );
+  const [activeTab, setActiveTab] = useState<"sightings" | "reviews">("sightings");
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
 
   const handleToggleAddReview = () => {
-    console.log("Toggling review form:", !isDisplayedAddReview);
-    setIsDisplayedAddReview((prev) => !prev)
-  }
+    setIsDisplayedAddReview((prev) => !prev);
+  };
 
   useEffect(() => {
     (async () => {
-      setFoodTruck(await getFoodTruckDataById(truckId));
-      // get current favorite state
+      const truckData = await getFoodTruckDataById(truckId);
+
+      // Assuming foodTruckData is the structure we receive
+      if (truckData) {
+        const structuredTruck = {
+          ...truckData,
+          profile: {      // the problem we were having is because was trying to access the avatar directly, so i create this function to do manually
+            avatar: truckData.avatar,  // attach avatar directly if present
+            name: truckData.name,
+            food_style: truckData.food_style,
+          },
+        };
+        setFoodTruck(structuredTruck);
+      }
+
+      // Get current favorite state
       setIsFavorite(await getIsFavorite(truckId));
     })();
-  }, []);
+  }, [truckId]);
 
   useEffect(() => {
     (async () => {
@@ -46,14 +57,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   }, [foodTruck]);
 
   useEffect(() => {
-    // reload to switch btn
+    // Reload or handle the switch button for favorites
   }, [isFavorite]);
-
-  // incoming
-
-  // const handleToggleFavorite = () => {
-  // setIsFavorited((previous) => !previous);
-  // };
 
   return (
     <div className="p-3">
@@ -61,18 +66,18 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         <div className="rounded-xl bg-background overflow-clip shadow-md">
           <Image
             className="h-[200px] object-cover"
-            src={foodTruck.profile?.avatar || "/default-food-truck.jpg"} 
-            alt={foodTruck.name || "Food Truck"}
+            src={foodTruck.profile?.avatar || "/default-food-truck.jpg"} // Access avatar here
+            alt={foodTruck.profile?.name || "Food Truck"}
             width={600}
             height={600}
-          ></Image>
+          />
 
           <div className="flex justify-between p-3">
             <div>
               <h2 className="text-lg font-semibold text-primary">
-                {foodTruck.name}
+                {foodTruck.profile?.name}
               </h2>
-              <p>{foodTruck.food_style}</p>
+              <p>{foodTruck.profile?.food_style}</p>
             </div>
             <button
               style={{
@@ -129,15 +134,15 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         )}
       </div>
       <button
-          className="bg-primary text-background py-2 px-4 rounded mt-4"
-          onClick={handleToggleAddReview}
-          >
-          Add Review(TEST)
-        </button>
+        className="bg-primary text-background py-2 px-4 rounded mt-4"
+        onClick={handleToggleAddReview}
+      >
+        Add Review (TEST)
+      </button>
 
-        {isDisplayedAddReview && (
-          <AddReviewFoodTruckForm handleToggle={handleToggleAddReview} truckId={truckId}/>
-        )}
+      {isDisplayedAddReview && (
+        <AddReviewFoodTruckForm handleToggle={handleToggleAddReview} truckId={truckId} />
+      )}
     </div>
   );
 }

@@ -11,7 +11,7 @@ type Truck = {
   name: string;
   food_style: string;
   created_by_profile_id: string;
-  profile: {
+  profile?: {
     id: number;
     name: string;
     food_style: string;

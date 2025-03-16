@@ -9,24 +9,25 @@ type FoodTruckCardProps = {
 };
 
 export default function FoodTruckCardLanding({ foodTruck }: FoodTruckCardProps) {
-  const avatarUrl = foodTruck.profile?.avatar || "/default-food-truck.jpg"; // access the avatar from profile, "/default-food-truck.jpg" doesnt return anything, is just to make the variable usable
+  const avatarUrl = foodTruck?.profile?.avatar || "/default-food-truck.jpg"; 
+// access the avatar from profile, "/default-food-truck.jpg" doesnt return anything, is just to make the variable usable
   return (
-      <Link href={`/truck-profile/${foodTruck.profile?.id}`} legacyBehavior>
+      <Link href={`/truck-profile/${foodTruck?.profile?.id}`} legacyBehavior>
         <a className="block">
           <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
             <Image
               className="h-[200px] object-cover"
               src={avatarUrl} // if no avatar is found will display an default image, which we dont have yet
-              alt={foodTruck.profile?.name || "Food Truck"} // Alt text for the image
+              alt={foodTruck?.profile?.name || "Food Truck"} // Alt text for the image
               width={600}
               height={600}
             />
             <div className="flex">
               <div className="p-3">
                 <h2 className="text-lg font-semibold text-primary">
-                  {foodTruck.profile?.name}
+                  {foodTruck?.profile?.name}
                 </h2>
-                <p>{foodTruck.profile?.food_style}</p>
+                <p>{foodTruck?.profile?.food_style}</p>
               </div>
               <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 flex-shrink-0">
                 <FaArrowRight />
