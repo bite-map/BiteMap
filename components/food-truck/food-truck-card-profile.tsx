@@ -38,7 +38,7 @@ export default function FoodTruckCardProfile({
 
       <Image
         className="h-[100px] object-cover"
-        src={foodTruck.food_truck_profiles.profile.avatar}
+        src={foodTruck.food_truck_profiles.profile?.avatar || "/default-food-truck.jpg"}
         alt="Picture of a food truck"
         width={600}
         height={600}

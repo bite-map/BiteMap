@@ -82,7 +82,7 @@ export default function AddSighting({
                       <div className="flex flex-row items-start h-full w-full  bg-white border border-gray-200 rounded-lg shadow-sm   hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                         <Image
                           className="object-cover rounded-t-lg h-full w-auto md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
-                          src={truck.profile.avatar}
+                          src={truck.profile?.avatar || "/default-food-truck.jpg"}
                           alt="image of a food truck"
                           width={60}
                           height={60}

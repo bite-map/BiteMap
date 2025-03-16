@@ -11,7 +11,7 @@ type FoodTruckCardProps = {
 export default function FoodTruckCardLanding({ foodTruck }: FoodTruckCardProps) {
   const avatarUrl = foodTruck.profile?.avatar || "/default-food-truck.jpg"; // access the avatar from profile, "/default-food-truck.jpg" doesnt return anything, is just to make the variable usable
   return (
-      <Link href={`/truck-profile/${foodTruck.profile.id}`} legacyBehavior>
+      <Link href={`/truck-profile/${foodTruck.profile?.id}`} legacyBehavior>
         <a className="block">
           <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
             <Image

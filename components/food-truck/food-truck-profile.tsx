@@ -61,8 +61,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         <div className="rounded-xl bg-background overflow-clip shadow-md">
           <Image
             className="h-[200px] object-cover"
-            src={foodTruck.profile.avatar as string}
-            alt="Picture of a food truck"
+            src={foodTruck.profile?.avatar || "/default-food-truck.jpg"} 
+            alt={foodTruck.name || "Food Truck"}
             width={600}
             height={600}
           ></Image>
