@@ -243,6 +243,7 @@ export default function Map() {
                     }
                   }}
                 />
+
                 {/* display sighitngs */}
                 <IconButton
                   Icon={LuRefreshCw}

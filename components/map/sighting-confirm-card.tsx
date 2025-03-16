@@ -29,7 +29,10 @@ export default function SightingConfirmCard({
       <div className="justify-center items-center bg-primary mt-3 mb-3 ml-3 mr-3 rounded-xl">
         <Link
           className="justify-center items-center h-full w-full"
-          href={`/truck-profile/${sighting.id}`}
+          onClick={() => {
+            setSelectedSighting(null);
+          }}
+          href={`/truck-profile/${truck?.id}`}
         >
           <p className="justify-center items-center text-center">Go TO Truck</p>
         </Link>
