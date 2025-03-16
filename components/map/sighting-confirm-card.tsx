@@ -54,7 +54,7 @@ export default function SightingConfirmCard({
         </button>
       </div>
       <div className="h-36 w-full flex justify-center justify-self-center items-center">
-        <img className="object-cover h-36 w-48 " src={truck?.avatar} alt="" />
+        <img className="object-cover h-36 w-48 " src={truck?.profile?.avatar} alt="" />
       </div>
     </div>
   );
