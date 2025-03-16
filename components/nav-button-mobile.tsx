@@ -18,18 +18,36 @@ export default function NavButtonMobile({
   const Icon = NavButton.icon;
 
   return (
-    <Link onClick={handleToggle} href={NavButton.href}>
-      <div
-        className={clsx(
-          "flex flex-col justify-center font-semibold items-center w-16 py-[6px] mt-3 text-sm",
-          {
-            "bg-primary text-background": pathname === NavButton.href,
-          }
-        )}
-      >
-        <Icon className="size-6 " />
-        <p>{NavButton.text}</p>
-      </div>
-    </Link>
+    <>
+      {NavButton.href !== "/truck-map" ? (
+        <Link onClick={handleToggle} href={NavButton.href}>
+          <div
+            className={clsx(
+              "flex flex-col justify-center font-semibold items-center w-16 py-[6px] mt-3 text-sm",
+              {
+                "bg-primary text-background": pathname === NavButton.href,
+              }
+            )}
+          >
+            <Icon className="size-6 " />
+            <p>{NavButton.text}</p>
+          </div>
+        </Link>
+      ) : (
+        <a onClick={handleToggle} href={NavButton.href}>
+          <div
+            className={clsx(
+              "flex flex-col justify-center font-semibold items-center w-16 py-[6px] mt-3 text-sm",
+              {
+                "bg-primary text-background": pathname === NavButton.href,
+              }
+            )}
+          >
+            <Icon className="size-6 " />
+            <p>{NavButton.text}</p>
+          </div>
+        </a>
+      )}
+    </>
   );
 }
