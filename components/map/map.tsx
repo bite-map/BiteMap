@@ -76,7 +76,7 @@ export default function Map() {
     let id: any;
     try {
       id = trackLocation(setLocation);
-      console.log(id);
+
     } catch (error) {
       navigator.geolocation.clearWatch(id);
       getLocation(setLocation);
