@@ -1,9 +1,3 @@
-// class places with marker :
-// methods:
-//  show all, clear all, this.foreach((obj)=>{add listener...})
-
-// Clear marker
-// marker: {marker, infoCard, marker}[]
 import {
   createCurrentLocationPin,
   createTruckPin,
