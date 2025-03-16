@@ -73,21 +73,26 @@ export default function Map() {
 
   // -----Effect-----
   useEffect(() => {
-    //getLocation(setLocation);
-    trackLocation(setLocation);
+    let id: any;
+    try {
+      id = trackLocation(setLocation);
+      console.log(id);
+    } catch (error) {
+      navigator.geolocation.clearWatch(id);
+      getLocation(setLocation);
+      // Toast error (currently is using static location)
+    }
   }, []);
 
   useEffect(() => {
     // updates the users marker when position changes
     if (userMarker) {
-      console.log("MOVING");
       map?.setCenter(location as Location);
       userMarker.setCenter(location as Location);
     }
 
     // if the user marker isn't already created, create one
     if (map && !userMarker) {
-      console.log("CREATING");
       setUserMarker(
         new google.maps.Circle({
           map: map,
@@ -232,7 +237,7 @@ export default function Map() {
 
           <button
             className="bg-primary text-background"
-            onClick={handleToggleAddTruck}
+            onClick={async () => handleToggleAddTruck}
           >
             Add truck (TEST)
           </button>
