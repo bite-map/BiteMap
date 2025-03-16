@@ -159,25 +159,103 @@ export const getTruckBySightingId = async (sighitngId: number) => {
   }
 };
 
-export const getNearbyFoodTrucks = async (lat: number, lng: number) => {
+export const getNearbyFoodTrucks = async (location: { lat: number; lng: number }) => {
   const supabase = await createClient();
-  const radius = 0.025 // aprox.. 11km
 
-  const { data, error } = await supabase
-    .from("food_truck_sightings")
-    .select("*")
-    .gte("latitude", lat - radius)
-    .lte("latitude", lat + radius)
-    .gte("longitude", lng - radius)
-    .lte("longitude", lng + radius)
+  try {
+    const { data, error } = await supabase.rpc("nearby_sightings", {
+      lat: location.lat,
+      lng: location.lng
+    });
 
-    if(error) {
-      console.error("error fetching food trucks based on user location", error);
+    if (error) {
+      console.error("Error fetching nearby food trucks:", error);
       return [];
     }
 
-    return data;
-}
+    // will filter results to include only food trucks within 2.5km (2500 meters)
+    const nearbyTrucks = data.filter((truck: any) => truck.dist_meters <= 2500);
+
+    // Fetch the food truck profiles based on food_truck_id
+    const trucksWithProfiles = await Promise.all(
+      nearbyTrucks.map(async (sighting: any) => {
+        const { data: profileData, error: profileError } = await supabase
+          .from("food_truck_profiles")
+          .select()
+          .eq("id", sighting.food_truck_id);
+
+        if (profileError) {
+          console.error(`Error fetching food truck profile for ID ${sighting.food_truck_id}:`, profileError);
+        }
+
+        const profile = profileData ? profileData[0] : null;
+
+        // Return sighting data along with the profile
+        return { ...sighting, profile };
+      })
+    );
+
+    // Log the full data to see what's being returned
+    console.log("All trucks with profiles:", trucksWithProfiles);
+
+    return trucksWithProfiles.filter((truck) => truck.profile); // Filter out trucks without a profile
+
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    throw error;
+  }
+};
+
+// export const getNearbyFoodTrucks = async (location: { lat: number; lng: number }) => {
+//   const supabase = await createClient();
+
+//   try {
+//     const { data, error } = await supabase.rpc("nearby_sightings", {
+//       lat: location.lat,
+//       lng: location.lng
+//     });
+
+//     if (error) {
+//       console.error("Error fetching nearby food trucks:", error);
+//       return [];
+//     }
+
+//     // will filter results to include only food trucks within 2.5km (2500 meters)
+//     const nearbyTrucks = data.filter((truck: any) => truck.dist_meters <= 2500);
+
+//     return nearbyTrucks;
+//   } catch (error) {
+//     console.error("Unexpected error:", error);
+//     throw error;
+//   }
+// };
+
+// export const getNearbyFoodTrucks = async (location: {lat: number, lng: number}) => {
+//   const supabase = await createClient();
+//   const {lat, lng} = location;
+//   const radius = 0.005 // aprox.. 2.5
+
+//   try {
+
+//   const { data, error } = await supabase
+//     .from("food_truck_sightings")
+//     .select("*")
+//     .gte("latitude", lat - radius)
+//     .lte("latitude", lat + radius)
+//     .gte("longitude", lng - radius)
+//     .lte("longitude", lng + radius)
+
+//     if(error) {
+//       console.error("error fetching food trucks based on user location", error);
+//       return [];
+//     }
+
+//     return data;
+// } catch (error) {
+//   console.error("Error:", error);
+//   throw error;
+// }
+// };
 // -------------- FOOD TRUCK (END) --------------
 
 // -------------- SIGHTING (START) --------------
