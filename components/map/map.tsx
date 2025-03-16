@@ -7,7 +7,6 @@ import { Library } from "@googlemaps/js-api-loader";
 import { LuRefreshCw } from "react-icons/lu";
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { Input } from "../ui/input";
-import IconButton from "../icon-button";
 import { createCurrentLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
 
@@ -204,13 +203,6 @@ export default function Map() {
     }
   }, [isDisplayedAddSighting, isDisplayedAddTruck]);
 
-  useEffect(() => {
-    const test = async () => {
-      // const data = await filterSightingByDayOfWeek(0);
-      // console.log(data);
-    };
-    test();
-  });
   // -----Effect-----
 
   return (
@@ -225,45 +217,8 @@ export default function Map() {
             <div className="relative flex p-2 gap-1 w-full">
               {/* TODO: change into levitation button to avoid hiding map with a big rectangle */}
               <div className="flex gap-1 w-full">
-                {/* display trucks fetched from google */}
-                {/* <IconButton
-                  Icon={FaMapMarkerAlt}
-                  callback={() => {
-                    if (!displayPlacesMarker) {
-                      searchFoodTruck(
-                        google,
-                        map as google.maps.Map,
-                        setPlaces,
-                        location
-                      );
-                      setDisplayPlacesMarker(true);
-                    }
-                    if (displayPlacesMarker && places) {
-                      clear(places);
-                      setDisplayPlacesMarker(false);
-                    }
-                  }}
-                />
-
-                <IconButton
-                  Icon={LuRefreshCw}
-                  callback={() => {
-                    if (!displaySightingsMarker) {
-                      fetchSighting(
-                        location,
-                        map as google.maps.Map,
-                        setSighting,
-                        setSelectedSighting
-                      );
-                      setDisplaySightingsMarker(true);
-                    }
-                    if (displaySightingsMarker && sightings) {
-                      clear(sightings);
-                      setSelectedSighting(null);
-                      setDisplaySightingsMarker(false);
-                    }
-                  }}
-                /> */}
+                {/* these btns will be temperary gray since it will be changed to drop down btn */}
+                {/* fetch from google places */}
                 <button
                   className=""
                   type="button"
@@ -285,10 +240,8 @@ export default function Map() {
                 >
                   <FaMapMarkerAlt />
                 </button>
-                {/*  */}
 
                 {/* display sighitngs */}
-
                 <button
                   className=""
                   type="button"
