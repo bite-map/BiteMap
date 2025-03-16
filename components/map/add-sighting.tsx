@@ -35,14 +35,29 @@ export default function AddSighting({
   }, []);
 
   useEffect(() => {
-    const fetchTruck = async () => {
-      const data = (await getFoodTruckData()) as Truck[];
+    (async () => {
+      const data = await getFoodTruckData();
       if (data?.length) {
-        setTrucks(data);
+        // creating the profile object manually, this way we can return the picture of the foodtruck
+        const structuredTrucks = data.map((truckData) => {
+          if (truckData) {
+            return {
+              ...truckData,
+              profile: {
+                avatar: truckData.avatar || "/default-food-truck.jpg",
+                name: truckData.name,
+                food_style: truckData.food_style,
+              },
+            };
+          }
+          return truckData;
+        });
+  
+        setTrucks(structuredTrucks); 
       }
-    };
-    fetchTruck();
+    })();
   }, []);
+  
 
   return (
     <div className="pt-2 ">
