@@ -11,6 +11,7 @@ import {
 } from "@/app/database-actions";
 import { getLocation } from "./geo-utils";
 import { Truck, Location } from "../global-component-types";
+import { getNearbyTruck } from "./filter-utils";
 
 type AddSightingProps = {
   handleToggleAddSighting: Function;
@@ -21,8 +22,8 @@ export default function AddSighting({
 }: AddSightingProps) {
   //use this location when adding sighting
   const [sightingLocation, setSightingLocation] = useState<Location>();
-  const [trucks, setTrucks] = useState<Truck[]>();
-  const [selectedTruck, setSelectedTruck] = useState<Truck | null>(null);
+  const [trucks, setTrucks] = useState<any[]>();
+  const [selectedTruck, setSelectedTruck] = useState<any | null>(null);
   const [searchResult, setSearchResult] = useState<any[]>();
   const [activeTab, setActiveTab] = useState<"listView" | "searchView">(
     "listView"
@@ -36,14 +37,23 @@ export default function AddSighting({
 
   useEffect(() => {
     const fetchTruck = async () => {
-      const data = (await getFoodTruckData()) as Truck[];
-      if (data?.length) {
-        setTrucks(data);
+      if (sightingLocation) {
+        const data = (await getNearbyTruck(
+          sightingLocation?.lat,
+          sightingLocation?.lng
+        )) as Truck[];
+        if (data?.length) {
+          setTrucks(data);
+        }
       }
     };
     fetchTruck();
-  }, []);
+  }, [sightingLocation]);
 
+  useEffect(() => {
+    console.log(sightingLocation);
+    console.log(trucks);
+  }, [trucks, sightingLocation]);
   return (
     <div className="pt-2 ">
       <div className=" flex flex-col min-w-64 max-w-64 mx-auto  w-full h-1/6 top-0">
@@ -91,8 +101,11 @@ export default function AddSighting({
                           <h5 className="mb-2 text-2xl font-bold className-tight text-gray-900 dark:text-white">
                             {truck.name}
                           </h5>
-                          <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                          <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
                             {truck.food_style}
+                          </p>
+                          <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
+                            {` ${truck.nearest_dist_meters} meters`}
                           </p>
                         </div>
                       </div>

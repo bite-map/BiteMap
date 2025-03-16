@@ -6,10 +6,11 @@ import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { LuRefreshCw } from "react-icons/lu";
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
-
 import { Input } from "../ui/input";
 import IconButton from "../icon-button";
 import { createCurrentLocationPin } from "./createPinStyles";
+import SightingConfirmCard from "./sighting-confirm-card";
+
 // types
 import { Location, Sighting } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
@@ -23,7 +24,7 @@ import {
   trackLocation,
   getLocation,
 } from "./geo-utils";
-import SightingConfirmCard from "./sighting-confirm-card";
+import { getMinDistanceSightingTruck, getNearbyTruck } from "./filter-utils";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
@@ -225,7 +226,7 @@ export default function Map() {
               {/* TODO: change into levitation button to avoid hiding map with a big rectangle */}
               <div className="flex gap-1 w-full">
                 {/* display trucks fetched from google */}
-                <IconButton
+                {/* <IconButton
                   Icon={FaMapMarkerAlt}
                   callback={() => {
                     if (!displayPlacesMarker) {
@@ -244,7 +245,6 @@ export default function Map() {
                   }}
                 />
 
-                {/* display sighitngs */}
                 <IconButton
                   Icon={LuRefreshCw}
                   callback={() => {
@@ -263,7 +263,66 @@ export default function Map() {
                       setDisplaySightingsMarker(false);
                     }
                   }}
-                />
+                /> */}
+                <button
+                  className=""
+                  type="button"
+                  onClick={() => {
+                    if (!displayPlacesMarker) {
+                      searchFoodTruck(
+                        google,
+                        map as google.maps.Map,
+                        setPlaces,
+                        location
+                      );
+                      setDisplayPlacesMarker(true);
+                    }
+                    if (displayPlacesMarker && places) {
+                      clear(places);
+                      setDisplayPlacesMarker(false);
+                    }
+                  }}
+                >
+                  <FaMapMarkerAlt />
+                </button>
+                {/*  */}
+
+                {/* display sighitngs */}
+
+                <button
+                  className=""
+                  type="button"
+                  onClick={async () => {
+                    if (!displaySightingsMarker) {
+                      fetchSighting(
+                        location,
+                        map as google.maps.Map,
+                        setSighting,
+                        setSelectedSighting
+                      );
+                      setDisplaySightingsMarker(true);
+                    }
+                    if (displaySightingsMarker && sightings) {
+                      clear(sightings);
+                      setSelectedSighting(null);
+                      setDisplaySightingsMarker(false);
+                    }
+                    // --------------test--------------
+                    // const data = await getMinDistanceSightingTruck(
+                    //   location.lat,
+                    //   location.lng
+                    // );
+                    const ttt = await getNearbyTruck(
+                      location.lat,
+                      location.lng
+                    );
+                    // --------------test--------------
+                  }}
+                >
+                  <LuRefreshCw />
+                </button>
+
+                {/*  */}
               </div>
               <Input
                 className="h-9 w-[250px] ml-auto"

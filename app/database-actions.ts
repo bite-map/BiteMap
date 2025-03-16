@@ -7,7 +7,6 @@ import {
   addFoodTruckProfileImageToBucket,
   getPublicUrlForImage,
 } from "./storage-actions";
-import { format } from "path";
 
 // -------------- FOOD TRUCK (START) --------------
 // adds a food truck to the database
@@ -177,6 +176,18 @@ export const getNearbyFoodTrucks = async (lat: number, lng: number) => {
 
   return data;
 };
+
+// human readable :
+export const getNearbyTruck = async (lat: number, lng: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_nearby_truck", { lat: lat, lng: lng, radius: 90000 })
+    .select();
+  if (error) return error;
+  console.log(data);
+  return data;
+};
+
 // -------------- FOOD TRUCK (END) --------------
 
 // -------------- SIGHTING (START) --------------
