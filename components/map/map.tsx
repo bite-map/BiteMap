@@ -11,7 +11,7 @@ import { Input } from "../ui/input";
 import IconButton from "../icon-button";
 import { createCurrentLocationPin } from "./createPinStyles";
 // types
-import { Location } from "../global-component-types";
+import { Location, Sighting } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
 import AddSighting from "./add-sighting";
 import {
@@ -61,7 +61,9 @@ export default function Map() {
     useState<boolean>(false);
   const [isDisplayedAddTruck, setIsDisplayedAddTruck] =
     useState<boolean>(false);
+
   // current id of sighting to display
+  const [selectedSighting, setSelectedSighting] = useState<any>();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
@@ -87,6 +89,11 @@ export default function Map() {
     }
     setIsAddingActive(!isAddingActive);
   };
+  // show sighting confirm card
+  const toggleConfirmSightingCard = (sighting: any) => {
+    setSelectedSighting(sighting);
+  };
+
   // -----Effect-----
   useEffect(() => {
     let id: any;
@@ -267,7 +274,7 @@ export default function Map() {
                     </div>
                   ) : (
                     <button
-                      className="mt-3 mb-3 relative ml-2 mr-2 bg-white p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
+                      className="mt-3 mb-3 relative ml-2 mr-2 bg-primary p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
                       onClick={() => {
                         handleToggleAddSighting();
                         handleToggleAddTruck();
@@ -287,7 +294,7 @@ export default function Map() {
                     </div>
                   ) : (
                     <button
-                      className="mt-3 relative ml-2 mr-2 bg-white p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
+                      className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
                       onClick={() => {
                         handleToggleAddSighting();
                         handleToggleAddTruck();

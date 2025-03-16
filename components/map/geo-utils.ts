@@ -17,7 +17,8 @@ export const createMarkerOnMap = (
   createPin: Function,
   title: string = "place",
   infoCardContent: string,
-  map: google.maps.Map
+  map: google.maps.Map,
+  clickEvent: Function | null = null
 ) => {
   const pin = createPin(google);
   const marker: google.maps.marker.AdvancedMarkerElement =
@@ -35,6 +36,9 @@ export const createMarkerOnMap = (
   const clickListener = marker.addListener("click", () => {
     infoCard.open({ map: map, anchor: marker });
     // clickEvent();
+    if (clickEvent) {
+      clickEvent();
+    }
   });
   return { marker, infoCard, clickListener };
 };
@@ -127,6 +131,7 @@ export const searchFoodTruck = async (
     }
   }
 };
+
 export const fetchSighting = async (
   location: Location,
   map: google.maps.Map,
@@ -139,17 +144,22 @@ export const fetchSighting = async (
   const sightings = (await getSighting(location as Location)) as any[];
   if (sightings.length > 0) {
     // store sightings
+    console.log(sightings);
     const sightingMarkers = sightings.map((sighting: any) => {
       const location: google.maps.LatLng = new google.maps.LatLng(
         sighting.lat,
         sighting.lng
       );
+      const sightingMarkerClickEvent = (sighting: any) => {
+        //
+      };
       const marker = createMarkerOnMap(
         location,
         createSightingPin,
         sighting.id.toString() as string,
         createInfoCardLink(sighting.food_truck_id),
-        map as google.maps.Map
+        map as google.maps.Map,
+        sightingMarkerClickEvent
       );
       return marker;
     });
