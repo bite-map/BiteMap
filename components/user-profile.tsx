@@ -56,11 +56,8 @@ export default function UserProfile() {
       const session = await supabase.auth.getSession();
       const profileId = session.data?.session?.user.id;
 
-      console.log("Fetching reviews for profile:", profileId);
-
       if (profileId) {
         const reviewsData = await getReviewsData(profileId);
-        console.log("Fetched Reviews Data:", reviewsData);
         setReviewsData(reviewsData);
       }
     };

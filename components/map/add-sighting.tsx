@@ -105,7 +105,7 @@ export default function AddSighting({
                             {truck.food_style}
                           </p>
                           <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
-                            {` ${truck.nearest_dist_meters} meters`}
+                            {` ${Math.floor(truck.nearest_dist_meters)} meters`}
                           </p>
                         </div>
                       </div>

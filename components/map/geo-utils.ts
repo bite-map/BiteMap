@@ -146,7 +146,6 @@ export const fetchSighting = async (
   const sightings = (await getSighting(location as Location)) as any[];
   if (sightings.length > 0) {
     // store sightings
-    console.log(sightings);
     const sightingMarkers = sightings.map((sighting: any) => {
       const location: google.maps.LatLng = new google.maps.LatLng(
         sighting.lat,
@@ -154,7 +153,6 @@ export const fetchSighting = async (
       );
       const sightingMarkerClickEvent = () => {
         setSelectedSighting(sighting);
-        console.log(sighting);
       };
       const marker = createMarkerOnMap(
         location,

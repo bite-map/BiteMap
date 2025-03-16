@@ -28,6 +28,7 @@ export default function FoodTruckCardLanding(
       if (location) {
         setLoading(true);
         const trucks = await getNearbyTruck(location?.lat, location?.lng);
+
         setTrucks(trucks);
         setLoading(false);
       }
@@ -65,7 +66,7 @@ export default function FoodTruckCardLanding(
                       <p>{truck.food_style}</p>
                     </div>
                     <div className="relative w-1/2 pt-3 pb-3 pr-3">
-                      <p className="text-sm m-1">{`${truck.nearest_dist_meters} meters from you`}</p>
+                      <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)} meters from you`}</p>
                     </div>
                     {/* we need to fix the link here currently just the map */}
                     <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
