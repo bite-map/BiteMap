@@ -25,6 +25,9 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
 
   const handleToggleAddReview = () => {
+
+    console.log("Toggling review form:", !isDisplayedAddReview);
+
     setIsDisplayedAddReview((prev) => !prev);
   };
 
@@ -56,9 +59,11 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     })();
   }, [foodTruck]);
 
+
   useEffect(() => {
     // Reload or handle the switch button for favorites
   }, [isFavorite]);
+
 
   return (
     <div className="p-3">
@@ -137,11 +142,15 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         className="bg-primary text-background py-2 px-4 rounded mt-4"
         onClick={handleToggleAddReview}
       >
+
         Add Review (TEST)
       </button>
 
       {isDisplayedAddReview && (
-        <AddReviewFoodTruckForm handleToggle={handleToggleAddReview} truckId={truckId} />
+        <AddReviewFoodTruckForm
+          handleToggle={handleToggleAddReview}
+          truckId={truckId}
+        />
       )}
     </div>
   );

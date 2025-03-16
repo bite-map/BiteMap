@@ -2,13 +2,12 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { Location } from "@/components/global-component-types";
-import { Truck, ProfileImage} from "../components/global-component-types";
+import { Truck, ProfileImage } from "../components/global-component-types";
 import {
   addFoodTruckProfileImageToBucket,
   getPublicUrlForImage,
 } from "./storage-actions";
 import { format } from "path";
-
 
 // -------------- FOOD TRUCK (START) --------------
 // adds a food truck to the database
@@ -162,6 +161,7 @@ export const getTruckBySightingId = async (sighitngId: number) => {
 export const getNearbyFoodTrucks = async (location: { lat: number; lng: number }) => {
   const supabase = await createClient();
 
+
   try {
     const { data, error } = await supabase.rpc("nearby_sightings", {
       lat: location.lat,
@@ -256,6 +256,25 @@ export const getNearbyFoodTrucks = async (location: { lat: number; lng: number }
 //   throw error;
 // }
 // };
+
+//   const radius = 0.025; // aprox.. 11km
+
+//   const { data, error } = await supabase
+//     .from("food_truck_sightings")
+//     .select("*")
+//     .gte("latitude", lat - radius)
+//     .lte("latitude", lat + radius)
+//     .gte("longitude", lng - radius)
+//     .lte("longitude", lng + radius);
+
+//   if (error) {
+//     console.error("error fetching food trucks based on user location", error);
+//     return [];
+//   }
+
+//   return data;
+// };
+
 // -------------- FOOD TRUCK (END) --------------
 
 // -------------- SIGHTING (START) --------------
@@ -309,6 +328,18 @@ export const getSightingBySightingId = async (sighting_id: number = 17) => {
     .rpc("select_sightings_id", { sighting_id: sighting_id })
     .select()
     .single();
+  if (error) return error;
+
+  return data;
+};
+
+// get all sightings on a specific day
+export const getDayOfWeekSighting = async (dayOfWeek: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_sightings_by_day", {
+    dayofweek: dayOfWeek,
+  });
+
   if (error) return error;
 
   return data;
@@ -397,34 +428,38 @@ export const getReviewsData = async (profileId: string) => {
 // -------------- REVIEW (END) --------------
 
 // -------------- REVIEW --------------
-// adds a review the database 
+// adds a review the database
 
-export const AddFoodTruckReview = async (formData: FormData, truckId: number) => {
+export const AddFoodTruckReview = async (
+  formData: FormData,
+  truckId: number
+) => {
   // const truckId = formData.get("truckId") as string;
   const rating = formData.get("rating") as string;
   const content = formData.get("content") as string;
 
   const supabase = await createClient();
-  const { data: { user }} = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data, error } = await supabase
+  const { data, error } = await supabase
     .from("reviews")
-    .insert ([
+    .insert([
       {
         food_truck_profile_id: truckId,
         created_by_profile_id: user?.id,
         rating: rating,
         content: content,
-      }
+      },
     ])
     .select();
 
-    if(error) throw error;
+  if (error) throw error;
 
-    console.log("New review added:", data);
-    return data;
-  }
-
+  console.log("New review added:", data);
+  return data;
+};
 
 // -------------- FAVORITE --------------
 

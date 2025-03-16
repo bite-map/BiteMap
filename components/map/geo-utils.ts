@@ -16,8 +16,9 @@ export const createMarkerOnMap = (
   location: google.maps.LatLng,
   createPin: Function,
   title: string = "place",
-  infoCardContent: string,
-  map: google.maps.Map
+  infoCardContent: string | null = null,
+  map: google.maps.Map,
+  clickEvent: Function | null = null
 ) => {
   const pin = createPin(google);
   const marker: google.maps.marker.AdvancedMarkerElement =
@@ -32,9 +33,14 @@ export const createMarkerOnMap = (
     maxWidth: 200,
     position: location,
   });
+
   const clickListener = marker.addListener("click", () => {
-    infoCard.open({ map: map, anchor: marker });
-    // clickEvent();
+    if (infoCardContent) {
+      infoCard.open({ map: map, anchor: marker });
+    }
+    if (clickEvent) {
+      clickEvent();
+    }
   });
   return { marker, infoCard, clickListener };
 };
@@ -51,12 +57,17 @@ export const clear = (markers: any[]) => {
 
 export const getLocation = (setLocation: Function) => {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => {
+        throw error;
+      }
+    );
   }
 };
 
@@ -99,11 +110,12 @@ export const searchFoodTruck = async (
   const { Place } = (await google.maps.importLibrary(
     "places"
   )) as google.maps.PlacesLibrary;
-
+  const center = new google.maps.LatLng(location.lat, location.lng);
+  const circle = new google.maps.Circle({ center: center, radius: 5000 });
   const request = {
     textQuery: "Food Truck",
     fields: ["displayName", "location", "businessStatus"],
-    locationBias: location,
+    locationBias: circle,
     includedType: "restaurant",
   };
   //@ts-ignore
@@ -126,10 +138,12 @@ export const searchFoodTruck = async (
     }
   }
 };
+
 export const fetchSighting = async (
   location: Location,
   map: google.maps.Map,
-  setSighting: Function
+  setSightingMarkers: Function,
+  setSelectedSighting: Function
 ) => {
   //
   if (!location && !map) {
@@ -138,20 +152,26 @@ export const fetchSighting = async (
   const sightings = (await getSighting(location as Location)) as any[];
   if (sightings.length > 0) {
     // store sightings
+    console.log(sightings);
     const sightingMarkers = sightings.map((sighting: any) => {
       const location: google.maps.LatLng = new google.maps.LatLng(
         sighting.lat,
         sighting.lng
       );
+      const sightingMarkerClickEvent = () => {
+        setSelectedSighting(sighting);
+        console.log(sighting);
+      };
       const marker = createMarkerOnMap(
         location,
         createSightingPin,
         sighting.id.toString() as string,
-        createInfoCardLink(sighting.food_truck_id),
-        map as google.maps.Map
+        null,
+        map as google.maps.Map,
+        sightingMarkerClickEvent
       );
       return marker;
     });
-    setSighting(sightingMarkers);
+    setSightingMarkers(sightingMarkers);
   }
 };
