@@ -142,7 +142,6 @@ export const getTruckBySightingId = async (sighitngId: number) => {
     .select()
     .eq("id", sighitngId)
     .single();
-  console.log(data);
   const truckId = data.food_truck_id;
   if (data) {
     const { data, error } = await supabase
@@ -150,42 +149,25 @@ export const getTruckBySightingId = async (sighitngId: number) => {
       .select()
       .eq("id", truckId)
       .single();
-    console.log(data);
     if (data) {
       return data;
     }
   }
 };
 
-export const getNearbyFoodTrucks = async (lat: number, lng: number) => {
-  const supabase = await createClient();
-  const radius = 0.025; // aprox.. 11km
-
-  const { data, error } = await supabase
-    .from("food_truck_sightings")
-    .select("*")
-    .gte("latitude", lat - radius)
-    .lte("latitude", lat + radius)
-    .gte("longitude", lng - radius)
-    .lte("longitude", lng + radius);
-
-  if (error) {
-    console.error("error fetching food trucks based on user location", error);
+// an alternative way to implement fetch trucks by nearby sightings:
+export const getNearbyTruck = async (lat: number, lng: number) => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .rpc("get_nearby_truck", { lat: lat, lng: lng, radius: 90000 })
+      .select();
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error(error);
     return [];
   }
-
-  return data;
-};
-
-// human readable :
-export const getNearbyTruck = async (lat: number, lng: number) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .rpc("get_nearby_truck", { lat: lat, lng: lng, radius: 90000 })
-    .select();
-  if (error) return error;
-  console.log(data);
-  return data;
 };
 
 // -------------- FOOD TRUCK (END) --------------
