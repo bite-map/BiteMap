@@ -23,6 +23,7 @@ import {
   trackLocation,
   getLocation,
 } from "./geo-utils";
+import SightingConfirmCard from "./sighting-confirm-card";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];
@@ -90,9 +91,6 @@ export default function Map() {
     setIsAddingActive(!isAddingActive);
   };
   // show sighting confirm card
-  const toggleConfirmSightingCard = (sighting: any) => {
-    setSelectedSighting(sighting);
-  };
 
   // -----Effect-----
   useEffect(() => {
@@ -204,6 +202,14 @@ export default function Map() {
       setIsAddingActive(false);
     }
   }, [isDisplayedAddSighting, isDisplayedAddTruck]);
+
+  useEffect(() => {
+    const test = async () => {
+      // const data = await filterSightingByDayOfWeek(0);
+      // console.log(data);
+    };
+    test();
+  });
   // -----Effect-----
 
   return (
@@ -245,12 +251,14 @@ export default function Map() {
                       fetchSighting(
                         location,
                         map as google.maps.Map,
-                        setSighting
+                        setSighting,
+                        setSelectedSighting
                       );
                       setDisplaySightingsMarker(true);
                     }
                     if (displaySightingsMarker && sightings) {
                       clear(sightings);
+                      setSelectedSighting(null);
                       setDisplaySightingsMarker(false);
                     }
                   }}
@@ -263,6 +271,14 @@ export default function Map() {
               />
             </div>
 
+            {selectedSighting && (
+              <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
+                <SightingConfirmCard
+                  sighting={selectedSighting}
+                  setSelectedSighting={setSelectedSighting}
+                />
+              </div>
+            )}
             {isAddingActive && (
               <div className="absolute flex flex-col h-90 w-96 justify-center items-center top-16 ">
                 <div className="relative w-fit h-fit items-center">

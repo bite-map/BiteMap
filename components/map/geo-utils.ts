@@ -16,7 +16,7 @@ export const createMarkerOnMap = (
   location: google.maps.LatLng,
   createPin: Function,
   title: string = "place",
-  infoCardContent: string,
+  infoCardContent: string | null = null,
   map: google.maps.Map,
   clickEvent: Function | null = null
 ) => {
@@ -33,9 +33,11 @@ export const createMarkerOnMap = (
     maxWidth: 200,
     position: location,
   });
+
   const clickListener = marker.addListener("click", () => {
-    infoCard.open({ map: map, anchor: marker });
-    // clickEvent();
+    if (infoCardContent) {
+      infoCard.open({ map: map, anchor: marker });
+    }
     if (clickEvent) {
       clickEvent();
     }
@@ -55,12 +57,17 @@ export const clear = (markers: any[]) => {
 
 export const getLocation = (setLocation: Function) => {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => {
+        throw error;
+      }
+    );
   }
 };
 
@@ -135,7 +142,8 @@ export const searchFoodTruck = async (
 export const fetchSighting = async (
   location: Location,
   map: google.maps.Map,
-  setSighting: Function
+  setSightingMarkers: Function,
+  setSelectedSighting: Function
 ) => {
   //
   if (!location && !map) {
@@ -150,19 +158,20 @@ export const fetchSighting = async (
         sighting.lat,
         sighting.lng
       );
-      const sightingMarkerClickEvent = (sighting: any) => {
-        //
+      const sightingMarkerClickEvent = () => {
+        setSelectedSighting(sighting);
+        console.log(sighting);
       };
       const marker = createMarkerOnMap(
         location,
         createSightingPin,
         sighting.id.toString() as string,
-        createInfoCardLink(sighting.food_truck_id),
+        null,
         map as google.maps.Map,
         sightingMarkerClickEvent
       );
       return marker;
     });
-    setSighting(sightingMarkers);
+    setSightingMarkers(sightingMarkers);
   }
 };
