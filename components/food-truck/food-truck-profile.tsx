@@ -28,8 +28,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
 
   const handleToggleAddReview = () => {
     console.log("Toggling review form:", !isDisplayedAddReview);
-    setIsDisplayedAddReview((prev) => !prev)
-  }
+    setIsDisplayedAddReview((prev) => !prev);
+  };
 
   useEffect(() => {
     (async () => {
@@ -45,15 +45,11 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     })();
   }, [foodTruck]);
 
+  useEffect(() => {}, [isFavorite]);
+
   useEffect(() => {
-    // reload to switch btn
-  }, [isFavorite]);
-
-  // incoming
-
-  // const handleToggleFavorite = () => {
-  // setIsFavorited((previous) => !previous);
-  // };
+    console.log(foodTruck);
+  }, [foodTruck]);
 
   return (
     <div className="p-3">
@@ -129,15 +125,18 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         )}
       </div>
       <button
-          className="bg-primary text-background py-2 px-4 rounded mt-4"
-          onClick={handleToggleAddReview}
-          >
-          Add Review(TEST)
-        </button>
+        className="bg-primary text-background py-2 px-4 rounded mt-4"
+        onClick={handleToggleAddReview}
+      >
+        Add Review(TEST)
+      </button>
 
-        {isDisplayedAddReview && (
-          <AddReviewFoodTruckForm handleToggle={handleToggleAddReview} truckId={truckId}/>
-        )}
+      {isDisplayedAddReview && (
+        <AddReviewFoodTruckForm
+          handleToggle={handleToggleAddReview}
+          truckId={truckId}
+        />
+      )}
     </div>
   );
 }
