@@ -83,7 +83,7 @@ export default function AddSighting({
 
                         <Image
                           className="object-cover rounded-t-lg h-full w-auto md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
-                          src={truck.profile?.avatar || "/default-food-truck.jpg"}
+                          src={truck?.profile?.avatar || "/default-food-truck.jpg"}
                           alt="image of a food truck"
                           width={60}
                           height={60}
