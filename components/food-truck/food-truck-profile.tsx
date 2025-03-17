@@ -20,7 +20,7 @@ type FoodTruckProfileProps = {
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
-    "sightings"
+    "reviews"
   );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
@@ -121,7 +121,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       )}
       <div className="border-b border-gray-200 mt-4">
         <nav className="flex -mb-px">
-          {["sightings", "reviews"].map((tab) => (
+          {["reviews", "sightings"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
@@ -137,6 +137,11 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         </nav>
       </div>
       <div className="pt-3">
+        {activeTab === "reviews" && (
+          <div>
+            <p>No reviews available</p>
+          </div>
+        )}
         {activeTab === "sightings" && (
           <div className="flex flex-col gap-y-2">
             {sightings ? (
@@ -146,12 +151,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
             ) : (
               <p>No sighting available</p>
             )}
-          </div>
-        )}
-
-        {activeTab === "reviews" && (
-          <div>
-            <p>No reviews available</p>
           </div>
         )}
       </div>
