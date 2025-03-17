@@ -274,27 +274,16 @@ export default function Map() {
                       setSelectedSighting(null);
                       setDisplaySightingsMarker(false);
                     }
-                    // --------------test--------------
-                    // const data = await getMinDistanceSightingTruck(
-                    //   location.lat,
-                    //   location.lng
-                    // );
-                    const ttt = await getNearbyTruck(
-                      location.lat,
-                      location.lng
-                    );
-                    // --------------test--------------
                   }}
                 >
                   <LuRefreshCw />
                 </button>
-
-                {/*  */}
               </div>
               <Input
                 className="h-9 w-[250px] ml-auto"
                 type="text"
                 ref={placeAutoCompleteRef}
+                placeholder="Search by location"
               />
             </div>
 
@@ -305,48 +294,32 @@ export default function Map() {
                   setSelectedSighting={setSelectedSighting}
                 />
               </div>
-            )}
+            )}       
+
             {isAddingActive && geocoder && (
               <div className="absolute flex flex-col h-90 w-96 justify-center items-center top-16 ">
                 <div className="relative w-fit h-fit items-center">
-                  {isDisplayedAddSighting ? (
+                  {isDisplayedAddSighting && (
                     <div className="relative w-80 h-fit bg-white p-2  border border-gray-300 rounded-xl ">
                       <AddSighting
                         handleToggleAddSighting={handleToggleAddSighting}
+                        handleToggleAddTruck={handleToggleAddTruck}
                         geocoder={geocoder}
                       />
                     </div>
-                  ) : (
-                    <button
-                      className="mt-3 mb-3 relative ml-2 mr-2 bg-primary p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
-                      onClick={() => {
-                        handleToggleAddSighting();
-                        handleToggleAddTruck();
-                      }}
-                    >
-                      Add sighting to an existing truck
-                    </button>
                   )}
                 </div>
+
                 <div className="relative w-fit h-fit items-center">
-                  {isDisplayedAddTruck ? (
+                  {isDisplayedAddTruck && (
                     <div className="relative w-fit h-fit bg-white p-2  border border-gray-300 rounded-xl ">
                       <AddNewFoodTruckForm
-                        handleToggle={handleToggleAddTruck}
+                        handleToggleAddTruck={handleToggleAddTruck}
+                        handleToggleAddSighting={handleToggleAddSighting}
                         location={location}
                         geocoder={geocoder}
                       />
                     </div>
-                  ) : (
-                    <button
-                      className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-black border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
-                      onClick={() => {
-                        handleToggleAddSighting();
-                        handleToggleAddTruck();
-                      }}
-                    >
-                      Cannot find truck? Add one
-                    </button>
                   )}
                 </div>
               </div>
