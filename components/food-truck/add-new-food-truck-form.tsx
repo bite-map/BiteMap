@@ -108,7 +108,6 @@ export default function AddNewFoodTruckForm({
                     type: "success",
                   });
                 }
-                console.log(sighitng);
               }
               handleToggleAddTruck();
             }}

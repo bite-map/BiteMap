@@ -29,7 +29,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
 
   const handleToggleAddReview = () => {
-    console.log("Toggling review form:", !isDisplayedAddReview);
     setIsDisplayedAddReview((prev) => !prev);
   };
 
@@ -44,7 +43,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   useEffect(() => {
     (async () => {
       const data = await getSightingsByLastActive(truckId);
-      console.log(data);
       if (data) {
         setSightings(data);
       }
@@ -54,7 +52,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
 
   useEffect(() => {
     if (sightings) {
-      console.log(sightings);
       const localTime = new Date(sightings[0].last_active_time);
       const year = localTime.getFullYear().toString().slice(-2);
       const month = (localTime.getMonth() + 1).toString().padStart(2, "0");
@@ -69,9 +66,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     }
   }, [sightings]);
 
-  useEffect(() => {
-    console.log(foodTruck);
-  }, [foodTruck]);
+  useEffect(() => {}, [foodTruck]);
 
   return (
     <div className="p-3">

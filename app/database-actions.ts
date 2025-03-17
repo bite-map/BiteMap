@@ -196,7 +196,20 @@ export const getSightingData = async (profileId: string) => {
 
   return data;
 };
+export const getSightingsOfUser = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  const { data, error } = await supabase
+    .rpc("get_sightings_by_user_id", { user_id: user?.id })
+    .select();
+
+  if (error) return [];
+
+  return data;
+};
 // get all sightings
 export const getSighting = async (location: Location) => {
   const supabase = await createClient();
@@ -268,7 +281,6 @@ export const addSighting = async (
       truck_id: food_truck_id,
       radius: 200,
     });
-    console.log(data);
 
     if (data && data.length > 0) {
       // inert to confirmation, return number of duplicated sightings
@@ -288,7 +300,6 @@ export const addSighting = async (
       if (confirmationError) {
         throw error;
       }
-      console.log(confirmationData);
       return { data: confirmationData, duplicatedSightingCount: count };
     }
     const { data: sightingData, error: sightingError } = await supabase
@@ -303,7 +314,7 @@ export const addSighting = async (
       ])
       .select()
       .single();
-    console.log(sightingData);
+    sightingData;
     return data;
   } catch (error) {
     console.error(error);
@@ -417,10 +428,7 @@ export const AddFoodTruckReview = async (
       },
     ])
     .select();
-
   if (error) throw error;
-
-  console.log("New review added:", data);
   return data;
 };
 

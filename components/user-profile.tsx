@@ -6,6 +6,7 @@ import { UserMetadata } from "@supabase/supabase-js";
 import { getFavoriteTruck } from "@/app/database-actions";
 import {
   getSightingData,
+  getSightingsOfUser,
   getSightingBySightingId,
 } from "@/app/database-actions";
 import { getReviewsData } from "@/app/database-actions";
@@ -43,13 +44,9 @@ export default function UserProfile() {
     };
 
     const fetchSightings = async () => {
-      const session = await supabase.auth.getSession();
-      const profileId = session.data?.session?.user.id;
-      if (profileId) {
-        const sightingData = await getSightingData(profileId);
+      const data = await getSightingsOfUser();
 
-        setSightingData(sightingData);
-      }
+      setSightingData(data);
     };
 
     const fetchReviews = async () => {

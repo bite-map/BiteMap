@@ -6,10 +6,6 @@ import { TiArrowForward } from "react-icons/ti";
 import { FaSpinner } from "react-icons/fa";
 import { GiCheckMark } from "react-icons/gi";
 import { usePathname } from "next/navigation";
-import {
-  getSightingBySightingId,
-  addSightingConfirmation,
-} from "@/app/database-actions";
 
 type SightingCardProps = {
   sightingData: any;
@@ -19,7 +15,7 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
   const pathname = usePathname();
   const [localTime, setLocalTime] = useState<string>();
 
-  // TODO: calculate sighting frequency, change db function
+  // TODO: calculate sighting frequency, using db function
   // TODO: parse latlng to address
   // parse to human readable str
   useEffect(() => {
@@ -48,7 +44,11 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
             ) : (
               <p className="truncate">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
             )}
-            <p>{`Last sighted at: ${localTime}`}</p>
+            {pathname === "/user-profile" ? (
+              <p>{`Created at: ${sightingData.created_at}`}</p>
+            ) : (
+              <p>{`Last sighted at: ${localTime}`}</p>
+            )}
           </div>
         ) : (
           <p className="flex items-center gap-2">
