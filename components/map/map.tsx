@@ -154,6 +154,9 @@ export default function Map() {
       const mapOptions = {
         center: location,
         zoom: 17,
+        zoomControlOptions: {
+          position: google.maps.ControlPosition.LEFT_BOTTOM,
+        },
         mapId: "3f60e97302b8c3",
         disableDefaultUI: true,
         zoomControl: true,
