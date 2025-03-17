@@ -26,16 +26,25 @@ import {
 
 import { ToastContainer } from "react-toastify";
 import { createToast } from "@/utils/toast";
+import { createClient } from "@/utils/supabase/client";
+import { UserMetadata } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
 
 export default function Map() {
+  const router = useRouter();
+
+  const supabase = createClient();
+
   // references
   const mapRef = useRef<HTMLDivElement>(null);
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
 
   // state varaibles
+  const [user, setUser] = useState<UserMetadata | undefined>(undefined);
+
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
@@ -101,6 +110,12 @@ export default function Map() {
 
   // -----Effect-----
   useEffect(() => {
+    // get logged in user
+    (async () => {
+      const session = await supabase.auth.getSession();
+      setUser(session.data.session?.user.user_metadata);
+    })();
+
     let id: any;
     try {
       id = trackLocation(setLocation);
@@ -139,6 +154,9 @@ export default function Map() {
       const mapOptions = {
         center: location,
         zoom: 17,
+        zoomControlOptions: {
+          position: google.maps.ControlPosition.LEFT_BOTTOM,
+        },
         mapId: "3f60e97302b8c3",
         disableDefaultUI: true,
         zoomControl: true,
@@ -300,6 +318,7 @@ export default function Map() {
             {selectedSighting && (
               <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
                 <SightingConfirmCard
+                  user={user}
                   setToastMessage={setToastMessage}
                   sighting={selectedSighting}
                   setSelectedSighting={setSelectedSighting}
@@ -344,6 +363,9 @@ export default function Map() {
           <div
             className="absolute bottom-0 right-0 m-3 inline-flex items-center justify-center bg-primary rounded-full w-14 h-14"
             onClick={() => {
+              if (!user) {
+                return router.push("/sign-in?error=Not signed in");
+              }
               handleToggleAddButton();
             }}
           >
