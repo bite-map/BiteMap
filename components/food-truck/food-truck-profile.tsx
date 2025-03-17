@@ -8,6 +8,7 @@ import {
   getSightingByTruckId,
   toggleFavorite,
   getIsFavorite,
+  getLastActiveSighting,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
 import { IoMdHeart } from "react-icons/io";
@@ -42,6 +43,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   useEffect(() => {
     (async () => {
       setSightings(await getSightingByTruckId(truckId));
+      const data = await getLastActiveSighting(truckId);
+      // Going to implement last active at (location, time)
     })();
   }, [foodTruck]);
 

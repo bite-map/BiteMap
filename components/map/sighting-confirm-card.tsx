@@ -5,7 +5,6 @@ import {
   getFoodTruckDataById,
 } from "@/app/database-actions";
 import Link from "next/link";
-import Image from "next/image";
 type SightingConfirmCardProps = {
   sighting: Sighting;
   setSelectedSighting: Function;
@@ -25,6 +24,9 @@ export default function SightingConfirmCard({
   });
   return (
     <div className="h-64 w-80 justify-center items-center">
+      <div className="">
+        <button onClick={() => {}}>x</button>
+      </div>
       <div className="justify-center items-center bg-primary mt-3 mb-3 ml-3 mr-3 rounded-xl">
         <Link
           className="justify-center items-center h-full w-full"
@@ -44,6 +46,7 @@ export default function SightingConfirmCard({
               sighting.id,
               sighting.food_truck_id
             );
+
             setSelectedSighting(null);
             // TOAST
           }}

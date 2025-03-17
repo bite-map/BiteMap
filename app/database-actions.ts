@@ -7,7 +7,6 @@ import {
   addFoodTruckProfileImageToBucket,
   getPublicUrlForImage,
 } from "./storage-actions";
-import { format } from "path";
 
 // -------------- FOOD TRUCK (START) --------------
 // adds a food truck to the database
@@ -143,7 +142,6 @@ export const getTruckBySightingId = async (sighitngId: number) => {
     .select()
     .eq("id", sighitngId)
     .single();
-  console.log(data);
   const truckId = data.food_truck_id;
   if (data) {
     const { data, error } = await supabase
@@ -151,32 +149,31 @@ export const getTruckBySightingId = async (sighitngId: number) => {
       .select()
       .eq("id", truckId)
       .single();
-    console.log(data);
     if (data) {
       return data;
     }
   }
 };
 
-export const getNearbyFoodTrucks = async (lat: number, lng: number) => {
-  const supabase = await createClient();
-  const radius = 0.025; // aprox.. 11km
-
-  const { data, error } = await supabase
-    .from("food_truck_sightings")
-    .select("*")
-    .gte("latitude", lat - radius)
-    .lte("latitude", lat + radius)
-    .gte("longitude", lng - radius)
-    .lte("longitude", lng + radius);
-
-  if (error) {
-    console.error("error fetching food trucks based on user location", error);
+// an alternative way to implement fetch trucks by nearby sightings:
+export const getNearbyTruck = async (
+  lat: number,
+  lng: number,
+  radius: number | null = null
+) => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .rpc("get_nearby_truck", { lat: lat, lng: lng, radius: radius })
+      .select();
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error(error);
     return [];
   }
-
-  return data;
 };
+
 // -------------- FOOD TRUCK (END) --------------
 
 // -------------- SIGHTING (START) --------------
@@ -272,6 +269,19 @@ export const addSighting = async (
   return data;
 };
 
+// current: get all s c, then partion by s id (last active of each s)
+export const getLastActiveSighting = async (truckId: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_sightings_ordered_by_last_active")
+    .select();
+  if (error) return error;
+  console.log(error);
+
+  return data;
+};
+
+// -------------- SIGHTING CONFIRMATION (START)--------------
 export const addSightingConfirmation = async (
   sightingId: number,
   truckId: number
@@ -308,6 +318,8 @@ export const getConfirmationBySightingId = async (sightingId: number) => {
 
   return data;
 };
+// -------------- SIGHTING CONFIRMATION (END)--------------
+
 // -------------- SIGHTING (END) --------------
 
 // -------------- REVIEW (START) --------------
