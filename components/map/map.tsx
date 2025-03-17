@@ -35,6 +35,7 @@ const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
 
 export default function Map() {
   const router = useRouter();
+
   const supabase = createClient();
 
   // references

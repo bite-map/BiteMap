@@ -13,12 +13,21 @@ import {
 import SightingCard from "./sighting-card";
 import { IoMdHeart } from "react-icons/io";
 import AddReviewFoodTruckForm from "./add-or-edit-reviews";
+import { createClient } from "@/utils/supabase/client";
+import { UserMetadata } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 type FoodTruckProfileProps = {
   truckId: number;
 };
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
+  const router = useRouter();
+
+  const supabase = createClient();
+
+  const [user, setUser] = useState<UserMetadata | undefined>(undefined);
+
   const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
     "reviews"
   );
@@ -33,6 +42,12 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   };
 
   useEffect(() => {
+    // get logged in user
+    (async () => {
+      const session = await supabase.auth.getSession();
+      setUser(session.data.session?.user.user_metadata);
+    })();
+
     (async () => {
       setFoodTruck(await getFoodTruckDataById(truckId));
       // get current favorite state
@@ -96,21 +111,23 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
                 </div>
               )}
             </div>
-            <button
-              style={{
-                color: isFavorite ? "red" : "gray",
-              }}
-              onClick={async () => {
-                try {
-                  const data = await toggleFavorite(truckId);
-                  setIsFavorite(data);
-                } catch (error) {
-                  console.error(error);
-                }
-              }}
-            >
-              <IoMdHeart />
-            </button>
+            {user && (
+              <button
+                style={{
+                  color: isFavorite ? "red" : "gray",
+                }}
+                onClick={async () => {
+                  try {
+                    const data = await toggleFavorite(truckId);
+                    setIsFavorite(data);
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }}
+              >
+                <IoMdHeart />
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -151,7 +168,13 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       </div>
       <button
         className="bg-primary text-background py-2 px-4 rounded mt-4"
-        onClick={handleToggleAddReview}
+        onClick={() => {
+          if (!user) {
+            return router.push("/sign-in?error=Not signed in");
+          }
+
+          handleToggleAddReview();
+        }}
       >
         Add Review(TEST)
       </button>
