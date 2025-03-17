@@ -7,7 +7,7 @@ import { SubmitButton } from "../submit-button";
 import { addFoodTruck, addSighting } from "@/app/database-actions";
 import { useState } from "react";
 import { Location } from "../global-component-types";
-import { IoMdClose } from "react-icons/io";
+import { FaArrowLeft } from "react-icons/fa";
 
 type AddNewFoodTruckFormProps = {
   handleToggleAddTruck: () => void;
@@ -31,7 +31,7 @@ export default function AddNewFoodTruckForm({
         }}
         className="absolute top-1 right-1 bg-primary p-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center"
       >
-        <IoMdClose />
+        <FaArrowLeft />
       </button>
       <form className="flex flex-col min-w-64 max-w-64 mx-auto">
         <h1 className="text-2xl font-medium">Add food truck</h1>
