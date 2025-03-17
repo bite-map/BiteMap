@@ -9,13 +9,16 @@ import { getNearbyTruck } from "@/app/database-actions";
 
 type AddSightingProps = {
   handleToggleAddSighting: Function;
+  geocoder: google.maps.Geocoder | null;
 };
 
 export default function AddSighting({
   handleToggleAddSighting,
+  geocoder,
 }: AddSightingProps) {
   //use this location when adding sighting
   const [sightingLocation, setSightingLocation] = useState<Location>();
+
   const [trucks, setTrucks] = useState<any[]>();
   const [selectedTruck, setSelectedTruck] = useState<any | null>(null);
   const [searchResult, setSearchResult] = useState<any[]>();
@@ -127,10 +130,27 @@ export default function AddSighting({
       <div className="flex flex-row w-full ml-1 mr-1 items-center justify-center ">
         <button
           onClick={async () => {
-            if (sightingLocation && selectedTruck) {
+            if (sightingLocation && selectedTruck && geocoder) {
+              const address = await geocoder.geocode(
+                {
+                  location: {
+                    lat: sightingLocation.lat,
+                    lng: sightingLocation.lng,
+                  },
+                },
+                (result, status) => {
+                  if (status === "OK" && result && result[0]) {
+                    return result;
+                  }
+                  return null;
+                }
+              );
+              const addressFormatted = address.results[0].formatted_address;
+
               const data = await addSighting(
                 sightingLocation,
-                selectedTruck.id
+                selectedTruck.id,
+                addressFormatted
               );
               if (data) {
                 setSelectedTruck(null);

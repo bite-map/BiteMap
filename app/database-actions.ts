@@ -246,7 +246,8 @@ export const getDayOfWeekSighting = async (dayOfWeek: number) => {
 
 export const addSighting = async (
   location: Location,
-  food_truck_id: number
+  food_truck_id: number,
+  address: string | null
 ) => {
   const supabase = await createClient();
   const {
@@ -259,6 +260,7 @@ export const addSighting = async (
         food_truck_id: food_truck_id,
         location: `POINT(${location.lng} ${location.lat})`,
         created_by_profile_id: user?.id,
+        address_formatted: address,
       },
     ])
     .select()
@@ -270,15 +272,22 @@ export const addSighting = async (
 };
 
 // current: get all s c, then partion by s id (last active of each s)
-export const getLastActiveSighting = async (truckId: number) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .rpc("get_sightings_ordered_by_last_active")
-    .select();
-  if (error) return error;
-  console.log(error);
-
-  return data;
+export const getSightingsByLastActive = async (truckId: number) => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .rpc("get_sightings_ordered_by_last_active")
+      .select();
+    if (error) {
+      return [error];
+    }
+    return data.filter((sighting) => {
+      return sighting.food_truck_id == truckId;
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 // -------------- SIGHTING CONFIRMATION (START)--------------

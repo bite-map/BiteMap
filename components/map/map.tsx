@@ -23,11 +23,14 @@ import {
   trackLocation,
   getLocation,
 } from "./geo-utils";
-import { getLastActiveSighting, getNearbyTruck } from "@/app/database-actions";
+import {
+  getSightingsByLastActive,
+  getNearbyTruck,
+} from "@/app/database-actions";
 import { getMinDistanceSightingTruck } from "./filter-utils";
 
 // Load api library
-const libs: Library[] = ["core", "maps", "places", "marker"];
+const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
 
 export default function Map() {
   // references
@@ -39,6 +42,7 @@ export default function Map() {
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   const [location, setLocation] = useState<Location>();
+  const [geocoder, setGeocoder] = useState<google.maps.Geocoder>();
   // marker for tracking users location
   const [userMarker, setUserMarker] = useState<google.maps.Circle | null>(null);
 
@@ -204,6 +208,15 @@ export default function Map() {
     }
   }, [isDisplayedAddSighting, isDisplayedAddTruck]);
 
+  useEffect(() => {
+    // test
+    if (isLoaded && window.google) {
+      const geocoder = new window.google.maps.Geocoder();
+      setGeocoder(geocoder);
+      console.log(geocoder);
+    }
+    // test
+  }, [isLoaded]);
   // -----Effect-----
 
   return (
@@ -293,13 +306,14 @@ export default function Map() {
                 />
               </div>
             )}
-            {isAddingActive && (
+            {isAddingActive && geocoder && (
               <div className="absolute flex flex-col h-90 w-96 justify-center items-center top-16 ">
                 <div className="relative w-fit h-fit items-center">
                   {isDisplayedAddSighting ? (
                     <div className="relative w-80 h-fit bg-white p-2  border border-gray-300 rounded-xl ">
                       <AddSighting
                         handleToggleAddSighting={handleToggleAddSighting}
+                        geocoder={geocoder}
                       />
                     </div>
                   ) : (
@@ -320,6 +334,7 @@ export default function Map() {
                       <AddNewFoodTruckForm
                         handleToggle={handleToggleAddTruck}
                         location={location}
+                        geocoder={geocoder}
                       />
                     </div>
                   ) : (
