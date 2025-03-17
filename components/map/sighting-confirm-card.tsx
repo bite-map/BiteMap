@@ -8,6 +8,7 @@ import {
 } from "@/app/database-actions";
 import Link from "next/link";
 import { UserMetadata } from "@supabase/supabase-js";
+import { redirect } from "next/navigation";
 
 type SightingConfirmCardProps = {
   sighting: Sighting;
@@ -18,6 +19,7 @@ type SightingConfirmCardProps = {
 export default function SightingConfirmCard({
   sighting,
   setSelectedSighting,
+  user,
   //   set toggle this card display
 }: SightingConfirmCardProps) {
   const [truck, setTruck] = useState<Truck>();
@@ -48,6 +50,10 @@ export default function SightingConfirmCard({
         <button
           className="h-full w-full"
           onClick={async () => {
+            if (!user) {
+              return redirect("/sign-in");
+            }
+
             const data = await addSightingConfirmation(
               sighting.id,
               sighting.food_truck_id
