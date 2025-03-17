@@ -270,6 +270,7 @@ export default function Map() {
                 className="h-9 w-[250px] ml-auto"
                 type="text"
                 ref={placeAutoCompleteRef}
+                placeholder="Search by location"
               />
             </div>
 
