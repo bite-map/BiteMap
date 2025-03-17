@@ -28,12 +28,13 @@ import { ToastContainer } from "react-toastify";
 import { createToast } from "@/utils/toast";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
 
 export default function Map() {
+  const router = useRouter();
   const supabase = createClient();
 
   // references
@@ -359,7 +360,7 @@ export default function Map() {
             className="absolute bottom-0 right-0 m-3 inline-flex items-center justify-center bg-primary rounded-full w-14 h-14"
             onClick={() => {
               if (!user) {
-                return redirect("/sign-in?error=Not signed in");
+                return router.push("/sign-in?error=Not signed in");
               }
               handleToggleAddButton();
             }}

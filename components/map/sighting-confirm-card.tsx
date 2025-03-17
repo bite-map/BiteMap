@@ -8,7 +8,7 @@ import {
 } from "@/app/database-actions";
 import Link from "next/link";
 import { UserMetadata } from "@supabase/supabase-js";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { IoMdClose } from "react-icons/io";
 type SightingConfirmCardProps = {
@@ -25,7 +25,10 @@ export default function SightingConfirmCard({
   user,
   //   set toggle this card display
 }: SightingConfirmCardProps) {
+  const router = useRouter();
+
   const [truck, setTruck] = useState<Truck>();
+
   useEffect(() => {
     const getTruck = async () => {
       const truck = await getFoodTruckDataById(sighting.food_truck_id);
@@ -33,6 +36,7 @@ export default function SightingConfirmCard({
     };
     getTruck();
   }, []);
+
   return (
     <div className="h-64 w-80 justify-center items-center flex flex-col">
       <div className="w-full absolute h-9 top-0 flex flex-row-reverse ">
@@ -61,7 +65,7 @@ export default function SightingConfirmCard({
           className="h-full w-full"
           onClick={async () => {
             if (!user) {
-              return redirect("/sign-in");
+              return router.push("/sign-in?error=Not signed in");
             }
 
             const data = await addSightingConfirmation(
