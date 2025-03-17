@@ -303,6 +303,7 @@ export default function Map() {
             {selectedSighting && (
               <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
                 <SightingConfirmCard
+                  user={user}
                   sighting={selectedSighting}
                   setSelectedSighting={setSelectedSighting}
                 />

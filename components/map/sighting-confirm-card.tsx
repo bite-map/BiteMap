@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Sighting, Truck } from "../global-component-types";
 import {
@@ -5,10 +7,14 @@ import {
   getFoodTruckDataById,
 } from "@/app/database-actions";
 import Link from "next/link";
+import { UserMetadata } from "@supabase/supabase-js";
+
 type SightingConfirmCardProps = {
   sighting: Sighting;
   setSelectedSighting: Function;
+  user: UserMetadata | undefined;
 };
+
 export default function SightingConfirmCard({
   sighting,
   setSelectedSighting,
