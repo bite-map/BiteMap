@@ -23,11 +23,9 @@ import {
   trackLocation,
   getLocation,
 } from "./geo-utils";
-import {
-  getSightingsByLastActive,
-  getNearbyTruck,
-} from "@/app/database-actions";
-import { getMinDistanceSightingTruck } from "./filter-utils";
+
+import { ToastContainer } from "react-toastify";
+import { createToast } from "@/utils/toast";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
@@ -71,6 +69,10 @@ export default function Map() {
   // current id of sighting to display
   const [selectedSighting, setSelectedSighting] = useState<any>();
 
+  const [toastMessage, setToastMessage] = useState<{
+    message: string;
+    type: string;
+  } | null>(null);
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
@@ -207,16 +209,24 @@ export default function Map() {
       setIsAddingActive(false);
     }
   }, [isDisplayedAddSighting, isDisplayedAddTruck]);
-
   useEffect(() => {
-    // test
     if (isLoaded && window.google) {
       const geocoder = new window.google.maps.Geocoder();
       setGeocoder(geocoder);
-      console.log(geocoder);
     }
-    // test
   }, [isLoaded]);
+  // show toast
+  useEffect(() => {
+    if (toastMessage?.message && toastMessage.type) {
+      const toast = createToast(toastMessage?.message, toastMessage?.type);
+      if (toast) {
+        toast();
+      }
+    }
+    return () => {
+      setToastMessage(null);
+    };
+  }, [toastMessage]);
   // -----Effect-----
 
   return (
@@ -290,11 +300,12 @@ export default function Map() {
             {selectedSighting && (
               <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
                 <SightingConfirmCard
+                  setToastMessage={setToastMessage}
                   sighting={selectedSighting}
                   setSelectedSighting={setSelectedSighting}
                 />
               </div>
-            )}       
+            )}
 
             {isAddingActive && geocoder && (
               <div className="absolute flex flex-col h-90 w-96 justify-center items-center top-16 ">
@@ -302,6 +313,7 @@ export default function Map() {
                   {isDisplayedAddSighting && (
                     <div className="relative w-80 h-fit bg-white p-2  border border-gray-300 rounded-xl ">
                       <AddSighting
+                        setToastMessage={setToastMessage}
                         handleToggleAddSighting={handleToggleAddSighting}
                         handleToggleAddTruck={handleToggleAddTruck}
                         geocoder={geocoder}
@@ -314,6 +326,7 @@ export default function Map() {
                   {isDisplayedAddTruck && (
                     <div className="relative w-fit h-fit bg-white p-2  border border-gray-300 rounded-xl ">
                       <AddNewFoodTruckForm
+                        setToastMessage={setToastMessage}
                         handleToggleAddTruck={handleToggleAddTruck}
                         handleToggleAddSighting={handleToggleAddSighting}
                         location={location}
@@ -326,6 +339,7 @@ export default function Map() {
             )}
           </div>
 
+          <ToastContainer></ToastContainer>
           {/* add new button:  */}
           <div
             className="absolute bottom-0 right-0 m-3 inline-flex items-center justify-center bg-primary rounded-full w-14 h-14"
