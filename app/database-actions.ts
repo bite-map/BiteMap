@@ -156,11 +156,15 @@ export const getTruckBySightingId = async (sighitngId: number) => {
 };
 
 // an alternative way to implement fetch trucks by nearby sightings:
-export const getNearbyTruck = async (lat: number, lng: number) => {
+export const getNearbyTruck = async (
+  lat: number,
+  lng: number,
+  radius: number | null = null
+) => {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .rpc("get_nearby_truck", { lat: lat, lng: lng, radius: 90000 })
+      .rpc("get_nearby_truck", { lat: lat, lng: lng, radius: radius })
       .select();
     if (error) throw error;
     return data || [];
@@ -265,6 +269,19 @@ export const addSighting = async (
   return data;
 };
 
+// current: get all s c, then partion by s id (last active of each s)
+export const getLastActiveSighting = async (truckId: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_sightings_ordered_by_last_active")
+    .select();
+  if (error) return error;
+  console.log(error);
+
+  return data;
+};
+
+// -------------- SIGHTING CONFIRMATION (START)--------------
 export const addSightingConfirmation = async (
   sightingId: number,
   truckId: number
@@ -301,6 +318,8 @@ export const getConfirmationBySightingId = async (sightingId: number) => {
 
   return data;
 };
+// -------------- SIGHTING CONFIRMATION (END)--------------
+
 // -------------- SIGHTING (END) --------------
 
 // -------------- REVIEW (START) --------------

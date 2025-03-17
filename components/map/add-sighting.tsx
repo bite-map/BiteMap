@@ -2,16 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 //helpers
-import {
-  getSightingBySightingId,
-  addSightingConfirmation,
-  addSighting,
-  getTruckBySightingId,
-  getFoodTruckData,
-} from "@/app/database-actions";
+import { addSighting } from "@/app/database-actions";
 import { getLocation } from "./geo-utils";
 import { Truck, Location } from "../global-component-types";
-import { getNearbyTruck } from "./filter-utils";
+import { getNearbyTruck } from "@/app/database-actions";
 
 type AddSightingProps = {
   handleToggleAddSighting: Function;
@@ -36,11 +30,13 @@ export default function AddSighting({
   }, []);
 
   useEffect(() => {
+    // default to fetch a large radius
     const fetchTruck = async () => {
       if (sightingLocation) {
         const data = (await getNearbyTruck(
           sightingLocation?.lat,
-          sightingLocation?.lng
+          sightingLocation?.lng,
+          null
         )) as Truck[];
         if (data?.length) {
           setTrucks(data);

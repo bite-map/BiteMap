@@ -23,7 +23,8 @@ import {
   trackLocation,
   getLocation,
 } from "./geo-utils";
-import { getMinDistanceSightingTruck, getNearbyTruck } from "./filter-utils";
+import { getLastActiveSighting, getNearbyTruck } from "@/app/database-actions";
+import { getMinDistanceSightingTruck } from "./filter-utils";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker"];

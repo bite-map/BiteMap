@@ -25,7 +25,7 @@ export default function SightingConfirmCard({
   return (
     <div className="h-64 w-80 justify-center items-center">
       <div className="">
-        x<button onClick={() => {}}></button>
+        <button onClick={() => {}}>x</button>
       </div>
       <div className="justify-center items-center bg-primary mt-3 mb-3 ml-3 mr-3 rounded-xl">
         <Link

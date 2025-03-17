@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Sighting } from "../global-component-types";
 import Link from "next/link";
 import { TiArrowForward } from "react-icons/ti";
-import { FaSpinner} from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import { GiCheckMark } from "react-icons/gi";
 import { usePathname } from "next/navigation";
 import {
