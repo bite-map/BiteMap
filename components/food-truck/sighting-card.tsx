@@ -35,10 +35,7 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
       `${year}-${month}-${day} ${dayOfWeek} ${hours}:${minutes}:${seconds}`
     );
   }, []);
-  useEffect(() => {
-    console.log(sightingData);
-    console.log(localTime);
-  }, [localTime]);
+
   return (
     <div className="flex rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <div className="grow overflow-hidden px-2 py-1">
@@ -60,23 +57,13 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
           </p>
         )}
       </div>
-      {pathname === "/user-profile" ? (
+      {pathname === "/user-profile" && (
         <Link
           href={`/truck-profile/${sightingData.food_truck_id}`}
           className=" flex justify-center items-center text-background text-2xl bg-primary w-20"
         >
           <TiArrowForward />
         </Link>
-      ) : (
-        <button
-          onClick={() => {
-            const truckId = Number(pathname.split("/").pop());
-            addSightingConfirmation(sightingData.id, truckId);
-          }}
-          className=" flex flex-none justify-center items-center text-background text-2xl bg-primary w-16"
-        >
-          <GiCheckMark size={20} />
-        </button>
       )}
     </div>
   );
