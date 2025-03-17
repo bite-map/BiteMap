@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Sighting, Truck } from "../global-component-types";
 import {
@@ -5,19 +7,28 @@ import {
   getFoodTruckDataById,
 } from "@/app/database-actions";
 import Link from "next/link";
+import { UserMetadata } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
+
 import { IoMdClose } from "react-icons/io";
 type SightingConfirmCardProps = {
   setToastMessage: (params: { message: string; type: string }) => void;
   sighting: Sighting;
   setSelectedSighting: Function;
+  user: UserMetadata | undefined;
 };
+
 export default function SightingConfirmCard({
   setToastMessage,
   sighting,
   setSelectedSighting,
+  user,
   //   set toggle this card display
 }: SightingConfirmCardProps) {
+  const router = useRouter();
+
   const [truck, setTruck] = useState<Truck>();
+
   useEffect(() => {
     const getTruck = async () => {
       const truck = await getFoodTruckDataById(sighting.food_truck_id);
@@ -25,6 +36,7 @@ export default function SightingConfirmCard({
     };
     getTruck();
   }, []);
+
   return (
     <div className="h-64 w-80 justify-center items-center flex flex-col">
       <div className="w-full absolute h-9 top-0 flex flex-row-reverse ">
@@ -52,6 +64,10 @@ export default function SightingConfirmCard({
         <button
           className="h-full w-full"
           onClick={async () => {
+            if (!user) {
+              return router.push("/sign-in?error=Not signed in");
+            }
+
             const data = await addSightingConfirmation(
               sighting.id,
               sighting.food_truck_id
