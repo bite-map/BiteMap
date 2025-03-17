@@ -15,6 +15,8 @@ export default function AddReviewFoodTruckForm({
   truckId,
 }: AddReviewFoodTruckFormProps) {
   const [rating, setRating] = useState(0);
+  const [file, setFile] = useState<File | null>(null);
+
   return (
     <div className="pt-2">
       <form className="flex flex-col min-w-64 max-w-64 mx-auto">
@@ -39,15 +41,23 @@ export default function AddReviewFoodTruckForm({
           />
           <Label
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            htmlFor="picture"
+            htmlFor="review-picture"
           >
             Picture
           </Label>
-          <Input type="file" name="picture" />
+          <Input
+            type="file"
+            name="review-picture"
+            onChange={(e) => {
+              if (e.target.files) {
+                setFile(e.target.files[0]);
+              }
+            }}
+          />
           <SubmitButton
             formAction={(formData) => {
               formData.append("rating", rating.toString()); // include rating in form data
-              AddFoodTruckReview(formData, truckId);
+              AddFoodTruckReview(formData, truckId, file as File);
               handleToggle();
             }}
             pendingText="Adding Review..."

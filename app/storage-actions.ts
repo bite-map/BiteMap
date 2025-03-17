@@ -40,6 +40,26 @@ export const addFoodTruckProfileImageToBucket = async (
   return data;
 };
 
+// adds a profile image associated with a trucks id to the bucket
+export const addReviewImageToBucket = async (
+  truckId: number,
+  reviewId: number,
+  file: File
+) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.storage
+    .from("BiteMap")
+    .upload(`review_images/truck_profile_${truckId}_review_${reviewId}`, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (error) console.error("Error adding review picture to bucket: ", error);
+
+  return data;
+};
+
 // gets the public url of an image in storage
 export const getPublicUrlForImage = async (img: ProfileImage) => {
   const supabase = await createClient();
