@@ -88,7 +88,7 @@ export default function UserProfile() {
 
       <div className="border-b border-gray-200 mt-4">
         <nav className="flex -mb-px">
-          {["favorites", "sightings", "reviews"].map((tab) => (
+          {["favorites", "reviews", "sightings"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
@@ -119,18 +119,6 @@ export default function UserProfile() {
           </div>
         )}
 
-        {activeTab === "sightings" && (
-          <div className="grid grid-cols-1 gap-y-2">
-            {sightingData.length > 0 ? (
-              sightingData.map((sighting) => (
-                <SightingCard key={sighting.id} sightingData={sighting} />
-              ))
-            ) : (
-              <p>No sighting available</p>
-            )}
-          </div>
-        )}
-
         {activeTab === "reviews" && (
           <div className="grid grid-cols-1 gap-y-3">
             {reviewsData.length > 0 ? (
@@ -139,6 +127,18 @@ export default function UserProfile() {
               ))
             ) : (
               <p>No reviews available</p>
+            )}
+          </div>
+        )}
+
+        {activeTab === "sightings" && (
+          <div className="grid grid-cols-1 gap-y-2">
+            {sightingData.length > 0 ? (
+              sightingData.map((sighting) => (
+                <SightingCard key={sighting.id} sightingData={sighting} />
+              ))
+            ) : (
+              <p>No sighting available</p>
             )}
           </div>
         )}
