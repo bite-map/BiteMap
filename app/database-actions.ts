@@ -382,15 +382,33 @@ export const getConfirmationBySightingId = async (sightingId: number) => {
 // -------------- SIGHTING (END) --------------
 
 // -------------- REVIEW (START) --------------
+// get review data by user
 export const getReviewsData = async (profileId: string) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("reviews")
     .select(
-      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name)"
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image"
     )
     .eq("created_by_profile_id", profileId);
+
+  if (error) {
+    console.error("Error fetching reviews:", error);
+    return [];
+  }
+  return data;
+};
+
+export const getReviewsDataByTruck = async (truckId: number) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select(
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image"
+    )
+    .eq("food_truck_profile_id", truckId);
 
   if (error) {
     console.error("Error fetching reviews:", error);

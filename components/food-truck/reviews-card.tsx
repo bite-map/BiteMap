@@ -1,5 +1,6 @@
 import React from "react";
 import { Review } from "../global-component-types";
+import Image from "next/image";
 
 type ReviewCardProps = {
   reviewsData: Review;
@@ -14,6 +15,13 @@ export default function ReviewCard({ reviewsData }: ReviewCardProps) {
             {reviewsData.food_truck_profiles.name}
           </h2>
           <p>{reviewsData.content}</p>
+          <Image
+            className="h-[300px] object-cover"
+            src={reviewsData.image}
+            alt="Picture of a food truck"
+            width={600}
+            height={600}
+          ></Image>
         </div>
       </div>
     </div>
