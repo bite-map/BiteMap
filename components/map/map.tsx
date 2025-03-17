@@ -209,6 +209,12 @@ export default function Map() {
       setIsAddingActive(false);
     }
   }, [isDisplayedAddSighting, isDisplayedAddTruck]);
+  useEffect(() => {
+    if (isLoaded && window.google) {
+      const geocoder = new window.google.maps.Geocoder();
+      setGeocoder(geocoder);
+    }
+  }, [isLoaded]);
   // show toast
   useEffect(() => {
     if (toastMessage?.message && toastMessage.type) {
