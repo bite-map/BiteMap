@@ -6,10 +6,13 @@ import {
 } from "@/app/database-actions";
 import Link from "next/link";
 type SightingConfirmCardProps = {
+  setToastMessage: (params: { message: string; type: string }) => void;
+
   sighting: Sighting;
   setSelectedSighting: Function;
 };
 export default function SightingConfirmCard({
+  setToastMessage,
   sighting,
   setSelectedSighting,
   //   set toggle this card display
@@ -46,9 +49,13 @@ export default function SightingConfirmCard({
               sighting.id,
               sighting.food_truck_id
             );
-
+            if (data) {
+              setToastMessage({
+                message: "successfully confirmed",
+                type: "success",
+              });
+            }
             setSelectedSighting(null);
-            // TOAST
           }}
         >
           <p className="justify-center items-center text-center">

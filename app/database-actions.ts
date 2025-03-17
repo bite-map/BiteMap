@@ -268,6 +268,8 @@ export const addSighting = async (
       truck_id: food_truck_id,
       radius: 200,
     });
+    console.log(data);
+
     if (data && data.length > 0) {
       // inert to confirmation, return number of duplicated sightings
       const nearestSightingId = data[0].id;
@@ -283,25 +285,25 @@ export const addSighting = async (
             },
           ])
           .select();
-      if (error) {
+      if (confirmationError) {
         throw error;
       }
-      return { data: data, duplicatedSightingCount: count };
+      console.log(confirmationData);
+      return { data: confirmationData, duplicatedSightingCount: count };
     }
-    // const { data: sd, error: se } = await supabase
-    //   .from("food_truck_sightings")
-    //   .insert([
-    //     {
-    //       food_truck_id: food_truck_id,
-    //       location: `POINT(${location.lng} ${location.lat})`,
-    //       created_by_profile_id: user?.id,
-    //       address_formatted: address,
-    //     },
-    //   ])
-    //   .select()
-    //   .single();
-    if (error) return error;
-    console.log(data, error);
+    const { data: sightingData, error: sightingError } = await supabase
+      .from("food_truck_sightings")
+      .insert([
+        {
+          food_truck_id: food_truck_id,
+          location: `POINT(${location.lng} ${location.lat})`,
+          created_by_profile_id: user?.id,
+          address_formatted: address,
+        },
+      ])
+      .select()
+      .single();
+    console.log(sightingData);
     return data;
   } catch (error) {
     console.error(error);

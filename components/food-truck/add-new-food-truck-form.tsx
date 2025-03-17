@@ -10,6 +10,7 @@ import { Location } from "../global-component-types";
 import { FaArrowLeft } from "react-icons/fa";
 
 type AddNewFoodTruckFormProps = {
+  setToastMessage: (params: { message: string; type: string }) => void;
   handleToggleAddTruck: () => void;
   handleToggleAddSighting: () => void;
   location: Location;
@@ -17,6 +18,7 @@ type AddNewFoodTruckFormProps = {
 };
 
 export default function AddNewFoodTruckForm({
+  setToastMessage,
   handleToggleAddTruck,
   handleToggleAddSighting,
   location,
@@ -77,8 +79,7 @@ export default function AddNewFoodTruckForm({
                 formData.get("food-style") as string,
                 file as File
               );
-              console.log(truckData);
-              // sighting
+              // add initial sighting
               if (truckData && geocoder) {
                 const address = await geocoder.geocode(
                   {
@@ -101,6 +102,12 @@ export default function AddNewFoodTruckForm({
                   truckData[0].id,
                   addressFormatted
                 );
+                if (sighitng) {
+                  setToastMessage({
+                    message: "successfully add new truck",
+                    type: "success",
+                  });
+                }
                 console.log(sighitng);
               }
               handleToggleAddTruck();
