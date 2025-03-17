@@ -12,12 +12,14 @@ import { IoMdClose } from "react-icons/io";
 import { SubmitButton } from "../submit-button";
 
 type AddSightingProps = {
+  setToastMessage: (params: { message: string; type: string }) => void;
   handleToggleAddSighting: () => void;
   handleToggleAddTruck: () => void;
   geocoder: google.maps.Geocoder | null;
 };
 
 export default function AddSighting({
+  setToastMessage,
   handleToggleAddSighting,
   handleToggleAddTruck,
   geocoder,
@@ -42,7 +44,6 @@ export default function AddSighting({
     const filteredItems = trucks?.filter((truck) =>
       truck.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     setFilteredTrucks(filteredItems);
   };
 
@@ -71,14 +72,8 @@ export default function AddSighting({
     if (typeof trucks !== "undefined") {
       setLoadingTrucks(false);
     }
-
     setFilteredTrucks(trucks);
   }, [trucks]);
-
-  useEffect(() => {
-    console.log(sightingLocation);
-    console.log(trucks);
-  }, [trucks, sightingLocation]);
 
   return (
     <div className="relative pt-2">
@@ -206,6 +201,18 @@ export default function AddSighting({
                 addressFormatted
               );
               if (data) {
+                if (data.duplicatedSightingCount) {
+                  setToastMessage({
+                    message:
+                      "Found an existing sighting, automatically confirming..",
+                    type: "info",
+                  });
+                } else {
+                  setToastMessage({
+                    message: "successfully add new sighting",
+                    type: "success",
+                  });
+                }
                 setSelectedTruck(null);
                 setSuccess(true);
               }
