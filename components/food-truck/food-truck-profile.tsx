@@ -8,7 +8,7 @@ import {
   getSightingByTruckId,
   toggleFavorite,
   getIsFavorite,
-  getLastActiveSighting,
+  getSightingsByLastActive,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
 import { IoMdHeart } from "react-icons/io";
@@ -20,10 +20,11 @@ type FoodTruckProfileProps = {
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
-    "sightings"
+    "reviews"
   );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
+  const [lastActive, setLastActive] = useState<string>();
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
 
@@ -42,13 +43,31 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
 
   useEffect(() => {
     (async () => {
-      setSightings(await getSightingByTruckId(truckId));
-      const data = await getLastActiveSighting(truckId);
+      const data = await getSightingsByLastActive(truckId);
+      console.log(data);
+      if (data) {
+        setSightings(data);
+      }
       // Going to implement last active at (location, time)
     })();
   }, [foodTruck]);
 
-  useEffect(() => {}, [isFavorite]);
+  useEffect(() => {
+    if (sightings) {
+      console.log(sightings);
+      const localTime = new Date(sightings[0].last_active_time);
+      const year = localTime.getFullYear().toString().slice(-2);
+      const month = (localTime.getMonth() + 1).toString().padStart(2, "0");
+      const day = localTime.getDate().toString().padStart(2, "0");
+      const dayOfWeek = localTime.toString().split(" ")[0];
+      const hours = localTime.getHours().toString().padStart(2, "0");
+      const minutes = localTime.getMinutes().toString().padStart(2, "0");
+      const seconds = localTime.getSeconds().toString().padStart(2, "0");
+      setLastActive(
+        `${year}-${month}-${day} ${dayOfWeek} ${hours}:${minutes}:${seconds}`
+      );
+    }
+  }, [sightings]);
 
   useEffect(() => {
     console.log(foodTruck);
@@ -71,7 +90,16 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
               <h2 className="text-lg font-semibold text-primary">
                 {foodTruck.name}
               </h2>
+
               <p>{foodTruck.food_style}</p>
+            </div>
+            <div>
+              {lastActive && (
+                <div>
+                  <p> Last seen at:</p>
+                  <p>{lastActive}</p>
+                </div>
+              )}
             </div>
             <button
               style={{
@@ -93,7 +121,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       )}
       <div className="border-b border-gray-200 mt-4">
         <nav className="flex -mb-px">
-          {["sightings", "reviews"].map((tab) => (
+          {["reviews", "sightings"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
@@ -109,6 +137,11 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         </nav>
       </div>
       <div className="pt-3">
+        {activeTab === "reviews" && (
+          <div>
+            <p>No reviews available</p>
+          </div>
+        )}
         {activeTab === "sightings" && (
           <div className="flex flex-col gap-y-2">
             {sightings ? (
@@ -118,12 +151,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
             ) : (
               <p>No sighting available</p>
             )}
-          </div>
-        )}
-
-        {activeTab === "reviews" && (
-          <div>
-            <p>No reviews available</p>
           </div>
         )}
       </div>
