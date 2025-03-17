@@ -12,27 +12,47 @@ import {
 } from "@/app/database-actions";
 
 type SightingCardProps = {
-  sightingData: Sighting;
+  sightingData: any;
 };
 
 export default function SightingCard({ sightingData }: SightingCardProps) {
   const pathname = usePathname();
-  const [location, setLocation] = useState<any>();
+  const [localTime, setLocalTime] = useState<string>();
+
+  // TODO: calculate sighting frequency, change db function
+  // TODO: parse latlng to address
+  // parse to human readable str
   useEffect(() => {
-    const parseSighting = async () => {
-      const parsedSighting = await getSightingBySightingId(sightingData.id);
-      setLocation(parsedSighting);
-    };
-    parseSighting();
+    const localTime = new Date(sightingData.last_active_time);
+    const year = localTime.getFullYear().toString().slice(-2);
+    const month = (localTime.getMonth() + 1).toString().padStart(2, "0");
+    const day = localTime.getDate().toString().padStart(2, "0");
+    const dayOfWeek = localTime.toString().split(" ")[0];
+    const hours = localTime.getHours().toString().padStart(2, "0");
+    const minutes = localTime.getMinutes().toString().padStart(2, "0");
+    const seconds = localTime.getSeconds().toString().padStart(2, "0");
+    setLocalTime(
+      `${year}-${month}-${day} ${dayOfWeek} ${hours}:${minutes}:${seconds}`
+    );
   }, []);
+  useEffect(() => {
+    console.log(sightingData);
+    console.log(localTime);
+  }, [localTime]);
   return (
     <div className="flex rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <div className="grow overflow-hidden px-2 py-1">
-        <h2 className="text-lg font-semibold text-primary">
-          {sightingData.food_truck_profiles.name}
-        </h2>
-        {location ? (
-          <p className="truncate">{`lat: ${location.lat}, lng: ${location.lng}`}</p>
+        {sightingData ? (
+          <div className="">
+            {sightingData.address_formatted ? (
+              <p className="truncate overflow-auto mb-1">
+                {sightingData.address_formatted}
+              </p>
+            ) : (
+              <p className="truncate">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
+            )}
+            <p>{`Last sighted at: ${localTime}`}</p>
+          </div>
         ) : (
           <p className="flex items-center gap-2">
             Loading location{" "}
