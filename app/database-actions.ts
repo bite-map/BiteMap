@@ -164,7 +164,11 @@ export const getNearbyTruck = async (
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .rpc("get_nearby_truck", { lat: lat, lng: lng, radius: radius })
+      .rpc("get_nearby_truck", {
+        lat: lat,
+        lng: lng,
+        radius: radius,
+      })
       .select();
     if (error) throw error;
     return data || [];
@@ -173,6 +177,8 @@ export const getNearbyTruck = async (
     return [];
   }
 };
+
+// get_nearby_truck_prevent_duplicate;
 
 // -------------- FOOD TRUCK (END) --------------
 
