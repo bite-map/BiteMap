@@ -40,6 +40,7 @@ type Review = {
   created_by_profile_id: string;
   food_truck_profiles: { name: string };
   image: string;
+  rating: number;
 };
 
 type ProfileImage = {

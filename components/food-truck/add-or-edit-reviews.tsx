@@ -25,7 +25,11 @@ export default function AddReviewFoodTruckForm({
         {/* RATING STAR FOR THE USER EXPERIENCE LATER */}
         <div className="mt-4">
           <Label className="text-sm font-medium">Overall Rating</Label>
-          <StarRating rating={rating} setRating={setRating} />
+          <StarRating
+            rating={rating}
+            setRating={setRating}
+            isClickable={true}
+          />
         </div>
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
           <Label

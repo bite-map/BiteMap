@@ -1,6 +1,7 @@
 import React from "react";
 import { Review } from "../global-component-types";
 import Image from "next/image";
+import StarRating from "./star-rating";
 
 type ReviewCardProps = {
   reviewsData: Review;
@@ -14,6 +15,7 @@ export default function ReviewCard({ reviewsData }: ReviewCardProps) {
           <h2 className="text-lg font-semibold text-primary">
             {reviewsData.food_truck_profiles.name}
           </h2>
+          <StarRating rating={reviewsData.rating} isClickable={false} />
           <p>{reviewsData.content}</p>
           <Image
             className="h-[300px] object-cover"

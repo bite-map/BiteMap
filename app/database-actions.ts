@@ -389,7 +389,7 @@ export const getReviewsData = async (profileId: string) => {
   const { data, error } = await supabase
     .from("reviews")
     .select(
-      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image"
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image, rating"
     )
     .eq("created_by_profile_id", profileId);
 
@@ -406,7 +406,7 @@ export const getReviewsDataByTruck = async (truckId: number) => {
   const { data, error } = await supabase
     .from("reviews")
     .select(
-      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image"
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image, rating"
     )
     .eq("food_truck_profile_id", truckId);
 
