@@ -27,7 +27,11 @@ export default function FoodTruckCardLanding(
     const fetchTruck = async () => {
       if (location) {
         setLoading(true);
-        const trucks = await getNearbyTruck(location?.lat, location?.lng);
+        const trucks = await getNearbyTruck(
+          location?.lat,
+          location?.lng,
+          100000
+        );
 
         setTrucks(trucks);
         setLoading(false);
