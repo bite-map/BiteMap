@@ -13,12 +13,14 @@ type AddNewFoodTruckFormProps = {
   handleToggleAddTruck: () => void;
   handleToggleAddSighting: () => void;
   location: Location;
+  geocoder: google.maps.Geocoder | null;
 };
 
 export default function AddNewFoodTruckForm({
   handleToggleAddTruck,
   handleToggleAddSighting,
   location,
+  geocoder,
 }: AddNewFoodTruckFormProps) {
   const [file, setFile] = useState<File | null>(null);
 
@@ -77,8 +79,29 @@ export default function AddNewFoodTruckForm({
               );
               console.log(truckData);
               // sighting
-              if (truckData) {
-                const sighitng = addSighting(location, truckData[0].id);
+              if (truckData && geocoder) {
+                const address = await geocoder.geocode(
+                  {
+                    location: {
+                      lat: location.lat,
+                      lng: location.lng,
+                    },
+                  },
+                  (result, status) => {
+                    if (status === "OK" && result && result[0]) {
+                      return result;
+                    }
+                    return null;
+                  }
+                );
+                const addressFormatted = address.results[0].formatted_address;
+
+                const sighitng = await addSighting(
+                  location,
+                  truckData[0].id,
+                  addressFormatted
+                );
+                console.log(sighitng);
               }
               handleToggleAddTruck();
             }}
