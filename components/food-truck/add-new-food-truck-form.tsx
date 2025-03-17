@@ -7,20 +7,32 @@ import { SubmitButton } from "../submit-button";
 import { addFoodTruck, addSighting } from "@/app/database-actions";
 import { useState } from "react";
 import { Location } from "../global-component-types";
+import { IoMdClose } from "react-icons/io";
 
 type AddNewFoodTruckFormProps = {
-  handleToggle: () => void;
+  handleToggleAddTruck: () => void;
+  handleToggleAddSighting: () => void;
   location: Location;
 };
 
 export default function AddNewFoodTruckForm({
-  handleToggle,
+  handleToggleAddTruck,
+  handleToggleAddSighting,
   location,
 }: AddNewFoodTruckFormProps) {
   const [file, setFile] = useState<File | null>(null);
 
   return (
-    <div className="pt-2">
+    <div className="relative pt-2 w-80">
+      <button
+        onClick={() => {
+          handleToggleAddTruck();
+          handleToggleAddSighting();
+        }}
+        className="absolute top-1 right-1 bg-primary p-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center"
+      >
+        <IoMdClose />
+      </button>
       <form className="flex flex-col min-w-64 max-w-64 mx-auto">
         <h1 className="text-2xl font-medium">Add food truck</h1>
         <p className="text-sm text-foreground">
@@ -68,11 +80,11 @@ export default function AddNewFoodTruckForm({
               if (truckData) {
                 const sighitng = addSighting(location, truckData[0].id);
               }
-              handleToggle();
+              handleToggleAddTruck();
             }}
-            pendingText="Adding truck..."
+            pendingText="Submitting..."
           >
-            Add Truck & Sighting
+            Submit
           </SubmitButton>
           <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8"></div>
         </div>
