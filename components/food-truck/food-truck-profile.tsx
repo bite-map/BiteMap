@@ -19,7 +19,6 @@ import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
-
 type FoodTruckProfileProps = {
   truckId: number;
 };
@@ -198,11 +197,14 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </div>
         )}
       </div>
+
       {isDisplayedAddReview && (
-        <AddReviewFoodTruckForm
-          handleToggle={handleToggleAddReview}
-          truckId={truckId}
-        />
+        <div className="absolute left-0 flex flex-col h-90 w-96 justify-center items-center top-32 ">
+          <AddReviewFoodTruckForm
+            handleToggle={handleToggleAddReview}
+            truckId={truckId}
+          />
+        </div>
       )}
     </div>
   );

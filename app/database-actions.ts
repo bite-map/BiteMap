@@ -403,6 +403,8 @@ export const getReviewsData = async (profileId: string) => {
 export const getReviewsDataByTruck = async (truckId: number) => {
   const supabase = await createClient();
 
+  console.log("TRUCK ID", truckId);
+
   const { data, error } = await supabase
     .from("reviews")
     .select(
