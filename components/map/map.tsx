@@ -114,7 +114,7 @@ export default function Map() {
   // maybe pass all of those stuff with setters to filter component when cleaning up the map component
   // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
   const buttonActions = {
-    searchInGoogle: () => {
+    staticTrucks: () => {
       if (!displayPlacesMarker && location) {
         searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
         setDisplayPlacesMarker(true);
@@ -124,7 +124,7 @@ export default function Map() {
         setDisplayPlacesMarker(false);
       }
     },
-    sightingActiveInLastWeek: async () => {
+    activeInLastWeek: async () => {
       if (!displaySightingsMarker) {
         const data = await getSightingActiveInLastWeek();
         if (data instanceof PostgrestError) {
@@ -145,7 +145,7 @@ export default function Map() {
         setDisplaySightingsMarker(false);
       }
     },
-    popularSightings: async () => {
+    popular: async () => {
       if (!displaySightingsMarker) {
         const data = await getSightingsOrderedByLastActiveCountConfirm();
         if (data instanceof PostgrestError) {
@@ -357,6 +357,9 @@ export default function Map() {
             {selectedSighting && (
               <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300 overflow-clip">
                 <SightingConfirmCard
+                  location={location}
+                  map={map as google.maps.Map}
+                  setSighting={setSighting}
                   user={user}
                   setToastMessage={setToastMessage}
                   sighting={selectedSighting}
