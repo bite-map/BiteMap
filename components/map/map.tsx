@@ -9,7 +9,7 @@ import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { Input } from "../ui/input";
 import { createCurrentLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
-
+import Filter from "./filter";
 // types
 import { Location, Sighting } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
@@ -19,15 +19,17 @@ import {
   createMarkerOnMap,
   createInfoCard,
   fetchSighting,
+  makeSightingMarkerUsingSighting,
   searchFoodTruck,
   trackLocation,
   getLocation,
 } from "./geo-utils";
+import { getSightingActiveInLastWeek } from "./filter-utils";
 
 import { ToastContainer } from "react-toastify";
 import { createToast } from "@/utils/toast";
 import { createClient } from "@/utils/supabase/client";
-import { UserMetadata } from "@supabase/supabase-js";
+import { PostgrestError, UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
 // Load api library
@@ -108,6 +110,46 @@ export default function Map() {
   };
   // show sighting confirm card
 
+  // maybe pass all of those stuff with setters to filter component
+  const buttonActions = {
+    searchTruckInGooglePlaces: () => {
+      if (!displayPlacesMarker && location) {
+        searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
+        setDisplayPlacesMarker(true);
+      }
+      if (displayPlacesMarker && places) {
+        clear(places);
+        setDisplayPlacesMarker(false);
+      }
+    },
+    getSightingLastWeekActive: async () => {
+      if (!displaySightingsMarker) {
+        const data = await getSightingActiveInLastWeek();
+        if (data instanceof PostgrestError) {
+          console.error(data);
+          return;
+        }
+        makeSightingMarkerUsingSighting(
+          map as google.maps.Map,
+          setSighting,
+          setSelectedSighting,
+          data
+        );
+        setDisplaySightingsMarker(true);
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
+    },
+    getSightingConfirmationBiggerThan: async () => {
+      //
+    },
+    getSightingActiveOnCurrentDayOfWeek: async () => {
+      //
+    },
+  };
   // -----Effect-----
   useEffect(() => {
     // get logged in user
@@ -262,31 +304,7 @@ export default function Map() {
                 {/* these btns will be temperary gray since it will be changed to drop down btn */}
                 {/* fetch from google places */}
                 <button
-                  className=""
-                  type="button"
-                  onClick={() => {
-                    if (!displayPlacesMarker) {
-                      searchFoodTruck(
-                        google,
-                        map as google.maps.Map,
-                        setPlaces,
-                        location
-                      );
-                      setDisplayPlacesMarker(true);
-                    }
-                    if (displayPlacesMarker && places) {
-                      clear(places);
-                      setDisplayPlacesMarker(false);
-                    }
-                  }}
-                >
-                  <FaMapMarkerAlt />
-                </button>
-
-                {/* display sighitngs */}
-                <button
-                  className=""
-                  type="button"
+                  className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                   onClick={async () => {
                     if (!displaySightingsMarker) {
                       fetchSighting(
@@ -304,8 +322,13 @@ export default function Map() {
                     }
                   }}
                 >
-                  <LuRefreshCw />
+                  <FaMapMarkerAlt className="fill-white" />
                 </button>
+                <Filter buttonActions={buttonActions} />
+                {/* <button className="h-8" type="button" onClick={}>
+                  <LuRefreshCw />
+                </button> */}
+                {/* display sighitngs */}
               </div>
               <Input
                 className="h-9 w-[250px] ml-auto"

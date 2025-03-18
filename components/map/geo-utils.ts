@@ -167,3 +167,33 @@ export const fetchSighting = async (
     setSightingMarkers(sightingMarkers);
   }
 };
+
+export const makeSightingMarkerUsingSighting = async (
+  map: google.maps.Map,
+  setSightingMarkers: Function,
+  setSelectedSighting: Function,
+  sightings: any[]
+) => {
+  if (sightings.length > 0) {
+    // store sightings
+    const sightingMarkers = sightings.map((sighting: any) => {
+      const location: google.maps.LatLng = new google.maps.LatLng(
+        sighting.lat,
+        sighting.lng
+      );
+      const sightingMarkerClickEvent = () => {
+        setSelectedSighting(sighting);
+      };
+      const marker = createMarkerOnMap(
+        location,
+        createSightingPin,
+        sighting.id.toString() as string,
+        null,
+        map as google.maps.Map,
+        sightingMarkerClickEvent
+      );
+      return marker;
+    });
+    setSightingMarkers(sightingMarkers);
+  }
+};

@@ -42,10 +42,8 @@ export default function UserProfile() {
         setFavoriteTrucks(favoriteTruckData);
       }
     };
-
     const fetchSightings = async () => {
       const data = await getSightingsOfUser();
-
       setSightingData(data);
     };
 
