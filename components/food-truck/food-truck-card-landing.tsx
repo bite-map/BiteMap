@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Truck, Location } from "./../global-component-types";
 import Image from "next/image";
 import Link from "next/link";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaSpinner } from "react-icons/fa";
 import { getNearbyTruck, getFoodNewTrucks } from "@/app/database-actions";
 import { getLocation } from "../map/geo-utils";
 import { createToast } from "@/utils/toast";
@@ -25,9 +25,9 @@ export default function FoodTruckCardLanding(
   const [locationDenied, setLocationDenied] = useState<boolean>(false);
 
   const locationToast = createToast(
-    "Location permissions denied! This app relies heavily on geolocation. Please consider granting location access.",
+    "Location permissions denied! This app relies heavily on geolocation. Please consider granting location access. Refresh to grant access.",
     "error",
-    8000
+    10000
   );
 
   useEffect(() => {
@@ -66,7 +66,10 @@ export default function FoodTruckCardLanding(
       <div className="flex flex-col gap-4 p-3 bg-muted">
         {!locationDenied ? (
           loading ? (
-            <p>Loading nearby food trucks...</p>
+            <p className="flex items-center gap-2 h-full w-full">
+              Loading Nearby Food Trucks{" "}
+              <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
+            </p>
           ) : trucks?.length === 0 || !trucks ? (
             <p>No food trucks found in your area.</p>
           ) : (
@@ -97,7 +100,6 @@ export default function FoodTruckCardLanding(
                           <div className="relative w-1/2 pt-3 pb-3 pr-3">
                             <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)} meters from you`}</p>
                           </div>
-                          {/* we need to fix the link here currently just the map */}
                           <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
                             <FaArrowRight />
                           </div>
@@ -134,7 +136,6 @@ export default function FoodTruckCardLanding(
                           </h2>
                           <p>{truck.food_style}</p>
                         </div>
-                        {/* we need to fix the link here currently just the map */}
                         <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
                           <FaArrowRight />
                         </div>
