@@ -27,7 +27,10 @@ export default function Filter({ buttonActions }: FilterProps) {
           {/* map: function array, onclick = set to function, then click marker button to execute function*/}
           {Object.entries(buttonActions).map(([actionName, actionFunction]) => {
             return (
-              <li className="flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-400 border">
+              <li
+                key={actionName}
+                className="flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-400 border"
+              >
                 <button
                   className="relative items-start w-full "
                   key={actionName}

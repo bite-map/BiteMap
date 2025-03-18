@@ -114,6 +114,7 @@ export default function Map() {
   // show sighting confirm card
 
   // maybe pass all of those stuff with setters to filter component when cleaning up the map component
+  // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
   const buttonActions = {
     searchInGoogle: () => {
       if (!displayPlacesMarker && location) {
@@ -149,7 +150,6 @@ export default function Map() {
     popularSightings: async () => {
       if (!displaySightingsMarker) {
         const data = await getSightingsOrderedByLastActiveCountConfirm();
-        console.log(data);
         if (data instanceof PostgrestError) {
           console.error(data);
           return;
@@ -349,7 +349,7 @@ export default function Map() {
                 {/* display sighitngs */}
               </div>
               <Input
-                className="h-9 w-[250px] ml-auto"
+                className="h-9 w-full ml-auto"
                 type="text"
                 ref={placeAutoCompleteRef}
                 placeholder="Search by location"

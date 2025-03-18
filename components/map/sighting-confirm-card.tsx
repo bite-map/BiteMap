@@ -32,6 +32,7 @@ export default function SightingConfirmCard({
   useEffect(() => {
     const getTruck = async () => {
       const truck = await getFoodTruckDataById(sighting.food_truck_id);
+      console.log(sighting);
       setTruck(truck);
     };
     getTruck();
@@ -67,7 +68,6 @@ export default function SightingConfirmCard({
             if (!user) {
               return router.push("/sign-in?error=Not signed in");
             }
-
             const data = await addSightingConfirmation(
               sighting.id,
               sighting.food_truck_id
