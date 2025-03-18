@@ -9,13 +9,16 @@ import {
   toggleFavorite,
   getIsFavorite,
   getSightingsByLastActive,
+  getReviewsDataByTruck,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
 import { IoMdHeart } from "react-icons/io";
 import AddReviewFoodTruckForm from "./add-or-edit-reviews";
+import ReviewCard from "./reviews-card";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -33,6 +36,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [lastActive, setLastActive] = useState<string>();
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
@@ -63,7 +67,15 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       }
       // Going to implement last active at (location, time)
     })();
+
+    (async () => {
+      setReviews(await getReviewsDataByTruck(truckId));
+    })();
   }, [foodTruck]);
+
+  useEffect(() => {
+    console.log(reviews);
+  }, [reviews]);
 
   useEffect(() => {
     if (sightings) {
@@ -150,9 +162,29 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       </div>
       <div className="pt-3">
         {activeTab === "reviews" && (
-          <div>
-            <p>No reviews available</p>
-          </div>
+          <>
+            <button
+              className="bg-primary text-background py-2 px-4 rounded mt-4"
+              onClick={() => {
+                if (!user) {
+                  return router.push("/sign-in?error=Not signed in");
+                }
+
+                handleToggleAddReview();
+              }}
+            >
+              Add Review(TEST)
+            </button>
+            <div className="grid grid-cols-1 gap-y-3">
+              {reviews.length > 0 ? (
+                reviews.map((review) => (
+                  <ReviewCard key={review.id} reviewsData={review} />
+                ))
+              ) : (
+                <p>No reviews available</p>
+              )}
+            </div>
+          </>
         )}
         {activeTab === "sightings" && (
           <div className="flex flex-col gap-y-2">
@@ -166,19 +198,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </div>
         )}
       </div>
-      <button
-        className="bg-primary text-background py-2 px-4 rounded mt-4"
-        onClick={() => {
-          if (!user) {
-            return router.push("/sign-in?error=Not signed in");
-          }
-
-          handleToggleAddReview();
-        }}
-      >
-        Add Review(TEST)
-      </button>
-
       {isDisplayedAddReview && (
         <AddReviewFoodTruckForm
           handleToggle={handleToggleAddReview}

@@ -5,6 +5,7 @@ import { Location } from "@/components/global-component-types";
 import { Truck, ProfileImage } from "../components/global-component-types";
 import {
   addFoodTruckProfileImageToBucket,
+  addReviewImageToBucket,
   getPublicUrlForImage,
 } from "./storage-actions";
 
@@ -177,7 +178,6 @@ export const getNearbyTruck = async (
     return [];
   }
 };
-
 // -------------- FOOD TRUCK (END) --------------
 
 // -------------- SIGHTING (START) --------------
@@ -379,17 +379,17 @@ export const getConfirmationBySightingId = async (sightingId: number) => {
   return data;
 };
 // -------------- SIGHTING CONFIRMATION (END)--------------
-
 // -------------- SIGHTING (END) --------------
 
 // -------------- REVIEW (START) --------------
+// get review data by user
 export const getReviewsData = async (profileId: string) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("reviews")
     .select(
-      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name)"
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image, rating"
     )
     .eq("created_by_profile_id", profileId);
 
@@ -399,23 +399,38 @@ export const getReviewsData = async (profileId: string) => {
   }
   return data;
 };
-// -------------- REVIEW (END) --------------
 
-// -------------- REVIEW --------------
+export const getReviewsDataByTruck = async (truckId: number) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select(
+      "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image, rating"
+    )
+    .eq("food_truck_profile_id", truckId);
+
+  if (error) {
+    console.error("Error fetching reviews:", error);
+    return [];
+  }
+  return data;
+};
+
 // adds a review the database
-
 export const AddFoodTruckReview = async (
   formData: FormData,
-  truckId: number
+  truckId: number,
+  file: File
 ) => {
-  // const truckId = formData.get("truckId") as string;
-  const rating = formData.get("rating") as string;
-  const content = formData.get("content") as string;
-
   const supabase = await createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const rating = formData.get("rating") as string;
+  const content = formData.get("content") as string;
 
   const { data, error } = await supabase
     .from("reviews")
@@ -428,9 +443,48 @@ export const AddFoodTruckReview = async (
       },
     ])
     .select();
-  if (error) throw error;
+
+  if (error) console.error(error);
+
+  let reviewId;
+
+  if (data) {
+    reviewId = data[0].id;
+  }
+
+  // add review image to storage and store returned data
+  const reviewImage = await addReviewImageToBucket(truckId, reviewId, file);
+
+  console.log("REVIEW IMAGE", reviewImage);
+
+  // get the public url for the profile image
+  const { publicUrl } = await getPublicUrlForImage(reviewImage as ProfileImage);
+
+  // update food truck profile with public url for profile image
+  addReviewImageToReview(reviewId, publicUrl);
+
+  if (error) console.error("Error adding food truck to database: ", error);
+
   return data;
 };
+
+// adds a review image to an existing review
+export const addReviewImageToReview = async (reviewId: number, url: string) => {
+  const supabase = await createClient();
+
+  // update food truck profile with public url for profile image
+  const { error } = await supabase
+    .from("reviews")
+    .update({ image: url })
+    .eq("id", reviewId);
+
+  if (error)
+    console.error(
+      `Error updating review picture for review ${reviewId}: `,
+      error
+    );
+};
+// -------------- REVIEW (END) --------------
 
 // -------------- FAVORITE --------------
 
