@@ -33,8 +33,19 @@ export const getSightingsOrderedByLastActiveCountConfirm = async () => {
     .rpc("get_sightings_ordered_by_last_active_count_confirm")
     .select();
   if (error) return error;
-  console.log(data);
   return data.filter((sighting) => {
     return sighting.confirmation_count > 10;
   });
+};
+
+// ----------- temp: for fetch and populate datas into db -----------
+
+export const populateData = async (lat: number, lng: number) => {
+  const supabase = await createClient();
+  //  const { data, error } = await supabase
+  //    .rpc("get_sightings_ordered_by_last_active_count_confirm")
+  //    .select();
+  //  if (error) return error;
+  //  data;
+  //  return data
 };

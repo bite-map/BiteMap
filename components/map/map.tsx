@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 // components / UI
-import { LuRefreshCw } from "react-icons/lu";
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { Input } from "../ui/input";
 import { createCurrentLocationPin } from "./createPinStyles";
@@ -27,6 +26,7 @@ import {
 import {
   getSightingActiveInLastWeek,
   getSightingsOrderedByLastActiveCountConfirm,
+  populateData,
 } from "./filter-utils";
 
 import { ToastContainer } from "react-toastify";
@@ -172,11 +172,36 @@ export default function Map() {
         setSelectedSighting(null);
         setDisplaySightingsMarker(false);
       }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
     },
     // TODO
     // getSightingActiveOnCurrentDayOfWeek: async () => {
     // },
   };
+
+  // populate places data from google places
+
+  const fetchDataPopulate = async () => {
+    const { Place } = (await google.maps.importLibrary(
+      "places"
+    )) as google.maps.PlacesLibrary;
+    const center = new google.maps.LatLng(35.65807, 139.751602);
+    const circle = new google.maps.Circle({ center: center, radius: 5000 });
+    const request = {
+      textQuery: "Food Truck",
+      fields: ["displayName", "location", "businessStatus"],
+      locationBias: circle,
+
+      includedType: "restaurant",
+    };
+    const { places } = await Place.searchByText(request);
+    console.log(places);
+  };
+  //
 
   // -----Effect-----
   useEffect(() => {
