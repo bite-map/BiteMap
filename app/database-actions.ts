@@ -391,7 +391,8 @@ export const getReviewsData = async (profileId: string) => {
     .select(
       "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image, rating"
     )
-    .eq("created_by_profile_id", profileId);
+    .eq("created_by_profile_id", profileId)
+    .order("id", { ascending: false });
 
   if (error) {
     console.error("Error fetching reviews:", error);
@@ -410,7 +411,8 @@ export const getReviewsDataByTruck = async (truckId: number) => {
     .select(
       "id, food_truck_profile_id, content, created_by_profile_id, food_truck_profiles(name), image, rating"
     )
-    .eq("food_truck_profile_id", truckId);
+    .eq("food_truck_profile_id", truckId)
+    .order("id", { ascending: false });
 
   if (error) {
     console.error("Error fetching reviews:", error);
