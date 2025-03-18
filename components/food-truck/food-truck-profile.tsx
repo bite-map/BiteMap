@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
-import { Sighting, Truck } from "../global-component-types";
+import { Truck } from "../global-component-types";
 import {
   getFoodTruckDataById,
-  getSightingByTruckId,
   toggleFavorite,
   getIsFavorite,
   getSightingsByLastActive,
@@ -18,7 +17,7 @@ import ReviewCard from "./reviews-card";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-
+import { IoCreateOutline } from "react-icons/io5";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -160,21 +159,24 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           ))}
         </nav>
       </div>
-      <div className="pt-3">
+      <div className="pt-2">
         {activeTab === "reviews" && (
           <>
-            <button
-              className="bg-primary text-background py-2 px-4 rounded mt-4"
-              onClick={() => {
-                if (!user) {
-                  return router.push("/sign-in?error=Not signed in");
-                }
+            <div className="flex">
+              <h1 className="text-2xl font-medium ml-2">Recent reviews</h1>
+              <button
+                className="bg-primary p-2 mr-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center ml-auto mb-2"
+                onClick={() => {
+                  if (!user) {
+                    return router.push("/sign-in?error=Not signed in");
+                  }
 
-                handleToggleAddReview();
-              }}
-            >
-              Add Review(TEST)
-            </button>
+                  handleToggleAddReview();
+                }}
+              >
+                <IoCreateOutline size={22} />
+              </button>
+            </div>
             <div className="grid grid-cols-1 gap-y-3">
               {reviews.length > 0 ? (
                 reviews.map((review) => (
@@ -198,11 +200,15 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </div>
         )}
       </div>
+
       {isDisplayedAddReview && (
-        <AddReviewFoodTruckForm
-          handleToggle={handleToggleAddReview}
-          truckId={truckId}
-        />
+        <div className="absolute left-0 flex flex-col h-90 w-96 justify-center items-center top-32 ">
+          <AddReviewFoodTruckForm
+            handleToggle={handleToggleAddReview}
+            truckId={truckId}
+            setReviews={setReviews}
+          />
+        </div>
       )}
     </div>
   );
