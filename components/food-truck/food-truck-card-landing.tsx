@@ -4,8 +4,11 @@ import { Truck, Location } from "./../global-component-types";
 import Image from "next/image";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
-import { getNearbyTruck } from "@/app/database-actions";
+import { getNearbyTruck, getFoodNewTrucks } from "@/app/database-actions";
 import { getLocation } from "../map/geo-utils";
+import { createToast } from "@/utils/toast";
+import { ToastContainer } from "react-toastify";
+
 type FoodTruckCardProps = {
   // foodTruck: Truck;
 };
@@ -17,16 +20,19 @@ export default function FoodTruckCardLanding(
 ) {
   const [location, setLocation] = useState<Location | null>();
   const [trucks, setTrucks] = useState<any[]>();
+  const [newTrucks, setNewTrucks] = useState<any[] | null>();
   const [loading, setLoading] = useState(true);
   const [locationDenied, setLocationDenied] = useState<boolean>(false);
+
+  const locationToast = createToast(
+    "Location permissions denied! This app relies heavily on geolocation. Please consider granting location access.",
+    "error",
+    8000
+  );
 
   useEffect(() => {
     getLocation(setLocation, setLocationDenied);
   }, []);
-
-  useEffect(() => {
-    console.log("Location denied", locationDenied);
-  }, [locationDenied]);
 
   useEffect(() => {
     const fetchTruck = async () => {
@@ -44,58 +50,104 @@ export default function FoodTruckCardLanding(
     };
     fetchTruck();
   }, [location]);
-  return (
-    <div className="flex flex-col gap-4 p-3 bg-muted">
-      <h1 className="text-xl text-primary">
-        <strong>Nearby Food Trucks You Might Like</strong>
-      </h1>
 
-      {!locationDenied ? (
-        loading ? (
-          <p>Loading nearby food trucks...</p>
-        ) : trucks?.length === 0 || !trucks ? (
-          <p>No food trucks found in your area.</p>
+  useEffect(() => {
+    (async () => {
+      setNewTrucks(await getFoodNewTrucks());
+    })();
+
+    if (locationDenied && locationToast) {
+      locationToast();
+    }
+  }, [locationDenied]);
+
+  return (
+    <>
+      <div className="flex flex-col gap-4 p-3 bg-muted">
+        {!locationDenied ? (
+          loading ? (
+            <p>Loading nearby food trucks...</p>
+          ) : trucks?.length === 0 || !trucks ? (
+            <p>No food trucks found in your area.</p>
+          ) : (
+            <>
+              <h1 className="text-xl text-primary">
+                <strong>Nearby Food Trucks You Might Like</strong>
+              </h1>
+              {/* display nearby trucks */}
+              {trucks.map((truck) => {
+                return (
+                  <div key={truck.id}>
+                    <Link href={`/truck-profile/${truck.id}`}>
+                      <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
+                        <Image
+                          className="h-[200px] object-cover"
+                          src={truck.avatar}
+                          alt="Picture of a food truck"
+                          width={600}
+                          height={600}
+                        ></Image>
+                        <div className="flex flex-row">
+                          <div className="relative w-1/2 pt-3 pb-3 pl-3">
+                            <h2 className="text-lg font-semibold text-primary">
+                              {truck.name}
+                            </h2>
+                            <p>{truck.food_style}</p>
+                          </div>
+                          <div className="relative w-1/2 pt-3 pb-3 pr-3">
+                            <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)} meters from you`}</p>
+                          </div>
+                          {/* we need to fix the link here currently just the map */}
+                          <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
+                            <FaArrowRight />
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
+            </>
+          )
         ) : (
-          trucks.map((truck) => {
-            return (
-              <div key={truck.id}>
-                <Link href={`/truck-profile/${truck.id}`}>
-                  <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
-                    <Image
-                      className="h-[200px] object-cover"
-                      src={truck.avatar}
-                      alt="Picture of a food truck"
-                      width={600}
-                      height={600}
-                    ></Image>
-                    <div className="flex flex-row">
-                      {/* <div className="p-3"> */}
-                      <div className="relative w-1/2 pt-3 pb-3 pl-3">
-                        <h2 className="text-lg font-semibold text-primary">
-                          {truck.name}
-                        </h2>
-                        <p>{truck.food_style}</p>
-                      </div>
-                      <div className="relative w-1/2 pt-3 pb-3 pr-3">
-                        <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)} meters from you`}</p>
-                      </div>
-                      {/* we need to fix the link here currently just the map */}
-                      <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
-                        <FaArrowRight />
+          <>
+            <h1 className="text-xl text-primary">
+              <strong>Recently Added Food Trucks You Might Like</strong>
+            </h1>
+            {/* display recently added trucks */}
+            {newTrucks?.map((truck) => {
+              return (
+                <div key={truck.id}>
+                  <Link href={`/truck-profile/${truck.id}`}>
+                    <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
+                      <Image
+                        className="h-[200px] object-cover"
+                        src={truck.avatar}
+                        alt="Picture of a food truck"
+                        width={600}
+                        height={600}
+                      ></Image>
+                      <div className="flex flex-row">
+                        <div className="relative w-1/2 pt-3 pb-3 pl-3">
+                          <h2 className="text-lg font-semibold text-primary">
+                            {truck.name}
+                          </h2>
+                          <p>{truck.food_style}</p>
+                        </div>
+                        {/* we need to fix the link here currently just the map */}
+                        <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
+                          <FaArrowRight />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              </div>
-            );
-          })
-        )
-      ) : (
-        <p>
-          This web app relies heavily on geolocation. Please consider granting
-          access to your devices location
-        </p>
-      )}
-    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </>
+        )}
+      </div>
+      <ToastContainer />
+    </>
   );
 }
