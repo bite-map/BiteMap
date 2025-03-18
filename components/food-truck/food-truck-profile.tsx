@@ -163,18 +163,21 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       <div className="pt-2">
         {activeTab === "reviews" && (
           <>
-            <button
-              className="bg-primary p-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center ml-auto mb-2"
-              onClick={() => {
-                if (!user) {
-                  return router.push("/sign-in?error=Not signed in");
-                }
+            <div className="flex">
+              <h1 className="text-2xl font-medium ml-2">Recent reviews</h1>
+              <button
+                className="bg-primary p-2 mr-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center ml-auto mb-2"
+                onClick={() => {
+                  if (!user) {
+                    return router.push("/sign-in?error=Not signed in");
+                  }
 
-                handleToggleAddReview();
-              }}
-            >
-              <IoCreateOutline size={222} />
-            </button>
+                  handleToggleAddReview();
+                }}
+              >
+                <IoCreateOutline size={22} />
+              </button>
+            </div>
             <div className="grid grid-cols-1 gap-y-3">
               {reviews.length > 0 ? (
                 reviews.map((review) => (
