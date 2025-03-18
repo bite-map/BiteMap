@@ -18,10 +18,15 @@ export default function FoodTruckCardLanding(
   const [location, setLocation] = useState<Location | null>();
   const [trucks, setTrucks] = useState<any[]>();
   const [loading, setLoading] = useState(true);
+  const [locationDenied, setLocationDenied] = useState<boolean>(false);
 
   useEffect(() => {
-    getLocation(setLocation);
+    getLocation(setLocation, setLocationDenied);
   }, []);
+
+  useEffect(() => {
+    console.log("Location denied", locationDenied);
+  }, [locationDenied]);
 
   useEffect(() => {
     const fetchTruck = async () => {
@@ -44,44 +49,52 @@ export default function FoodTruckCardLanding(
       <h1 className="text-xl text-primary">
         <strong>Nearby Food Trucks You Might Like</strong>
       </h1>
-      {loading ? (
-        <p>Loading nearby food trucks ...</p>
-      ) : trucks?.length === 0 || !trucks ? (
-        <p>No food trucks found in your area.</p>
-      ) : (
-        trucks.map((truck) => {
-          return (
-            <div key={truck.id}>
-              <Link href={`/truck-profile/${truck.id}`}>
-                <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
-                  <Image
-                    className="h-[200px] object-cover"
-                    src={truck.avatar}
-                    alt="Picture of a food truck"
-                    width={600}
-                    height={600}
-                  ></Image>
-                  <div className="flex flex-row">
-                    {/* <div className="p-3"> */}
-                    <div className="relative w-1/2 pt-3 pb-3 pl-3">
-                      <h2 className="text-lg font-semibold text-primary">
-                        {truck.name}
-                      </h2>
-                      <p>{truck.food_style}</p>
-                    </div>
-                    <div className="relative w-1/2 pt-3 pb-3 pr-3">
-                      <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)} meters from you`}</p>
-                    </div>
-                    {/* we need to fix the link here currently just the map */}
-                    <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
-                      <FaArrowRight />
+
+      {!locationDenied ? (
+        loading ? (
+          <p>Loading nearby food trucks...</p>
+        ) : trucks?.length === 0 || !trucks ? (
+          <p>No food trucks found in your area.</p>
+        ) : (
+          trucks.map((truck) => {
+            return (
+              <div key={truck.id}>
+                <Link href={`/truck-profile/${truck.id}`}>
+                  <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
+                    <Image
+                      className="h-[200px] object-cover"
+                      src={truck.avatar}
+                      alt="Picture of a food truck"
+                      width={600}
+                      height={600}
+                    ></Image>
+                    <div className="flex flex-row">
+                      {/* <div className="p-3"> */}
+                      <div className="relative w-1/2 pt-3 pb-3 pl-3">
+                        <h2 className="text-lg font-semibold text-primary">
+                          {truck.name}
+                        </h2>
+                        <p>{truck.food_style}</p>
+                      </div>
+                      <div className="relative w-1/2 pt-3 pb-3 pr-3">
+                        <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)} meters from you`}</p>
+                      </div>
+                      {/* we need to fix the link here currently just the map */}
+                      <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
+                        <FaArrowRight />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            </div>
-          );
-        })
+                </Link>
+              </div>
+            );
+          })
+        )
+      ) : (
+        <p>
+          This web app relies heavily on geolocation. Please consider granting
+          access to your devices location
+        </p>
       )}
     </div>
   );

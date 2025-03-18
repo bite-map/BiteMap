@@ -37,6 +37,8 @@ export default function AddSighting({
   //   use this and effect cleanup to popup toast message
   const [success, setSuccess] = useState<boolean | null>(null);
 
+  const [locationDenied, setLocationDenied] = useState<boolean>(false);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value;
     setSearchItem(searchTerm);
@@ -48,7 +50,7 @@ export default function AddSighting({
   };
 
   useEffect(() => {
-    getLocation(setSightingLocation);
+    getLocation(setSightingLocation, setLocationDenied);
   }, []);
 
   useEffect(() => {

@@ -49,7 +49,10 @@ export const clear = (markers: any[]) => {
   });
 };
 
-export const getLocation = (setLocation: Function) => {
+export const getLocation = (
+  setLocation: Function,
+  setLocationDenied: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -57,8 +60,10 @@ export const getLocation = (setLocation: Function) => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
+        setLocationDenied(false);
       },
       (error) => {
+        setLocationDenied(true);
         throw error;
       }
     );
