@@ -5,7 +5,7 @@ import Image from "next/image";
 import { addSighting } from "@/app/database-actions";
 import { getLocation } from "./geo-utils";
 import { Truck, Location } from "../global-component-types";
-import { getNearbyTruck } from "@/app/database-actions";
+import { getFoodTruckData } from "@/app/database-actions";
 import { Input } from "../ui/input";
 import { FaSpinner } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
@@ -55,11 +55,10 @@ export default function AddSighting({
     // default to fetch a large radius
     const fetchTruck = async () => {
       if (sightingLocation) {
-        const data = (await getNearbyTruck(
-          sightingLocation?.lat,
-          sightingLocation?.lng,
-          null
-        )) as Truck[];
+        //
+
+        const data = (await getFoodTruckData()) as Truck[];
+
         if (data?.length) {
           setTrucks(data);
         }
@@ -107,9 +106,9 @@ export default function AddSighting({
                     }}
                   >
                     {/* link go to truck profile or get all sighitng? */}
-                    <div className="flex flex-row items-start h-full w-full  bg-white border border-gray-200 rounded-xl shadow-sm   hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <div className="flex flex-row items-center h-full w-full  bg-white border border-gray-200 rounded-xl shadow-sm   hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                       <Image
-                        className="m-3 object-cover rounded-t-lg  md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
+                        className="m-3 h-[60px] w-[60px] object-cover rounded-t-lg  md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
                         src={truck.avatar}
                         alt="Image of a food truck"
                         width={60}
@@ -122,9 +121,6 @@ export default function AddSighting({
                         <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
                           {truck.food_style}
                         </p>
-                        <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
-                          {` ${Math.floor(truck.nearest_dist_meters)} meters`}
-                        </p>
                       </div>
                     </div>
                   </li>
@@ -132,7 +128,7 @@ export default function AddSighting({
               })}
               {searchItem === "" && (
                 <>
-                  <p>
+                  <p className="pl-2">
                     Can't find the truck you're looking for? You can add one
                     below.
                   </p>
@@ -152,7 +148,9 @@ export default function AddSighting({
             <>
               {!loadingTrucks ? (
                 <>
-                  <p>No trucks match your search. You can add one below.</p>
+                  <p className="pl-2">
+                    No trucks match your search. You can add one below.
+                  </p>
                   <button
                     className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center text-sm"
                     onClick={() => {
