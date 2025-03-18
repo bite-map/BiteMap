@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
-import { Sighting, Truck } from "../global-component-types";
+import { Truck } from "../global-component-types";
 import {
   getFoodTruckDataById,
-  getSightingByTruckId,
   toggleFavorite,
   getIsFavorite,
   getSightingsByLastActive,
