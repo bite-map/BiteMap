@@ -5,7 +5,7 @@ import Image from "next/image";
 import { addSighting } from "@/app/database-actions";
 import { getLocation } from "./geo-utils";
 import { Truck, Location } from "../global-component-types";
-import { getNearbyTruck } from "@/app/database-actions";
+import { getNearbyTruck, getFoodTruckData } from "@/app/database-actions";
 import { Input } from "../ui/input";
 import { FaSpinner } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
@@ -55,11 +55,10 @@ export default function AddSighting({
     // default to fetch a large radius
     const fetchTruck = async () => {
       if (sightingLocation) {
-        const data = (await getNearbyTruck(
-          sightingLocation?.lat,
-          sightingLocation?.lng,
-          null
-        )) as Truck[];
+        //
+
+        const data = (await getFoodTruckData()) as Truck[];
+
         if (data?.length) {
           setTrucks(data);
         }
@@ -109,7 +108,7 @@ export default function AddSighting({
                     {/* link go to truck profile or get all sighitng? */}
                     <div className="flex flex-row items-start h-full w-full  bg-white border border-gray-200 rounded-xl shadow-sm   hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                       <Image
-                        className="m-3 object-cover rounded-t-lg  md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
+                        className="m-3 h-[60px] w-[60px] object-cover rounded-t-lg  md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
                         src={truck.avatar}
                         alt="Image of a food truck"
                         width={60}
@@ -122,9 +121,9 @@ export default function AddSighting({
                         <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
                           {truck.food_style}
                         </p>
-                        <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
+                        {/* <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
                           {` ${Math.floor(truck.nearest_dist_meters)} meters`}
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                   </li>
