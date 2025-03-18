@@ -3,7 +3,7 @@ import {
   createTruckPin,
   createSightingPin,
 } from "./createPinStyles";
-import { getSighting } from "@/app/database-actions";
+import { getSightingsByLastActive } from "@/app/database-actions";
 import { Location } from "../global-component-types";
 
 export const createMarkerOnMap = (
@@ -143,7 +143,37 @@ export const fetchSighting = async (
   if (!location && !map) {
     return;
   }
-  const sightings = (await getSighting(location as Location)) as any[];
+  const sightings = (await getSightingsByLastActive()) as any[];
+  if (sightings.length > 0) {
+    // store sightings
+    const sightingMarkers = sightings.map((sighting: any) => {
+      const location: google.maps.LatLng = new google.maps.LatLng(
+        sighting.lat,
+        sighting.lng
+      );
+      const sightingMarkerClickEvent = () => {
+        setSelectedSighting(sighting);
+      };
+      const marker = createMarkerOnMap(
+        location,
+        createSightingPin,
+        sighting.id.toString() as string,
+        null,
+        map as google.maps.Map,
+        sightingMarkerClickEvent
+      );
+      return marker;
+    });
+    setSightingMarkers(sightingMarkers);
+  }
+};
+
+export const makeSightingMarkerUsingSighting = async (
+  map: google.maps.Map,
+  setSightingMarkers: Function,
+  setSelectedSighting: Function,
+  sightings: any[]
+) => {
   if (sightings.length > 0) {
     // store sightings
     const sightingMarkers = sightings.map((sighting: any) => {

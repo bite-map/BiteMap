@@ -185,20 +185,7 @@ export const getNearbyTruck = async (
 
 // -------------- SIGHTING (START) --------------
 // get specific user's sighting
-export const getSightingData = async (profileId: string) => {
-  const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("food_truck_sightings")
-    .select(
-      "id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)"
-    )
-    .eq("created_by_profile_id", profileId);
-
-  if (error) return [];
-
-  return data;
-};
 export const getSightingsOfUser = async () => {
   const supabase = await createClient();
   const {
@@ -216,9 +203,7 @@ export const getSightingsOfUser = async () => {
 // get all sightings
 export const getSighting = async (location: Location) => {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
   const { data, error } = await supabase
     .rpc("nearby_sightings", { lat: location.lat, lng: location.lng })
     .select();
@@ -235,20 +220,6 @@ export const getSightingByTruckId = async (truckId: number) => {
       "id, created_by_profile_id, food_truck_id, location, food_truck_profiles(name)"
     )
     .eq("food_truck_id", truckId);
-  return data;
-};
-
-export const getSightingBySightingId = async (sighting_id: number = 17) => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .rpc("select_sightings_id", { sighting_id: sighting_id })
-    .select()
-    .single();
-  if (error) return error;
-
   return data;
 };
 
@@ -326,11 +297,11 @@ export const addSighting = async (
 };
 
 // current: get all s c, then partion by s id (last active of each s)
-export const getSightingsByLastActive = async (truckId: number) => {
+export const getSightingsByLastActiveOfTruck = async (truckId: number) => {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .rpc("get_sightings_ordered_by_last_active")
+      .rpc("get_sightings_ordered_by_last_active_count_confirm")
       .select();
     if (error) {
       return [error];
@@ -338,6 +309,22 @@ export const getSightingsByLastActive = async (truckId: number) => {
     return data.filter((sighting) => {
       return sighting.food_truck_id == truckId;
     });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getSightingsByLastActive = async () => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .rpc("get_sightings_ordered_by_last_active_count_confirm")
+      .select();
+    if (error) {
+      return [error];
+    }
+    return data;
   } catch (error) {
     console.error(error);
     throw error;

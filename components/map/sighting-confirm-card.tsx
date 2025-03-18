@@ -9,11 +9,11 @@ import {
 import Link from "next/link";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-
+import { GiConfirmed } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 type SightingConfirmCardProps = {
   setToastMessage: (params: { message: string; type: string }) => void;
-  sighting: Sighting;
+  sighting: any;
   setSelectedSighting: Function;
   user: UserMetadata | undefined;
 };
@@ -32,6 +32,7 @@ export default function SightingConfirmCard({
   useEffect(() => {
     const getTruck = async () => {
       const truck = await getFoodTruckDataById(sighting.food_truck_id);
+      console.log(sighting);
       setTruck(truck);
     };
     getTruck();
@@ -67,7 +68,6 @@ export default function SightingConfirmCard({
             if (!user) {
               return router.push("/sign-in?error=Not signed in");
             }
-
             const data = await addSightingConfirmation(
               sighting.id,
               sighting.food_truck_id
@@ -87,8 +87,19 @@ export default function SightingConfirmCard({
           </p>
         </button>
       </div>
-      <div className="flex h-24 w-30 overflow-hidden justify-center justify-self-center items-center object-cover mt-2">
-        <img className="object-cover h-36 w-48 " src={truck?.avatar} alt="" />
+      <div className="flex flex-row">
+        <div className="flex h-24 w-24 overflow-hidden   object-cover mt-2">
+          <img className="object-cover h-36 w-48 " src={truck?.avatar} alt="" />
+        </div>
+        <div className="ml-2 flex flex-col justify-center justify-self-center items-center">
+          <p>{truck?.name}</p>
+          <p>{truck?.food_style}</p>
+          <div className="flex flex-row justify-center justify-self-center items-center">
+            <p className="text-center mr-1">{sighting.confirmation_count}</p>
+            <GiConfirmed />
+          </div>
+          {sighting.address_formatted && <p>{sighting.address_formatted}</p>}
+        </div>
       </div>
     </div>
   );

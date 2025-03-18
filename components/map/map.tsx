@@ -9,7 +9,7 @@ import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { Input } from "../ui/input";
 import { createCurrentLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
-
+import Filter from "./filter";
 // types
 import { Location, Sighting } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
@@ -19,15 +19,20 @@ import {
   createMarkerOnMap,
   createInfoCard,
   fetchSighting,
+  makeSightingMarkerUsingSighting,
   searchFoodTruck,
   trackLocation,
   getLocation,
 } from "./geo-utils";
+import {
+  getSightingActiveInLastWeek,
+  getSightingsOrderedByLastActiveCountConfirm,
+} from "./filter-utils";
 
 import { ToastContainer } from "react-toastify";
 import { createToast } from "@/utils/toast";
 import { createClient } from "@/utils/supabase/client";
-import { UserMetadata } from "@supabase/supabase-js";
+import { PostgrestError, UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
 // Load api library
@@ -65,8 +70,6 @@ export default function Map() {
 
   //autocomplete location with markers
   const [selectedLocation, setSelectedLocation] = useState<any>();
-  const [displaySelectedLocationMarker, setDisplaySelectedLocationMarker] =
-    useState<boolean>(false);
 
   const [isAddingActive, setIsAddingActive] = useState<boolean>(false);
   //used to toggle add sighting / truck
@@ -107,6 +110,66 @@ export default function Map() {
     setIsAddingActive(!isAddingActive);
   };
   // show sighting confirm card
+
+  // maybe pass all of those stuff with setters to filter component when cleaning up the map component
+  // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
+  const buttonActions = {
+    searchInGoogle: () => {
+      if (!displayPlacesMarker && location) {
+        searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
+        setDisplayPlacesMarker(true);
+      }
+      if (displayPlacesMarker && places) {
+        clear(places);
+        setDisplayPlacesMarker(false);
+      }
+    },
+    sightingActiveInLastWeek: async () => {
+      if (!displaySightingsMarker) {
+        const data = await getSightingActiveInLastWeek();
+        if (data instanceof PostgrestError) {
+          console.error(data);
+          return;
+        }
+        makeSightingMarkerUsingSighting(
+          map as google.maps.Map,
+          setSighting,
+          setSelectedSighting,
+          data
+        );
+        setDisplaySightingsMarker(true);
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
+    },
+    popularSightings: async () => {
+      if (!displaySightingsMarker) {
+        const data = await getSightingsOrderedByLastActiveCountConfirm();
+        if (data instanceof PostgrestError) {
+          console.error(data);
+          return;
+        }
+        makeSightingMarkerUsingSighting(
+          map as google.maps.Map,
+          setSighting,
+          setSelectedSighting,
+          data
+        );
+        setDisplaySightingsMarker(true);
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
+    },
+    // TODO
+    // getSightingActiveOnCurrentDayOfWeek: async () => {
+    // },
+  };
 
   // -----Effect-----
   useEffect(() => {
@@ -257,36 +320,9 @@ export default function Map() {
 
           <div className="absolute w-full flex flex-row justify-center items-center">
             <div className="relative flex p-2 gap-1 w-full">
-              {/* TODO: change into levitation button to avoid hiding map with a big rectangle */}
-              <div className="flex gap-1 w-full">
-                {/* these btns will be temperary gray since it will be changed to drop down btn */}
-                {/* fetch from google places */}
+              <div className="flex gap-2 w-full justify-center h-10 items-center">
                 <button
-                  className=""
-                  type="button"
-                  onClick={() => {
-                    if (!displayPlacesMarker) {
-                      searchFoodTruck(
-                        google,
-                        map as google.maps.Map,
-                        setPlaces,
-                        location
-                      );
-                      setDisplayPlacesMarker(true);
-                    }
-                    if (displayPlacesMarker && places) {
-                      clear(places);
-                      setDisplayPlacesMarker(false);
-                    }
-                  }}
-                >
-                  <FaMapMarkerAlt />
-                </button>
-
-                {/* display sighitngs */}
-                <button
-                  className=""
-                  type="button"
+                  className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                   onClick={async () => {
                     if (!displaySightingsMarker) {
                       fetchSighting(
@@ -304,11 +340,14 @@ export default function Map() {
                     }
                   }}
                 >
-                  <LuRefreshCw />
+                  <FaMapMarkerAlt className="fill-white" />
                 </button>
+                <Filter buttonActions={buttonActions} />
+
+                {/* display sighitngs */}
               </div>
               <Input
-                className="h-9 w-[250px] ml-auto"
+                className="h-9 w-full ml-auto"
                 type="text"
                 ref={placeAutoCompleteRef}
                 placeholder="Search by location"

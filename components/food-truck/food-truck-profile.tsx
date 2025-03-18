@@ -7,7 +7,7 @@ import {
   getFoodTruckDataById,
   toggleFavorite,
   getIsFavorite,
-  getSightingsByLastActive,
+  getSightingsByLastActiveOfTruck,
   getReviewsDataByTruck,
 } from "@/app/database-actions";
 import SightingCard from "./sighting-card";
@@ -60,21 +60,16 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
 
   useEffect(() => {
     (async () => {
-      const data = await getSightingsByLastActive(truckId);
+      const data = await getSightingsByLastActiveOfTruck(truckId);
       if (data) {
         setSightings(data);
       }
-      // Going to implement last active at (location, time)
     })();
 
     (async () => {
       setReviews(await getReviewsDataByTruck(truckId));
     })();
   }, [foodTruck]);
-
-  useEffect(() => {
-    console.log(reviews);
-  }, [reviews]);
 
   useEffect(() => {
     if (sightings) {
