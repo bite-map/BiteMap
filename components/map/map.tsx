@@ -70,8 +70,6 @@ export default function Map() {
 
   //autocomplete location with markers
   const [selectedLocation, setSelectedLocation] = useState<any>();
-  const [displaySelectedLocationMarker, setDisplaySelectedLocationMarker] =
-    useState<boolean>(false);
 
   const [isAddingActive, setIsAddingActive] = useState<boolean>(false);
   //used to toggle add sighting / truck
@@ -161,18 +159,18 @@ export default function Map() {
           data
         );
         setDisplaySightingsMarker(true);
-        if (displaySightingsMarker && sightings) {
-          clear(sightings);
-          setSelectedSighting(null);
-          setDisplaySightingsMarker(false);
-        }
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
       }
     },
-
     // TODO
     // getSightingActiveOnCurrentDayOfWeek: async () => {
     // },
   };
+
   // -----Effect-----
   useEffect(() => {
     // get logged in user
