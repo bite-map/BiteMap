@@ -24,7 +24,10 @@ import {
   trackLocation,
   getLocation,
 } from "./geo-utils";
-import { getSightingActiveInLastWeek } from "./filter-utils";
+import {
+  getSightingActiveInLastWeek,
+  getSightingsOrderedByLastActiveCountConfirm,
+} from "./filter-utils";
 
 import { ToastContainer } from "react-toastify";
 import { createToast } from "@/utils/toast";
@@ -110,9 +113,9 @@ export default function Map() {
   };
   // show sighting confirm card
 
-  // maybe pass all of those stuff with setters to filter component
+  // maybe pass all of those stuff with setters to filter component when cleaning up the map component
   const buttonActions = {
-    searchTruckInGooglePlaces: () => {
+    searchInGoogle: () => {
       if (!displayPlacesMarker && location) {
         searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
         setDisplayPlacesMarker(true);
@@ -122,7 +125,7 @@ export default function Map() {
         setDisplayPlacesMarker(false);
       }
     },
-    getSightingLastWeekActive: async () => {
+    sightingActiveInLastWeek: async () => {
       if (!displaySightingsMarker) {
         const data = await getSightingActiveInLastWeek();
         if (data instanceof PostgrestError) {
@@ -143,12 +146,32 @@ export default function Map() {
         setDisplaySightingsMarker(false);
       }
     },
-    getSightingConfirmationBiggerThan: async () => {
-      //
+    popularSightings: async () => {
+      if (!displaySightingsMarker) {
+        const data = await getSightingsOrderedByLastActiveCountConfirm();
+        console.log(data);
+        if (data instanceof PostgrestError) {
+          console.error(data);
+          return;
+        }
+        makeSightingMarkerUsingSighting(
+          map as google.maps.Map,
+          setSighting,
+          setSelectedSighting,
+          data
+        );
+        setDisplaySightingsMarker(true);
+        if (displaySightingsMarker && sightings) {
+          clear(sightings);
+          setSelectedSighting(null);
+          setDisplaySightingsMarker(false);
+        }
+      }
     },
-    getSightingActiveOnCurrentDayOfWeek: async () => {
-      //
-    },
+
+    // TODO
+    // getSightingActiveOnCurrentDayOfWeek: async () => {
+    // },
   };
   // -----Effect-----
   useEffect(() => {
@@ -299,10 +322,7 @@ export default function Map() {
 
           <div className="absolute w-full flex flex-row justify-center items-center">
             <div className="relative flex p-2 gap-1 w-full">
-              {/* TODO: change into levitation button to avoid hiding map with a big rectangle */}
-              <div className="flex gap-1 w-full">
-                {/* these btns will be temperary gray since it will be changed to drop down btn */}
-                {/* fetch from google places */}
+              <div className="flex gap-2 w-full justify-center h-10 items-center">
                 <button
                   className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                   onClick={async () => {
@@ -325,9 +345,7 @@ export default function Map() {
                   <FaMapMarkerAlt className="fill-white" />
                 </button>
                 <Filter buttonActions={buttonActions} />
-                {/* <button className="h-8" type="button" onClick={}>
-                  <LuRefreshCw />
-                </button> */}
+
                 {/* display sighitngs */}
               </div>
               <Input

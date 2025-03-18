@@ -3,7 +3,7 @@ import {
   createTruckPin,
   createSightingPin,
 } from "./createPinStyles";
-import { getSighting } from "@/app/database-actions";
+import { getSightingsByLastActive } from "@/app/database-actions";
 import { Location } from "../global-component-types";
 
 export const createMarkerOnMap = (
@@ -143,7 +143,7 @@ export const fetchSighting = async (
   if (!location && !map) {
     return;
   }
-  const sightings = (await getSighting(location as Location)) as any[];
+  const sightings = (await getSightingsByLastActive()) as any[];
   if (sightings.length > 0) {
     // store sightings
     const sightingMarkers = sightings.map((sighting: any) => {

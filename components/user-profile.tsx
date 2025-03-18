@@ -4,11 +4,7 @@ import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { getFavoriteTruck } from "@/app/database-actions";
-import {
-  getSightingData,
-  getSightingsOfUser,
-  getSightingBySightingId,
-} from "@/app/database-actions";
+import { getSightingsOfUser } from "@/app/database-actions";
 import { getReviewsData } from "@/app/database-actions";
 import Image from "next/image";
 import SightingCard from "./food-truck/sighting-card";

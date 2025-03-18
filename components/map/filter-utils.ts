@@ -26,3 +26,14 @@ export const getSightingActiveInLastWeek = async () => {
     return sightingDate >= oneWeekAgo && sightingDate <= now;
   });
 };
+
+export const getSightingsOrderedByLastActiveCountConfirm = async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_sightings_ordered_by_last_active_count_confirm")
+    .select();
+  if (error) return error;
+  return data.filter((sighting) => {
+    return sighting.confirmation_count > 10;
+  });
+};
