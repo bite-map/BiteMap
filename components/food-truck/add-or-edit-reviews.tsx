@@ -2,18 +2,23 @@ import React, { useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { SubmitButton } from "../submit-button";
-import { AddFoodTruckReview } from "@/app/database-actions";
+import {
+  AddFoodTruckReview,
+  getReviewsDataByTruck,
+} from "@/app/database-actions";
 import StarRating from "./star-rating";
 import { IoMdClose } from "react-icons/io";
 
 type AddReviewFoodTruckFormProps = {
   handleToggle: () => void;
   truckId: number;
+  setReviews: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 export default function AddReviewFoodTruckForm({
   handleToggle,
   truckId,
+  setReviews,
 }: AddReviewFoodTruckFormProps) {
   const [rating, setRating] = useState(0);
   const [file, setFile] = useState<File | null>(null);
@@ -70,10 +75,11 @@ export default function AddReviewFoodTruckForm({
             }}
           />
           <SubmitButton
-            formAction={(formData) => {
+            formAction={async (formData) => {
               formData.append("rating", rating.toString()); // include rating in form data
               AddFoodTruckReview(formData, truckId, file as File);
               handleToggle();
+              setReviews(await getReviewsDataByTruck(truckId));
             }}
             pendingText="Adding Review..."
           >

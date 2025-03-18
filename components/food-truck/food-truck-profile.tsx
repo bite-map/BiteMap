@@ -18,6 +18,7 @@ import ReviewCard from "./reviews-card";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { IoCreateOutline } from "react-icons/io5";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -159,11 +160,11 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           ))}
         </nav>
       </div>
-      <div className="pt-3">
+      <div className="pt-2">
         {activeTab === "reviews" && (
           <>
             <button
-              className="bg-primary text-background py-2 px-4 rounded mt-4"
+              className="bg-primary p-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center ml-auto mb-2"
               onClick={() => {
                 if (!user) {
                   return router.push("/sign-in?error=Not signed in");
@@ -172,7 +173,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
                 handleToggleAddReview();
               }}
             >
-              Add Review(TEST)
+              <IoCreateOutline size={222} />
             </button>
             <div className="grid grid-cols-1 gap-y-3">
               {reviews.length > 0 ? (
@@ -203,6 +204,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           <AddReviewFoodTruckForm
             handleToggle={handleToggleAddReview}
             truckId={truckId}
+            setReviews={setReviews}
           />
         </div>
       )}
