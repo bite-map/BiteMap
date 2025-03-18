@@ -39,18 +39,31 @@ export default function SightingConfirmCard({
   }, []);
 
   return (
-    <div className="h-64 w-80 justify-center items-center flex flex-col">
-      <div className="w-full absolute h-9 top-0 flex flex-row-reverse ">
-        <button
-          className="relative right-1 bg-primary top-1 p-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center"
-          onClick={() => {
-            setSelectedSighting(null);
-          }}
-        >
-          <IoMdClose />
-        </button>
+    <div className="relative  w-80 flex flex-col">
+      <button
+        className="absolute right-1 bg-primary top-1 p-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center"
+        onClick={() => {
+          setSelectedSighting(null);
+        }}
+      >
+        <IoMdClose />
+      </button>
+      <div className="absolute left-2 top-2 flex items-center text-primary text-xl font-bold ">
+        <p className="text-center mr-1">{sighting.confirmation_count}</p>
+        <GiConfirmed size={22} />
       </div>
-      <div className=" w-64 justify-center items-center bg-primary mt-1 mb-1  rounded-xl">
+
+      <div className="flex">
+        <img className="object-cover w-32 " src={truck?.avatar} alt="" />
+
+        <div className="ml-2 flex flex-col">
+          <p>{truck?.name}</p>
+          <p>{truck?.food_style}</p>
+
+          {sighting.address_formatted && <p>{sighting.address_formatted}</p>}
+        </div>
+      </div>
+      <div className=" w-64 justify-center items-center bg-primary mt-1 mb-1 rounded-xl">
         <Link
           className="justify-center items-center h-full w-full "
           onClick={() => {
@@ -86,20 +99,6 @@ export default function SightingConfirmCard({
             Confirm Sighting
           </p>
         </button>
-      </div>
-      <div className="flex flex-row">
-        <div className="flex h-24 w-24 overflow-hidden   object-cover mt-2">
-          <img className="object-cover h-36 w-48 " src={truck?.avatar} alt="" />
-        </div>
-        <div className="ml-2 flex flex-col justify-center justify-self-center items-center">
-          <p>{truck?.name}</p>
-          <p>{truck?.food_style}</p>
-          <div className="flex flex-row justify-center justify-self-center items-center">
-            <p className="text-center mr-1">{sighting.confirmation_count}</p>
-            <GiConfirmed />
-          </div>
-          {sighting.address_formatted && <p>{sighting.address_formatted}</p>}
-        </div>
       </div>
     </div>
   );

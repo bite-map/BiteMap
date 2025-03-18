@@ -355,7 +355,7 @@ export default function Map() {
             </div>
 
             {selectedSighting && (
-              <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
+              <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300 overflow-clip">
                 <SightingConfirmCard
                   user={user}
                   setToastMessage={setToastMessage}
