@@ -182,63 +182,6 @@ export default function Map() {
     // },
   };
 
-  // populate places data from google places
-
-  // const fetchDataPopulate = async () => {
-  //   const { Place } = (await google.maps.importLibrary(
-  //     "places"
-  //   )) as google.maps.PlacesLibrary;
-  //   const center = new google.maps.LatLng(35.6717, 139.7645);
-  //   const circle = new google.maps.Circle({ center: center, radius: 15000 });
-  //   const request = {
-  //     textQuery: "Food Truck",
-
-  //     fields: ["displayName", "location", "businessStatus"],
-  //     locationBias: circle,
-
-  //     includedType: "restaurant",
-  //   };
-  //   const { places } = await Place.searchByText(request);
-
-  //   const service = new google.maps.places.PlacesService(
-  //     document.createElement("div")
-  //   );
-
-  //   const data = places.map(async (place) => {
-  //     service.getDetails(
-  //       {
-  //         placeId: place.id,
-  //         fields: ["formatted_address", "name", "geometry", "photos"],
-  //       },
-  //       (place, status) => {
-  //         if (
-  //           status === google.maps.places.PlacesServiceStatus.OK &&
-  //           place &&
-  //           place.photos &&
-  //           place.photos.length > 0 &&
-  //           place.formatted_address
-  //         ) {
-  //           const photo = place.photos[0];
-  //           const photoUrl = photo.getUrl({ maxWidth: 1600, maxHeight: 1600 });
-  //           const truck = {
-  //             name: place.name as string,
-  //             avatarUrl: photoUrl,
-  //             formatted_address: place.formatted_address,
-  //           };
-  //           populateData(truck, {
-  //             lat: place.geometry?.location?.lat() as number,
-  //             lng: place.geometry?.location?.lng() as number,
-  //           });
-  //           // push!
-  //         } else {
-  //           console.error("Error fetching place details:", status);
-  //         }
-  //       }
-  //     );
-  //   });
-  // };
-  // //
-
   // -----Effect-----
   useEffect(() => {
     // get logged in user
