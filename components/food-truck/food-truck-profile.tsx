@@ -94,9 +94,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     }
   }, [sightings]);
 
-  useEffect(() => {
-    console.log("HUMANS CAN READ", lastActiveHumanRead);
-  }, [lastActiveHumanRead]);
+
 
   return (
     <div className="p-3">
