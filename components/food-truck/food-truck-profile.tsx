@@ -163,7 +163,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
               {lastActive && (
                 <div>
                   <p> Last seen at:</p>
-                  <p>{lastActive}</p>
+                  <p>{lastActiveHumanRead}</p>
                 </div>
               )}
             </div>
