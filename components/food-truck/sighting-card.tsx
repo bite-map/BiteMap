@@ -2,9 +2,9 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { Sighting } from "../global-component-types";
 import Link from "next/link";
-import { TiArrowForward } from "react-icons/ti";
 import { GiConfirmed } from "react-icons/gi";
 import { FaSpinner } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 
 import { usePathname } from "next/navigation";
 
@@ -72,7 +72,7 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
           href={`/truck-profile/${sightingData.food_truck_id}`}
           className=" flex justify-center items-center text-background text-2xl bg-primary w-20"
         >
-          <TiArrowForward />
+          <FaArrowRight />
         </Link>
       )}
     </div>

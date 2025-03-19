@@ -4,6 +4,7 @@ import Image from "next/image";
 import { TiArrowForward } from "react-icons/ti";
 import Link from "next/link";
 import { IoMdHeart } from "react-icons/io";
+import { FaArrowRight } from "react-icons/fa";
 import { toggleFavorite } from "@/app/database-actions";
 
 type FoodTruckCardProps = {
@@ -56,7 +57,7 @@ export default function FoodTruckCardProfile({
           href={`/truck-profile/${foodTruck.food_truck_id}`}
           className=" flex justify-center items-center text-background text-2xl mt-auto bg-primary w-full h-8"
         >
-          <TiArrowForward />
+          <FaArrowRight />
         </Link>
       </div>
     </div>
