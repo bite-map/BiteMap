@@ -66,6 +66,7 @@ export default function AddReviewFoodTruckForm({
             Image
           </Label>
           <Input
+            required
             type="file"
             name="review-picture"
             onChange={(e) => {

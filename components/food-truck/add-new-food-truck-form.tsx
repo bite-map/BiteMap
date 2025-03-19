@@ -64,6 +64,7 @@ export default function AddNewFoodTruckForm({
             Profile Picture
           </Label>
           <Input
+            required
             type="file"
             name="truck-profile-picture"
             onChange={(e) => {
