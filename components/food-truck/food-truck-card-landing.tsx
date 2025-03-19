@@ -96,9 +96,9 @@ export default function FoodTruckCardLanding(
                           </div>
                           <div className="relative w-1/2 pt-3 pb-3 pr-3">
                             {Math.floor(truck.nearest_dist_meters) < 1000 ? (
-                              <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)} meters from you`}</p>
+                              <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)}m from you`}</p>
                             ) : (
-                              <p className="text-sm m-1">{`${(truck.nearest_dist_meters / 1000).toFixed(1)} kilometers from you`}</p>
+                              <p className="text-sm m-1">{`${(truck.nearest_dist_meters / 1000).toFixed(1)}km from you`}</p>
                             )}
                           </div>
                           <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
