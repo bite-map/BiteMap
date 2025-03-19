@@ -156,7 +156,6 @@ export const fetchSighting = async (
     return;
   }
   const sightings = (await getSightingsByLastActive()) as any[];
-  console.log(sightings, "sssss");
   if (sightings.length > 0) {
     // store sightings
     const sightingMarkers = sightings.map((sighting: any) => {
