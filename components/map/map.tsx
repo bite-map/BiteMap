@@ -49,7 +49,7 @@ export default function Map() {
 
   // state varaibles
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
-
+  const [locationDenied, setLocationDenied] = useState<boolean>(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
@@ -85,11 +85,18 @@ export default function Map() {
     message: string;
     type: string;
   } | null>(null);
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
     version: "weekly",
   });
+
+  const locationToast = createToast(
+    "Location permissions denied! This app relies heavily on geolocation. Please consider refreshing to grant location access.",
+    "error",
+    10000
+  );
 
   // toggle display to add sighting
   const handleToggleAddSighting = () => {
@@ -181,13 +188,19 @@ export default function Map() {
 
     let id: any;
     try {
-      id = trackLocation(setLocation);
+      id = trackLocation(setLocation, setLocationDenied);
     } catch (error) {
       navigator.geolocation.clearWatch(id);
-      getLocation(setLocation);
+      getLocation(setLocation, setLocationDenied);
       // Toast error (currently is using static location)
     }
   }, []);
+
+  useEffect(() => {
+    if (locationDenied && locationToast) {
+      locationToast();
+    }
+  }, [locationDenied]);
 
   useEffect(() => {
     // updates the users marker when position changes
@@ -312,118 +325,127 @@ export default function Map() {
 
   return (
     <>
-      {isLoaded && location ? (
-        <div className="flex flex-col h-full">
-          {/* MAP */}
-          <div id="map" ref={mapRef} className="grow"></div>
-          {/* MAP */}
 
-          <div className="absolute w-full flex flex-row justify-center items-center">
-            <div className="relative flex p-2 gap-1 w-full">
-              <div className="flex gap-2 w-full justify-center h-10 items-center">
-                <button
-                  className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
-                  onClick={async () => {
-                    if (!displaySightingsMarker) {
-                      fetchSighting(
-                        location,
-                        map as google.maps.Map,
-                        setSighting,
-                        setSelectedSighting
-                      );
-                      setDisplaySightingsMarker(true);
-                    }
-                    if (displaySightingsMarker && sightings) {
-                      clear(sightings);
-                      setSelectedSighting(null);
-                      setDisplaySightingsMarker(false);
-                    }
-                  }}
-                >
-                  <FaMapMarkerAlt className="fill-white" />
-                </button>
-                <Filter buttonActions={buttonActions} />
+      {!locationDenied ? (
+        isLoaded && location ? (
+          <div className="flex flex-col h-full">
+            {/* MAP */}
+            <div id="map" ref={mapRef} className="grow"></div>
+            {/* MAP */}
 
-                {/* display sighitngs */}
-              </div>
-              <Input
-                className="h-9 w-full ml-auto"
-                type="text"
-                ref={placeAutoCompleteRef}
-                placeholder="Search by location"
-              />
-            </div>
+            <div className="absolute w-full flex flex-row justify-center items-center">
+              <div className="relative flex p-2 gap-1 w-full">
+                <div className="flex gap-2 w-full justify-center h-10 items-center">
+                  <button
+                    className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
+                    onClick={async () => {
+                      if (!displaySightingsMarker) {
+                        fetchSighting(
+                          location,
+                          map as google.maps.Map,
+                          setSighting,
+                          setSelectedSighting
+                        );
+                        setDisplaySightingsMarker(true);
+                      }
+                      if (displaySightingsMarker && sightings) {
+                        clear(sightings);
+                        setSelectedSighting(null);
+                        setDisplaySightingsMarker(false);
+                      }
+                    }}
+                  >
+                    <FaMapMarkerAlt className="fill-white" />
+                  </button>
+                  <Filter buttonActions={buttonActions} />
 
-            {selectedSighting && (
-              <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300 overflow-clip">
-                <SightingConfirmCard
-                  location={location}
-                  map={map as google.maps.Map}
-                  setSighting={setSighting}
-                  user={user}
-                  setToastMessage={setToastMessage}
-                  sighting={selectedSighting}
-                  setSelectedSighting={setSelectedSighting}
+                  {/* display sighitngs */}
+                </div>
+                <Input
+                  className="h-9 w-full ml-auto"
+                  type="text"
+                  ref={placeAutoCompleteRef}
+                  placeholder="Search by location"
+
                 />
               </div>
-            )}
 
-            {isAddingActive && geocoder && (
-              <div className="absolute flex flex-col h-90 w-96 justify-center items-center top-16 ">
-                <div className="relative w-fit h-fit items-center">
-                  {isDisplayedAddSighting && (
-                    <div className="relative w-80 h-fit bg-white p-2  border border-gray-300 rounded-xl ">
-                      <AddSighting
-                        setToastMessage={setToastMessage}
-                        handleToggleAddSighting={handleToggleAddSighting}
-                        handleToggleAddTruck={handleToggleAddTruck}
-                        geocoder={geocoder}
-                      />
-                    </div>
-                  )}
+              {selectedSighting && (
+                <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
+                  <SightingConfirmCard
+                    location={location}
+                    map={map as google.maps.Map}
+                    setSighting={setSighting}
+                    user={user}
+                    setToastMessage={setToastMessage}
+                    sighting={selectedSighting}
+                    setSelectedSighting={setSelectedSighting}
+                  />
                 </div>
+              )}
 
-                <div className="relative w-fit h-fit items-center">
-                  {isDisplayedAddTruck && (
-                    <div className="relative w-fit h-fit bg-white p-2  border border-gray-300 rounded-xl ">
-                      <AddNewFoodTruckForm
-                        setToastMessage={setToastMessage}
-                        handleToggleAddTruck={handleToggleAddTruck}
-                        handleToggleAddSighting={handleToggleAddSighting}
-                        location={location}
-                        geocoder={geocoder}
-                      />
-                    </div>
-                  )}
+              {isAddingActive && geocoder && (
+                <div className="absolute flex flex-col h-90 w-96 justify-center items-center top-16 ">
+                  <div className="relative w-fit h-fit items-center">
+                    {isDisplayedAddSighting && (
+                      <div className="relative w-80 h-fit bg-white p-2  border border-gray-300 rounded-xl ">
+                        <AddSighting
+                          setToastMessage={setToastMessage}
+                          handleToggleAddSighting={handleToggleAddSighting}
+                          handleToggleAddTruck={handleToggleAddTruck}
+                          geocoder={geocoder}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="relative w-fit h-fit items-center">
+                    {isDisplayedAddTruck && (
+                      <div className="relative w-fit h-fit bg-white p-2  border border-gray-300 rounded-xl ">
+                        <AddNewFoodTruckForm
+                          setToastMessage={setToastMessage}
+                          handleToggleAddTruck={handleToggleAddTruck}
+                          handleToggleAddSighting={handleToggleAddSighting}
+                          location={location}
+                          geocoder={geocoder}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <ToastContainer></ToastContainer>
-          {/* add new button:  */}
-          <div
-            className="absolute bottom-0 right-0 m-3 inline-flex items-center justify-center bg-primary rounded-full w-14 h-14"
-            onClick={() => {
-              if (!user) {
-                return router.push("/sign-in?error=Not signed in");
-              }
-              handleToggleAddButton();
-            }}
-          >
-            <FaPlus
-              className="focus:outline-none focus:ring-4 focus:shadow font-sans rounded-full  "
-              color="white"
-              fontSize={16}
-            />
+            <ToastContainer></ToastContainer>
+            {/* add new button:  */}
+            <div
+              className="absolute bottom-0 right-0 m-3 inline-flex items-center justify-center bg-primary rounded-full w-14 h-14"
+              onClick={() => {
+                if (!user) {
+                  return router.push("/sign-in?error=Not signed in");
+                }
+                handleToggleAddButton();
+              }}
+            >
+              <FaPlus
+                className="focus:outline-none focus:ring-4 focus:shadow font-sans rounded-full  "
+                color="white"
+                fontSize={16}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex justify-center items-center gap-2 text-lg mt-2">
+            Loading map{" "}
+            <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
+          </div>
+        )
       ) : (
         <div className="flex justify-center items-center gap-2 text-lg mt-2">
-          Loading map{" "}
-          <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
+          Error loading map. Please check permissions.
         </div>
       )}
+      <ToastContainer />
     </>
   );
 }

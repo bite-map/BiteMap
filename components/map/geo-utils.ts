@@ -49,7 +49,10 @@ export const clear = (markers: any[]) => {
   });
 };
 
-export const getLocation = (setLocation: Function) => {
+export const getLocation = (
+  setLocation: Function,
+  setLocationDenied: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -57,8 +60,10 @@ export const getLocation = (setLocation: Function) => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
+        setLocationDenied(false);
       },
       (error) => {
+        setLocationDenied(true);
         throw error;
       }
     );
@@ -66,7 +71,10 @@ export const getLocation = (setLocation: Function) => {
 };
 
 // very similar to getLocation but will update when the users position changes
-export const trackLocation = (setLocation: Function) => {
+export const trackLocation = (
+  setLocation: Function,
+  setLocationDenied: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   if (navigator.geolocation) {
     return navigator.geolocation.watchPosition(
       (position) => {
@@ -74,8 +82,12 @@ export const trackLocation = (setLocation: Function) => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
+        setLocationDenied(false);
       },
-      (error) => console.error(error),
+      (error) => {
+        setLocationDenied(true);
+        throw error;
+      },
       { enableHighAccuracy: true }
     );
   }
