@@ -190,7 +190,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       {locationsChance.size > 0 && (
         <h2>
           <p className="text-sm text-gray-500">
-            Showing chances for {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()]}:
+            <strong>Showing chances for {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()]}:</strong>
           </p>
           <ul>
             {Array.from(locationsChance.entries()).map(([location, chance]) => (
