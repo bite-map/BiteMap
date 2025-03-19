@@ -18,12 +18,16 @@ import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { IoCreateOutline } from "react-icons/io5";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 type FoodTruckProfileProps = {
   truckId: number;
 };
 
 export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
+  dayjs.extend(relativeTime);
+
   const router = useRouter();
 
   const supabase = createClient();
@@ -37,6 +41,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [sightings, setSightings] = useState<any[] | null>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [lastActive, setLastActive] = useState<string>();
+  const [lastActiveHumanRead, setLastActiveHumanRead] = useState<string>();
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
 
@@ -84,10 +89,12 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       setLastActive(
         `${year}-${month}-${day} ${dayOfWeek} ${hours}:${minutes}:${seconds}`
       );
+
+      setLastActiveHumanRead(dayjs(sightings[0].last_active_time).fromNow());
     }
   }, [sightings]);
 
-  useEffect(() => {}, [foodTruck]);
+
 
   return (
     <div className="p-3">
@@ -112,8 +119,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
             <div>
               {lastActive && (
                 <div>
-                  <p> Last seen at:</p>
-                  <p>{lastActive}</p>
+                  <p> Last seen:</p>
+                  <p>{lastActiveHumanRead}</p>
                 </div>
               )}
             </div>
