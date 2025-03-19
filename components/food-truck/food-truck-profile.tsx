@@ -17,6 +17,7 @@ import ReviewCard from "./reviews-card";
 import { createClient } from "@/utils/supabase/client";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { getAllSighConfirmationsByDayLocationId } from "@/app/database-actions";
 import { IoCreateOutline } from "react-icons/io5";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -29,21 +30,19 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   dayjs.extend(relativeTime);
 
   const router = useRouter();
-
   const supabase = createClient();
 
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
-
-  const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
-    "reviews"
-  );
+  const [activeTab, setActiveTab] = useState<"sightings" | "reviews">("reviews");
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
-  const [sightings, setSightings] = useState<any[] | null>(null);
+  const [sightings, setSightings] = useState<any[] | null>();
   const [reviews, setReviews] = useState<any[]>([]);
   const [lastActive, setLastActive] = useState<string>();
   const [lastActiveHumanRead, setLastActiveHumanRead] = useState<string>();
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
+  const [locationsChance, setLocationsChance] = useState<Map<string, number>>(new Map());
+
 
   const handleToggleAddReview = () => {
     setIsDisplayedAddReview((prev) => !prev);
@@ -77,6 +76,50 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   }, [foodTruck]);
 
   useEffect(() => {
+    console.log(reviews);
+  }, [reviews]);
+
+  useEffect(() => {
+    if (sightings && sightings.length > 0) {
+      const calculateChance = async () => {
+        const chancesMap = new Map<string, number>();
+        const dayOfWeek = new Date().getDay(); // Current day of the week (0-6)
+
+        // Get sightings confirmations for all sightings
+        for (let sighting of sightings) {
+          const confirmations = await getAllSighConfirmationsByDayLocationId(
+            truckId,
+            sighting.address_formatted,
+            dayOfWeek
+          );
+
+          const confirmationCount = confirmations.length;
+
+          if (confirmationCount > 0) {
+            const currentChance = chancesMap.get(sighting.address_formatted) || 0;
+            chancesMap.set(
+              sighting.address_formatted,
+              currentChance + confirmationCount // Normalize chance by the number of sightings
+            );
+          }
+        }
+
+        const totalConfirmations = Array.from(chancesMap.values()).reduce((acc, val) => acc + val, 0);
+
+        if(totalConfirmations > 0) {
+          chancesMap.forEach((count, address) => {
+            const maxChance = Math.min(count / totalConfirmations, 0.9)
+            chancesMap.set( address, maxChance)
+          })
+        }
+
+        setLocationsChance(chancesMap);
+      };
+
+      calculateChance();
+    }
+  }, [sightings]);
+  useEffect(() => {
     if (sightings) {
       const localTime = new Date(sightings[0].last_active_time);
       const year = localTime.getFullYear().toString().slice(-2);
@@ -97,30 +140,30 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
 
 
   return (
-    <div className="p-3">
-      {foodTruck && (
-        <div className="rounded-xl bg-background overflow-clip shadow-md">
-          <Image
-            className="h-[200px] object-cover"
-            src={foodTruck.avatar as string}
-            alt="Picture of a food truck"
-            width={600}
-            height={600}
-          ></Image>
+<div className="p-3">
+  {foodTruck && (
+    <div className="rounded-xl bg-background overflow-clip shadow-md">
+      <Image
+        className="h-[200px] object-cover"
+        src={foodTruck.avatar as string}
+        alt="Picture of a food truck"
+        width={600}
+        height={600}
+      ></Image>
 
-          <div className="flex justify-between p-3">
-            <div>
-              <h2 className="text-lg font-semibold text-primary">
-                {foodTruck.name}
-              </h2>
+      <div className="flex justify-between p-3">
+        <div>
+          <h2 className="text-lg font-semibold text-primary">
+            {foodTruck.name}
+          </h2>
 
               <p>{foodTruck.food_style}</p>
             </div>
             <div>
               {lastActive && (
                 <div>
-                  <p> Last seen:</p>
-                  <p>{lastActiveHumanRead}</p>
+                  <p> Last seen at:</p>
+                  <p>{lastActive}</p>
                 </div>
               )}
             </div>
@@ -144,6 +187,20 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </div>
         </div>
       )}
+      {locationsChance.size > 0 && (
+        <h2>
+          <p className="text-sm text-gray-500">
+            Showing chances for {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()]}:
+          </p>
+          <ul>
+            {Array.from(locationsChance.entries()).map(([location, chance]) => (
+              <li key={location} className="text-sm">
+                {location}: <strong>{Math.round(chance * 100)}% chance</strong>
+              </li>
+            ))}
+          </ul>
+        </h2>
+      )}
       <div className="border-b border-gray-200 mt-4">
         <nav className="flex -mb-px">
           {["reviews", "sightings"].map((tab) => (
@@ -161,7 +218,9 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           ))}
         </nav>
       </div>
-      <div className="pt-2">
+
+  {/* Reviews Tab */}
+  <div className="pt-2">
         {activeTab === "reviews" && (
           <>
             <div className="flex">
