@@ -78,9 +78,13 @@ export const addProfileImageToFoodTruck = async (
 };
 
 // gets information about all food trucks
+// gets information about all food trucks
 export const getFoodTruckData = async () => {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("food_truck_profiles").select();
+  const { data, error } = await supabase
+    .from("food_truck_profiles")
+    .select()
+    .order("name", { ascending: true });
 
   if (error) console.error("Error fetching all food truck data", error);
 

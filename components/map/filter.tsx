@@ -41,6 +41,7 @@ export default function Filter({
 }: FilterProps) {
   const [fold, setFold] = useState<boolean>(false);
   const buttonActionsCollect = {
+    allSightings: async () => {},
     activeInLastWeek: async () => {
       if (!displaySightingsMarker) {
         const data = await getSightingActiveInLastWeek();

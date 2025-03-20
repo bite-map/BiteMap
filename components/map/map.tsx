@@ -316,6 +316,7 @@ export default function Map() {
             <div className="absolute w-full flex flex-row justify-center items-center">
               <div className="relative flex p-2 gap-1 w-full">
                 <div className="flex gap-2 w-full justify-center h-10 items-center">
+                  {/* make this button as 'back to my current location' */}
                   <button
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                     onClick={async () => {
