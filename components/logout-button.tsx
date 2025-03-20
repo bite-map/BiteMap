@@ -13,10 +13,10 @@ export default function LogoutButton({ handleToggle }: LogoutButtonProps) {
         signOutAction();
         handleToggle();
       }}
-      className="flex flex-col justify-center font-semibold items-center text-foreground w-16 py-[6px] mt-3 text-sm"
+      className="flex font-semibold items-center w-40 h-12 p-3 mt-3"
     >
-      <GrLogout className="size-6 " />
-      <p>Logout</p>
+      <GrLogout size={26} />
+      <p className="ml-2">Logout</p>
     </button>
   );
 }
