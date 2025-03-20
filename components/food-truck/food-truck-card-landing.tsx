@@ -116,7 +116,7 @@ export default function FoodTruckCardLanding(
                               </span>
                             )}
                           </div>
-                          <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
+                          <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-w-16">
                             <FaArrowRight />
                           </div>
                         </div>

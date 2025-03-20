@@ -33,13 +33,13 @@ export default function FoodTruckCardRecent({
                   height={600}
                 ></Image>
                 <div className="flex flex-row">
-                  <div className="px-3 py-2">
+                  <div className="px-3 py-2 truncate">
                     <h2 className="text-xl font-semibold truncate w-full">
                       {truck.name}
                     </h2>
                     <p className="-mt-1 text-sm">{truck.food_style}</p>
                   </div>
-                  <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
+                  <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-h-16">
                     <FaArrowRight />
                   </div>
                 </div>
