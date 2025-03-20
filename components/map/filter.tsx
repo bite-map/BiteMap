@@ -41,16 +41,6 @@ export default function Filter({
 }: FilterProps) {
   const [fold, setFold] = useState<boolean>(false);
   const buttonActionsCollect = {
-    staticTrucks: () => {
-      if (!displayPlacesMarker && location) {
-        searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
-        setDisplayPlacesMarker(true);
-      }
-      if (displayPlacesMarker && places) {
-        clear(places);
-        setDisplayPlacesMarker(false);
-      }
-    },
     activeInLastWeek: async () => {
       if (!displaySightingsMarker) {
         const data = await getSightingActiveInLastWeek();
@@ -96,6 +86,16 @@ export default function Filter({
         clear(sightings);
         setSelectedSighting(null);
         setDisplaySightingsMarker(false);
+      }
+    },
+    staticTrucks: () => {
+      if (!displayPlacesMarker && location) {
+        searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
+        setDisplayPlacesMarker(true);
+      }
+      if (displayPlacesMarker && places) {
+        clear(places);
+        setDisplayPlacesMarker(false);
       }
     },
     // TODO

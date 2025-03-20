@@ -23,28 +23,32 @@ import {
   trackLocation,
   getLocation,
 } from "./geo-utils";
-import {
-  getSightingActiveInLastWeek,
-  getSightingsOrderedByLastActiveCountConfirm,
-} from "./filter-utils";
 
 import { ToastContainer } from "react-toastify";
 import { createToast } from "@/utils/toast";
 import { createClient } from "@/utils/supabase/client";
 import { PostgrestError, UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
 
 export default function Map() {
   const router = useRouter();
-
   const supabase = createClient();
 
   // references
   const mapRef = useRef<HTMLDivElement>(null);
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
+
+  // search params
+  const searchParams = useSearchParams();
+  // if user go to map by clicking address on sighting
+  const initialMarker = searchParams.get("latlng");
+  // if user go to map by clicking button on side bar
+  // e.g.: init=active
+  const initialDisplay = searchParams.get("init");
 
   // state varaibles
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
@@ -119,13 +123,19 @@ export default function Map() {
   // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
 
   // -----Effect-----
+  //TODO 1  initial display markers
+  useEffect(() => {
+    console.log(searchParams);
+  }, [map, isLoaded, location]);
+  //TODO 2  Change location follow autocomplete
+  //TODO 3  If autocomplete marker clicked again, display button to back to current location
+
   useEffect(() => {
     // get logged in user
     (async () => {
       const session = await supabase.auth.getSession();
       setUser(session.data.session?.user.user_metadata);
     })();
-
     let id: any;
     try {
       id = trackLocation(setLocation, setLocationDenied);
@@ -243,6 +253,7 @@ export default function Map() {
       setIsAddingActive(false);
     }
   }, [isDisplayedAddSighting, isDisplayedAddTruck]);
+
   useEffect(() => {
     if (isLoaded && window.google) {
       const geocoder = new window.google.maps.Geocoder();
