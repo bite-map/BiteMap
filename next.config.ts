@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
     ],
   },
   reactStrictMode: false,
+  // allows uploading of larger images
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+  },
 };
 
 export default nextConfig;
