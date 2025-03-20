@@ -49,7 +49,11 @@ export default function Header({ user }: HeaderProps) {
         <SidebarMobile
           NavButtons={[
             { icon: AiOutlineHome, text: "Home", href: "/" },
-            { icon: GrMapLocation, text: "Map", href: "/truck-map" },
+            {
+              icon: GrMapLocation,
+              text: "Map",
+              href: "/truck-map?init=active",
+            },
             { icon: AiOutlineUser, text: "Account", href: "/user-profile" },
           ]}
           isDisplayed={isDisplayed}
@@ -60,7 +64,11 @@ export default function Header({ user }: HeaderProps) {
         <SidebarMobile
           NavButtons={[
             { icon: AiOutlineHome, text: "Home", href: "/" },
-            { icon: GrMapLocation, text: "Map", href: "/truck-map" },
+            {
+              icon: GrMapLocation,
+              text: "Map",
+              href: "/truck-map?init=active",
+            },
             { icon: GrLogin, text: "Login", href: "/sign-in" },
           ]}
           isDisplayed={isDisplayed}

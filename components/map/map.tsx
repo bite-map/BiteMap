@@ -16,12 +16,12 @@ import AddSighting from "./add-sighting";
 import {
   clear,
   createMarkerOnMap,
-  createInfoCard,
   fetchSighting,
   makeSightingMarkerUsingSighting,
   searchFoodTruck,
   trackLocation,
   getLocation,
+  displayInitSighting,
 } from "./geo-utils";
 
 import { ToastContainer } from "react-toastify";
@@ -30,6 +30,8 @@ import { createClient } from "@/utils/supabase/client";
 import { PostgrestError, UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import { getSightingBySightingId } from "@/app/database-actions";
+import { getSightingActiveInLastWeek } from "./filter-utils";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
@@ -45,11 +47,12 @@ export default function Map() {
   // search params
   const searchParams = useSearchParams();
   // if user go to map by clicking address on sighting
-  const initialMarker = searchParams.get("latlng");
+  const initialSightingId = Number(searchParams.get("sighting-id"));
   // if user go to map by clicking button on side bar
   // e.g.: init=active
   const initialDisplay = searchParams.get("init");
-
+  const [initialSightingLoaded, setInitialSightingLoaded] =
+    useState<boolean>(false);
   // state varaibles
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
   const [locationDenied, setLocationDenied] = useState<boolean>(false);
@@ -123,10 +126,40 @@ export default function Map() {
   // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
 
   // -----Effect-----
-  //TODO 1  initial display markers
+  //initial display markers
   useEffect(() => {
-    console.log(searchParams);
-  }, [map, isLoaded, location]);
+    if (!initialSightingLoaded && map && isLoaded) {
+      if (initialSightingId && !isNaN(initialSightingId)) {
+        displayInitSighting(
+          initialSightingId,
+          map,
+          setSighting,
+          setSelectedSighting,
+          setDisplaySightingsMarker
+        );
+      }
+      if (initialDisplay === "active") {
+        if (!displaySightingsMarker) {
+          const displayActiveAtInit = async () => {
+            const data = await getSightingActiveInLastWeek();
+            if (data instanceof PostgrestError) {
+              console.error(data);
+              return;
+            }
+            makeSightingMarkerUsingSighting(
+              map as google.maps.Map,
+              setSighting,
+              setSelectedSighting,
+              data
+            );
+          };
+          displayActiveAtInit();
+          setDisplaySightingsMarker(true);
+        }
+      }
+      setInitialSightingLoaded(true);
+    }
+  }, [map, isLoaded]);
   //TODO 2  Change location follow autocomplete
   //TODO 3  If autocomplete marker clicked again, display button to back to current location
 
@@ -234,10 +267,7 @@ export default function Map() {
             place.geometry?.location as google.maps.LatLng,
             createCurrentLocationPin,
             "selectedLocation",
-            createInfoCard(
-              place.formatted_address as string,
-              place.formatted_address as string
-            ),
+            null,
             map
           );
           setSelectedLocation(selectedLocationMarker);

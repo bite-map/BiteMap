@@ -7,6 +7,7 @@ import { FaSpinner } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 
 import { usePathname } from "next/navigation";
+import { L } from "vitest/dist/chunks/reporters.66aFHiyX";
 
 type SightingCardProps = {
   sightingData: any;
@@ -39,13 +40,15 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
         {sightingData ? (
           <div className="flex flex-row ">
             <div className="flex flex-col w-80">
-              {sightingData.address_formatted ? (
-                <p className="truncate overflow-auto mb-1">
-                  {sightingData.address_formatted}
-                </p>
-              ) : (
-                <p className="truncate">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
-              )}
+              <Link href={`/truck-map?sighting-id=${sightingData.id}`}>
+                {sightingData.address_formatted ? (
+                  <p className="truncate overflow-auto mb-1">
+                    {sightingData.address_formatted}
+                  </p>
+                ) : (
+                  <p className="truncate">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
+                )}
+              </Link>
               {pathname === "/user-profile" ? (
                 <p>{`Created at: ${sightingData.created_at}`}</p>
               ) : (

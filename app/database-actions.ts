@@ -223,6 +223,17 @@ export const getSighting = async (location: Location) => {
   return data;
 };
 
+export const getSightingBySightingId = async (sightignId: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_sighting_by_id", { sighting_id: sightignId })
+    .select();
+  console.log(data, error);
+  if (error) return error;
+
+  return data;
+};
+
 export const getSightingByTruckId = async (truckId: number) => {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -405,7 +416,6 @@ export const getReviewsData = async (profileId: string) => {
 export const getReviewsDataByTruck = async (truckId: number) => {
   const supabase = await createClient();
 
-
   const { data, error } = await supabase
     .from("reviews")
     .select(
@@ -458,7 +468,6 @@ export const AddFoodTruckReview = async (
 
   // add review image to storage and store returned data
   const reviewImage = await addReviewImageToBucket(truckId, reviewId, file);
-
 
   // get the public url for the profile image
   const { publicUrl } = await getPublicUrlForImage(reviewImage as ProfileImage);
