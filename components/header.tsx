@@ -25,6 +25,12 @@ export default function Header({ user }: HeaderProps) {
 
   return (
     <>
+      <button
+        className="fixed top-3 right-2 z-30 text-gray-700 text-2xl border-2 border-primary bg-muted rounded-xl text-primary w-10 h-10 mr-[3px] flex justify-center items-center"
+        onClick={handleToggle}
+      >
+        {!isDisplayed ? <LuMenu /> : <MdClose />}
+      </button>
       <header className="fixed top-0 left-0 z-10 bg-background w-full flex shrink-0 justify-between items-center h-16 px-2 drop-shadow-sm ">
         {/* displays the logo */}
         <Link href="/">
@@ -37,12 +43,6 @@ export default function Header({ user }: HeaderProps) {
           ></Image>
         </Link>
         {/* menu button */}
-        <button
-          className="text-gray-700 text-2xl border-2 border-primary bg-muted rounded-xl text-primary w-10 h-10 mr-[3px] flex justify-center items-center"
-          onClick={handleToggle}
-        >
-          {!isDisplayed ? <LuMenu /> : <MdClose />}
-        </button>
       </header>
       {/* displays a different sidebar depending on login satus */}
       {user ? (
