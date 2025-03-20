@@ -61,7 +61,7 @@ export default function FoodTruckCardLanding(
 
   return (
     <>
-      <div className="flex flex-col gap-4 p-3 bg-muted">
+      <div className="flex flex-col gap-4 p-3 bg-muted min-h-screen">
         {!locationDenied ? (
           loading ? (
             <p className="flex items-center gap-2 h-full w-full">
@@ -82,7 +82,7 @@ export default function FoodTruckCardLanding(
                 return (
                   <div key={truck.id}>
                     <Link href={`/truck-profile/${truck.id}`}>
-                      <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
+                      <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full">
                         <Image
                           className="h-[200px] object-cover"
                           src={truck.avatar}
@@ -91,8 +91,8 @@ export default function FoodTruckCardLanding(
                           height={600}
                         ></Image>
                         <div className="flex flex-row">
-                          <div className="px-3 py-2">
-                            <h2 className="text-xl font-semibold truncate w-full">
+                          <div className="px-3 py-2 truncate">
+                            <h2 className="text-xl font-semibold truncate">
                               {truck.name}
                             </h2>
                             <p className="-mt-1 text-sm">{truck.food_style}</p>
