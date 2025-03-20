@@ -123,7 +123,7 @@ export const searchFoodTruck = async (
   // TODO: make 'createMarkerOnMap' for places, and split 2 kinds of markers
   const { places } = await Place.searchByText(request);
   if (places.length) {
-    console.log(places);
+  
     if (map && places) {
       const placeMarkers = places.map((place) => {
         const url = "https://www.google.com/maps/place/?q=place_id:${place.id}";
