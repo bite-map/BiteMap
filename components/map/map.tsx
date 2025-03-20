@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 // components / UI
-import { LuRefreshCw } from "react-icons/lu";
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { Input } from "../ui/input";
 import { createCurrentLocationPin } from "./createPinStyles";
@@ -17,36 +16,43 @@ import AddSighting from "./add-sighting";
 import {
   clear,
   createMarkerOnMap,
-  createInfoCard,
   fetchSighting,
   makeSightingMarkerUsingSighting,
   searchFoodTruck,
   trackLocation,
   getLocation,
+  displayInitSighting,
 } from "./geo-utils";
-import {
-  getSightingActiveInLastWeek,
-  getSightingsOrderedByLastActiveCountConfirm,
-} from "./filter-utils";
 
 import { ToastContainer } from "react-toastify";
 import { createToast } from "@/utils/toast";
 import { createClient } from "@/utils/supabase/client";
 import { PostgrestError, UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { getSightingBySightingId } from "@/app/database-actions";
+import { getSightingActiveInLastWeek } from "./filter-utils";
 
 // Load api library
 const libs: Library[] = ["core", "maps", "places", "marker", "geocoding"];
 
 export default function Map() {
   const router = useRouter();
-
   const supabase = createClient();
 
   // references
   const mapRef = useRef<HTMLDivElement>(null);
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
 
+  // search params
+  const searchParams = useSearchParams();
+  // if user go to map by clicking address on sighting
+  const initialSightingId = Number(searchParams.get("sighting-id"));
+  // if user go to map by clicking button on side bar
+  // e.g.: init=active
+  const initialDisplay = searchParams.get("init");
+  const [initialSightingLoaded, setInitialSightingLoaded] =
+    useState<boolean>(false);
   // state varaibles
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
   const [locationDenied, setLocationDenied] = useState<boolean>(false);
@@ -117,75 +123,52 @@ export default function Map() {
     setIsAddingActive(!isAddingActive);
   };
   // show sighting confirm card
-
-  // maybe pass all of those stuff with setters to filter component when cleaning up the map component
   // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
-  const buttonActions = {
-    staticTrucks: () => {
-      if (!displayPlacesMarker && location) {
-        searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
-        setDisplayPlacesMarker(true);
-      }
-      if (displayPlacesMarker && places) {
-        clear(places);
-        setDisplayPlacesMarker(false);
-      }
-    },
-    activeInLastWeek: async () => {
-      if (!displaySightingsMarker) {
-        const data = await getSightingActiveInLastWeek();
-        if (data instanceof PostgrestError) {
-          console.error(data);
-          return;
-        }
-        makeSightingMarkerUsingSighting(
-          map as google.maps.Map,
-          setSighting,
-          setSelectedSighting,
-          data
-        );
-        setDisplaySightingsMarker(true);
-      }
-      if (displaySightingsMarker && sightings) {
-        clear(sightings);
-        setSelectedSighting(null);
-        setDisplaySightingsMarker(false);
-      }
-    },
-    popular: async () => {
-      if (!displaySightingsMarker) {
-        const data = await getSightingsOrderedByLastActiveCountConfirm();
-        if (data instanceof PostgrestError) {
-          console.error(data);
-          return;
-        }
-        makeSightingMarkerUsingSighting(
-          map as google.maps.Map,
-          setSighting,
-          setSelectedSighting,
-          data
-        );
-        setDisplaySightingsMarker(true);
-      }
-      if (displaySightingsMarker && sightings) {
-        clear(sightings);
-        setSelectedSighting(null);
-        setDisplaySightingsMarker(false);
-      }
-    },
-    // TODO
-    // getSightingActiveOnCurrentDayOfWeek: async () => {
-    // },
-  };
 
   // -----Effect-----
+  //initial display markers
+  useEffect(() => {
+    if (!initialSightingLoaded && map && isLoaded) {
+      if (initialSightingId && !isNaN(initialSightingId)) {
+        displayInitSighting(
+          initialSightingId,
+          map,
+          setSighting,
+          setSelectedSighting,
+          setDisplaySightingsMarker
+        );
+      }
+      if (initialDisplay === "active") {
+        if (!displaySightingsMarker) {
+          const displayActiveAtInit = async () => {
+            const data = await getSightingActiveInLastWeek();
+            if (data instanceof PostgrestError) {
+              console.error(data);
+              return;
+            }
+            makeSightingMarkerUsingSighting(
+              map as google.maps.Map,
+              setSighting,
+              setSelectedSighting,
+              data
+            );
+          };
+          displayActiveAtInit();
+          setDisplaySightingsMarker(true);
+        }
+      }
+      setInitialSightingLoaded(true);
+    }
+  }, [map, isLoaded]);
+  //TODO 2  Change location follow autocomplete
+  //TODO 3  If autocomplete marker clicked again, display button to back to current location
+
   useEffect(() => {
     // get logged in user
     (async () => {
       const session = await supabase.auth.getSession();
       setUser(session.data.session?.user.user_metadata);
     })();
-
     let id: any;
     try {
       id = trackLocation(setLocation, setLocationDenied);
@@ -284,10 +267,7 @@ export default function Map() {
             place.geometry?.location as google.maps.LatLng,
             createCurrentLocationPin,
             "selectedLocation",
-            createInfoCard(
-              place.formatted_address as string,
-              place.formatted_address as string
-            ),
+            null,
             map
           );
           setSelectedLocation(selectedLocationMarker);
@@ -303,6 +283,7 @@ export default function Map() {
       setIsAddingActive(false);
     }
   }, [isDisplayedAddSighting, isDisplayedAddTruck]);
+
   useEffect(() => {
     if (isLoaded && window.google) {
       const geocoder = new window.google.maps.Geocoder();
@@ -325,7 +306,6 @@ export default function Map() {
 
   return (
     <>
-
       {!locationDenied ? (
         isLoaded && location ? (
           <div className="flex flex-col h-full">
@@ -336,6 +316,7 @@ export default function Map() {
             <div className="absolute w-full flex flex-row justify-center items-center">
               <div className="relative flex p-2 gap-1 w-full">
                 <div className="flex gap-2 w-full justify-center h-10 items-center">
+                  {/* make this button as 'back to my current location' */}
                   <button
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                     onClick={async () => {
@@ -357,7 +338,21 @@ export default function Map() {
                   >
                     <FaMapMarkerAlt className="fill-white" />
                   </button>
-                  <Filter buttonActions={buttonActions} />
+                  {}
+                  <Filter
+                    google={google}
+                    map={map}
+                    displayPlacesMarker={displayPlacesMarker}
+                    setDisplayPlacesMarker={setDisplayPlacesMarker}
+                    displaySightingsMarker={displaySightingsMarker}
+                    setDisplaySightingsMarker={setDisplaySightingsMarker}
+                    sightings={sightings}
+                    setSighting={setSighting}
+                    setSelectedSighting={setSelectedSighting}
+                    location={location}
+                    places={places}
+                    setPlaces={setPlaces}
+                  />
 
                   {/* display sighitngs */}
                 </div>
@@ -366,7 +361,6 @@ export default function Map() {
                   type="text"
                   ref={placeAutoCompleteRef}
                   placeholder="Search by location"
-
                 />
               </div>
 

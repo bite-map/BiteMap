@@ -77,13 +77,14 @@ export const addProfileImageToFoodTruck = async (
     );
 };
 
-// gets information about all food trucks in alphabetical order
+// gets information about all food trucks
+// gets information about all food trucks
 export const getFoodTruckData = async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("food_truck_profiles")
     .select()
-    .order("name", { ascending: true }); // orders alphabetically
+    .order("name", { ascending: true });
 
   if (error) console.error("Error fetching all food truck data", error);
 
@@ -221,6 +222,17 @@ export const getSighting = async (location: Location) => {
   const { data, error } = await supabase
     .rpc("nearby_sightings", { lat: location.lat, lng: location.lng })
     .select();
+  if (error) return error;
+
+  return data;
+};
+
+export const getSightingBySightingId = async (sightignId: number) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_sighting_by_id", { sighting_id: sightignId })
+    .select();
+  console.log(data, error);
   if (error) return error;
 
   return data;
@@ -408,8 +420,6 @@ export const getReviewsData = async (profileId: string) => {
 export const getReviewsDataByTruck = async (truckId: number) => {
   const supabase = await createClient();
 
-  console.log("TRUCK ID", truckId);
-
   const { data, error } = await supabase
     .from("reviews")
     .select(
@@ -462,8 +472,6 @@ export const AddFoodTruckReview = async (
 
   // add review image to storage and store returned data
   const reviewImage = await addReviewImageToBucket(truckId, reviewId, file);
-
-  console.log("REVIEW IMAGE", reviewImage);
 
   // get the public url for the profile image
   const { publicUrl } = await getPublicUrlForImage(reviewImage as ProfileImage);
