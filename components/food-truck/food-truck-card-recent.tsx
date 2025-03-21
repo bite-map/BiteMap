@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { FaArrowRight, FaMapMarkerAlt } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 import { Truck } from "../global-component-types";
 import { montserrat } from "../fonts";
 
@@ -37,9 +37,11 @@ export default function FoodTruckCardRecent({
                     <h2 className="text-xl font-semibold truncate w-full">
                       {truck.name}
                     </h2>
-                    <p className="-mt-1 text-sm">{truck.food_style}</p>
+                    <p className="-mt-1 text-sm text-gray-500">
+                      {truck.food_style}
+                    </p>
                   </div>
-                  <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-h-16">
+                  <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-w-16 min-h-16">
                     <FaArrowRight />
                   </div>
                 </div>
