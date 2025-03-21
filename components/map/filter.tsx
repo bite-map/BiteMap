@@ -26,6 +26,7 @@ type FilterProps = {
   places: any[] | undefined;
   setPlaces: (param: any[]) => void;
   setSelectedStatic: (place: any) => void;
+  setSelectedStatic: (place: any) => void;
 };
 export interface FilterMethods {
   sightings: () => Promise<void>;
@@ -49,6 +50,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
     location,
     places,
     setPlaces,
+    setSelectedStatic,
     setSelectedStatic,
   } = props;
 
