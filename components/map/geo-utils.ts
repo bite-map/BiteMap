@@ -1,5 +1,5 @@
 import {
-  createCurrentLocationPin,
+  createSelectedLocationPin,
   createTruckPin,
   createSightingPin,
 } from "./createPinStyles";
@@ -44,18 +44,30 @@ export const createMarkerOnMap = (
   return { marker, infoCard, clickListener };
 };
 
-export const clear = (markers: any[]) => {
-  markers.forEach((obj: any) => {
-    if (obj) {
-      google.maps.event.removeListener(obj.clickListener);
-      if (obj.infoCard) {
-        obj.infoCard.close();
-      }
-      if (obj.marker) {
-        obj.marker.setMap(null);
+export const clear = (
+  markers: {
+    clickListener: null | any;
+    infoCard: null | any;
+    marker: google.maps.marker.AdvancedMarkerElement;
+  }[]
+) => {
+  markers.forEach(
+    (obj: {
+      clickListener: null | any;
+      infoCard: null | any;
+      marker: google.maps.marker.AdvancedMarkerElement;
+    }) => {
+      if (obj) {
+        google.maps.event.removeListener(obj.clickListener);
+        if (obj.infoCard) {
+          obj.infoCard.close();
+        }
+        if (obj.marker) {
+          obj.marker.map = null;
+        }
       }
     }
-  });
+  );
 };
 
 export const getLocation = (
@@ -100,6 +112,7 @@ export const trackLocation = (
       { enableHighAccuracy: true }
     );
   }
+  return null;
 };
 
 export const searchFoodTruck = async (
@@ -123,7 +136,6 @@ export const searchFoodTruck = async (
   // TODO: make 'createMarkerOnMap' for places, and split 2 kinds of markers
   const { places } = await Place.searchByText(request);
   if (places.length) {
-  
     if (map && places) {
       const placeMarkers = places.map((place) => {
         const url = "https://www.google.com/maps/place/?q=place_id:${place.id}";

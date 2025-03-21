@@ -16,7 +16,6 @@ type SightingConfirmCardProps = {
   location: any;
   map: google.maps.Map;
   setSighting: Dispatch<SetStateAction<any[] | undefined>>;
-
   setToastMessage: (params: { message: string; type: string }) => void;
   sighting: any;
   setSelectedSighting: Function;

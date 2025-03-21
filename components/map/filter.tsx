@@ -5,6 +5,7 @@ import {
   makeSightingMarkerUsingSighting,
   searchFoodTruck,
   clear,
+  fetchSighting,
 } from "./geo-utils";
 import {
   getSightingActiveInLastWeek,
@@ -40,8 +41,24 @@ export default function Filter({
   setPlaces,
 }: FilterProps) {
   const [fold, setFold] = useState<boolean>(false);
+  const [currentAction, setCurrentAction] = useState<string>();
   const buttonActionsCollect = {
-    allSightings: async () => {},
+    allSightings: async () => {
+      if (!displaySightingsMarker) {
+        fetchSighting(
+          location,
+          map as google.maps.Map,
+          setSighting,
+          setSelectedSighting
+        );
+        setDisplaySightingsMarker(true);
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
+    },
     activeInLastWeek: async () => {
       if (!displaySightingsMarker) {
         const data = await getSightingActiveInLastWeek();
@@ -118,7 +135,9 @@ export default function Filter({
           setFold(!fold);
         }}
       >
-        <p className="w-full">Select filter</p>
+        <p className="w-full">
+          {currentAction ? formatButtonName(currentAction) : `Select Sightings`}
+        </p>
         <FaChevronDown size={8} className="mr-1" />
       </button>
       {fold && (
@@ -135,6 +154,7 @@ export default function Filter({
                     className="relative items-start w-full h-full "
                     key={actionName}
                     onClick={() => {
+                      setCurrentAction(actionName);
                       actionFunction();
                     }}
                   >

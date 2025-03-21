@@ -255,7 +255,6 @@ export const getSightingBySightingId = async (sightignId: number) => {
   const { data, error } = await supabase
     .rpc("get_sighting_by_id", { sighting_id: sightignId })
     .select();
-  console.log(data, error);
   if (error) return error;
 
   return data;

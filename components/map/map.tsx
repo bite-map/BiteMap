@@ -5,8 +5,9 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
+import { FiRefreshCcw } from "react-icons/fi";
 import { Input } from "../ui/input";
-import { createCurrentLocationPin } from "./createPinStyles";
+import { createSelectedLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
 import Filter from "./filter";
 // types
@@ -43,6 +44,7 @@ export default function Map() {
   // references
   const mapRef = useRef<HTMLDivElement>(null);
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
+  const watchIdRef = useRef<number | null>(null);
 
   // search params
   const searchParams = useSearchParams();
@@ -64,6 +66,7 @@ export default function Map() {
   // marker for tracking users location
   const [userMarker, setUserMarker] = useState<google.maps.Circle | null>(null);
 
+  const [isTracking, setIsTracking] = useState<boolean>(true);
   //google map food truck location with markers
   const [places, setPlaces] = useState<any[]>();
   const [displayPlacesMarker, setDisplayPlacesMarker] =
@@ -75,7 +78,8 @@ export default function Map() {
     useState<boolean>(false);
 
   //autocomplete location with markers
-  const [selectedLocation, setSelectedLocation] = useState<any>();
+
+  const [selectedLocationMarker, setSelectedLocationMarker] = useState<any>();
 
   const [isAddingActive, setIsAddingActive] = useState<boolean>(false);
   //used to toggle add sighting / truck
@@ -160,7 +164,9 @@ export default function Map() {
       setInitialSightingLoaded(true);
     }
   }, [map, isLoaded]);
+
   //TODO 2  Change location follow autocomplete
+
   //TODO 3  If autocomplete marker clicked again, display button to back to current location
 
   useEffect(() => {
@@ -169,15 +175,20 @@ export default function Map() {
       const session = await supabase.auth.getSession();
       setUser(session.data.session?.user.user_metadata);
     })();
-    let id: any;
-    try {
-      id = trackLocation(setLocation, setLocationDenied);
-    } catch (error) {
-      navigator.geolocation.clearWatch(id);
-      getLocation(setLocation, setLocationDenied);
-      // Toast error (currently is using static location)
-    }
   }, []);
+  // toggle track current location
+  useEffect(() => {
+    // pause track when setting autocomplete
+    if (isTracking) {
+      try {
+        watchIdRef.current = trackLocation(setLocation, setLocationDenied);
+      } catch (error) {
+        if (watchIdRef.current) {
+          navigator.geolocation.clearWatch(watchIdRef.current);
+        }
+      }
+    }
+  }, [isTracking]);
 
   useEffect(() => {
     if (locationDenied && locationToast) {
@@ -187,7 +198,7 @@ export default function Map() {
 
   useEffect(() => {
     // updates the users marker when position changes
-    if (userMarker) {
+    if (userMarker && isTracking) {
       map?.setCenter(location as Location);
       userMarker.setCenter(location as Location);
     }
@@ -260,23 +271,29 @@ export default function Map() {
       // set center to place in auto complete
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
-
-        if (place) {
+        if (place && place.geometry?.location) {
           // drop marker
-          const selectedLocationMarker = createMarkerOnMap(
+          const marker = createMarkerOnMap(
             place.geometry?.location as google.maps.LatLng,
-            createCurrentLocationPin,
+            createSelectedLocationPin,
             "selectedLocation",
             null,
             map
           );
-          setSelectedLocation(selectedLocationMarker);
 
+          setLocation({
+            lat: place.geometry?.location.lat(),
+            lng: place.geometry?.location.lng(),
+          });
+          setIsTracking(false);
+          setSelectedLocationMarker(marker);
+          // onclick, set map null???
           map?.setCenter(place.geometry?.location as google.maps.LatLng);
         }
       });
     }
   }, [autoComplete]);
+
   // turn off after adding truck / sighting
   useEffect(() => {
     if (!isDisplayedAddTruck && !isDisplayedAddSighting && isAddingActive) {
@@ -316,29 +333,31 @@ export default function Map() {
             <div className="absolute w-full flex flex-row justify-center items-center">
               <div className="relative flex p-2 gap-1 w-full">
                 <div className="flex gap-2 w-full justify-center h-10 items-center">
-                  {/* make this button as 'back to my current location' */}
+                  {/* make this button as 'back to my current location, reset zoom and center, and clear all markers' */}
                   <button
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                     onClick={async () => {
-                      if (!displaySightingsMarker) {
-                        fetchSighting(
-                          location,
-                          map as google.maps.Map,
-                          setSighting,
-                          setSelectedSighting
-                        );
-                        setDisplaySightingsMarker(true);
+                      console.log(selectedLocationMarker, places, sightings);
+                      if (selectedLocationMarker) {
+                        clear([selectedLocationMarker]);
+                        setIsTracking(true);
+                        //back to current location
                       }
-                      if (displaySightingsMarker && sightings) {
+                      if (places) {
+                        clear(places);
+                        setPlaces(undefined);
+                      }
+                      if (sightings) {
                         clear(sightings);
+                        setSighting(undefined);
                         setSelectedSighting(null);
                         setDisplaySightingsMarker(false);
                       }
                     }}
                   >
-                    <FaMapMarkerAlt className="fill-white" />
+                    <FiRefreshCcw className="text-white" />
                   </button>
-                  {}
+
                   <Filter
                     google={google}
                     map={map}

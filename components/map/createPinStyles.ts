@@ -1,32 +1,16 @@
 // This file defines all Pin styles
 //pin maker takes google:any
 // NEXT TODO: wrap those pin makers into a class, which has a constructor takes google
-export class PinMaker {
-  constructor(googleObj: any) {
-    const google = googleObj;
-    const activityLevel = {
-      l0: "#eafaf1",
-      l1: "#d5f5e3",
-      l2: "#abebc6",
-      l3: "#82e0aa",
-      l4: "#58d68d",
-      l5: "#2ecc71",
-    };
-  }
-  createCurrentLocationPin() {}
-  createTruckPin() {}
-  createSightingPin() {}
-}
 
-// ----- Pin for user current location -----
-export function createCurrentLocationPin(google: any) {
-  const currentLocationPin = new google.maps.marker.PinElement({
-    scale: 1.5,
+// ----- Pin for user selected location -----
+export function createSelectedLocationPin(google: any) {
+  const selectedLocationPin = new google.maps.marker.PinElement({
+    scale: 1,
     background: "#cd6155",
     borderColor: "#cd6155",
     glyphColor: "#f9ebea",
   });
-  return currentLocationPin;
+  return selectedLocationPin;
 }
 // ----- Pin for user current location -----
 
