@@ -5,14 +5,17 @@ import Link from "next/link";
 import { GiConfirmed } from "react-icons/gi";
 import { FaSpinner } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
-
 import { usePathname } from "next/navigation";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 type SightingCardProps = {
   sightingData: any;
 };
 
 export default function SightingCard({ sightingData }: SightingCardProps) {
+  dayjs.extend(relativeTime);
+
   const pathname = usePathname();
   const [localTime, setLocalTime] = useState<string>();
 
@@ -37,27 +40,24 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
     <div className="flex rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <div className="grow overflow-hidden px-2 py-1">
         {sightingData ? (
-          <div className="flex flex-row ">
-            <div className="flex flex-col w-80">
+          <div className="flex flex-row items-center px-2 h-16">
+            <div className="flex flex-col truncate grow">
               {sightingData.address_formatted ? (
-                <p className="truncate overflow-auto mb-1">
+                <p className="truncate overflow-auto mb-1 font-semibold">
                   {sightingData.address_formatted}
                 </p>
               ) : (
-                <p className="truncate">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
+                <p className="truncate font-semibold">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
               )}
-              {pathname === "/user-profile" ? (
-                <p>{`Created at: ${sightingData.created_at}`}</p>
-              ) : (
-                <p>{`Last sighted at: ${localTime}`}</p>
-              )}
+
+              <p>Last seen: {dayjs(localTime).fromNow()}</p>
             </div>
-            <div className="flex items-center justify-center w-full">
+            <div className="flex items-center justify-center ml-2">
               {/* show how many  confirmation the sighting has, may need to change icon if it's confusing */}
-              <p className="text-center mr-1">
+              <GiConfirmed size={22} className="text-primary" />
+              <p className="text-center ml-1">
                 {sightingData.confirmation_count}
               </p>
-              <GiConfirmed></GiConfirmed>
             </div>
           </div>
         ) : (
@@ -67,14 +67,6 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
           </p>
         )}
       </div>
-      {pathname === "/user-profile" && (
-        <Link
-          href={`/truck-profile/${sightingData.food_truck_id}`}
-          className=" flex justify-center items-center text-background text-2xl bg-primary w-20"
-        >
-          <FaArrowRight />
-        </Link>
-      )}
     </div>
   );
 }

@@ -94,8 +94,6 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     }
   }, [sightings]);
 
-
-
   return (
     <div className="p-3">
       {foodTruck && (
