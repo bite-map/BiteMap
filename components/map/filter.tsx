@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Location } from "../global-component-types";
 import { FaChevronDown } from "react-icons/fa6";
 import {
@@ -26,95 +26,90 @@ type FilterProps = {
   places: any[] | undefined;
   setPlaces: (param: any[]) => void;
 };
-export default function Filter({
-  google,
-  map,
-  displayPlacesMarker,
-  setDisplayPlacesMarker,
-  displaySightingsMarker,
-  setDisplaySightingsMarker,
-  sightings,
-  setSighting,
-  setSelectedSighting,
-  location,
-  places,
-  setPlaces,
-}: FilterProps) {
+export interface FilterMethods {
+  resetButtonText: () => void;
+}
+const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
+  const {
+    google,
+    map,
+    displayPlacesMarker,
+    setDisplayPlacesMarker,
+    displaySightingsMarker,
+    setDisplaySightingsMarker,
+    sightings,
+    setSighting,
+    setSelectedSighting,
+    location,
+    places,
+    setPlaces,
+  } = props;
+
   const [fold, setFold] = useState<boolean>(false);
-  const [currentAction, setCurrentAction] = useState<string>();
+  const [currentAction, setCurrentAction] = useState<string | null>(null);
+  // use ref to clear filter when reset button clicked
+  useImperativeHandle(ref, () => ({
+    resetButtonText: () => {
+      setCurrentAction(null);
+    },
+  }));
   const buttonActionsCollect = {
     allSightings: async () => {
-      if (!displaySightingsMarker) {
-        fetchSighting(
-          location,
-          map as google.maps.Map,
-          setSighting,
-          setSelectedSighting
-        );
-        setDisplaySightingsMarker(true);
-      }
       if (displaySightingsMarker && sightings) {
         clear(sightings);
-        setSelectedSighting(null);
-        setDisplaySightingsMarker(false);
       }
+      fetchSighting(
+        location,
+        map as google.maps.Map,
+        setSighting,
+        setSelectedSighting
+      );
+      setDisplaySightingsMarker(true);
     },
     activeInLastWeek: async () => {
-      if (!displaySightingsMarker) {
-        const data = await getSightingActiveInLastWeek();
-        if (data instanceof PostgrestError) {
-          console.error(data);
-          return;
-        }
-        makeSightingMarkerUsingSighting(
-          map as google.maps.Map,
-          setSighting,
-          setSelectedSighting,
-          data
-        );
-        setDisplaySightingsMarker(true);
-      }
       if (displaySightingsMarker && sightings) {
         clear(sightings);
-        setSelectedSighting(null);
-        setDisplaySightingsMarker(false);
       }
+
+      const data = await getSightingActiveInLastWeek();
+      if (data instanceof PostgrestError) {
+        console.error(data);
+        return;
+      }
+      makeSightingMarkerUsingSighting(
+        map as google.maps.Map,
+        setSighting,
+        setSelectedSighting,
+        data
+      );
+      setDisplaySightingsMarker(true);
     },
-    popular: async () => {
-      if (!displaySightingsMarker) {
-        const data = await getSightingsOrderedByLastActiveCountConfirm();
-        if (data instanceof PostgrestError) {
-          console.error(data);
-          return;
-        }
-        makeSightingMarkerUsingSighting(
-          map as google.maps.Map,
-          setSighting,
-          setSelectedSighting,
-          data
-        );
-        setDisplaySightingsMarker(true);
-      }
+    accurite: async () => {
       if (displaySightingsMarker && sightings) {
         clear(sightings);
-        setSelectedSighting(null);
-        setDisplaySightingsMarker(false);
       }
-      if (displaySightingsMarker && sightings) {
-        clear(sightings);
-        setSelectedSighting(null);
-        setDisplaySightingsMarker(false);
+
+      const data = await getSightingsOrderedByLastActiveCountConfirm();
+      if (data instanceof PostgrestError) {
+        console.error(data);
+        return;
       }
+      makeSightingMarkerUsingSighting(
+        map as google.maps.Map,
+        setSighting,
+        setSelectedSighting,
+        data
+      );
+      setDisplaySightingsMarker(true);
     },
     staticTrucks: () => {
-      if (!displayPlacesMarker && location) {
-        searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
-        setDisplayPlacesMarker(true);
-      }
       if (displayPlacesMarker && places) {
         clear(places);
         setDisplayPlacesMarker(false);
       }
+
+      searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
+      setDisplayPlacesMarker(true);
     },
     // TODO
     // getSightingActiveOnCurrentDayOfWeek: async () => {
@@ -171,4 +166,5 @@ export default function Filter({
       )}
     </div>
   );
-}
+});
+export default Filter;

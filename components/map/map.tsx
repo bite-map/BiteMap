@@ -9,7 +9,7 @@ import { FiRefreshCcw } from "react-icons/fi";
 import { Input } from "../ui/input";
 import { createSelectedLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
-import Filter from "./filter";
+import Filter, { FilterMethods } from "./filter";
 // types
 import { Location, Sighting } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
@@ -45,6 +45,7 @@ export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null);
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
   const watchIdRef = useRef<number | null>(null);
+  const filterRef = useRef<FilterMethods | null>(null);
 
   // search params
   const searchParams = useSearchParams();
@@ -65,8 +66,8 @@ export default function Map() {
   const [geocoder, setGeocoder] = useState<google.maps.Geocoder>();
   // marker for tracking users location
   const [userMarker, setUserMarker] = useState<google.maps.Circle | null>(null);
-
   const [isTracking, setIsTracking] = useState<boolean>(true);
+
   //google map food truck location with markers
   const [places, setPlaces] = useState<any[]>();
   const [displayPlacesMarker, setDisplayPlacesMarker] =
@@ -78,7 +79,6 @@ export default function Map() {
     useState<boolean>(false);
 
   //autocomplete location with markers
-
   const [selectedLocationMarker, setSelectedLocationMarker] = useState<any>();
 
   const [isAddingActive, setIsAddingActive] = useState<boolean>(false);
@@ -164,10 +164,6 @@ export default function Map() {
       setInitialSightingLoaded(true);
     }
   }, [map, isLoaded]);
-
-  //TODO 2  Change location follow autocomplete
-
-  //TODO 3  If autocomplete marker clicked again, display button to back to current location
 
   useEffect(() => {
     // get logged in user
@@ -287,7 +283,7 @@ export default function Map() {
           });
           setIsTracking(false);
           setSelectedLocationMarker(marker);
-          // onclick, set map null???
+
           map?.setCenter(place.geometry?.location as google.maps.LatLng);
         }
       });
@@ -338,6 +334,9 @@ export default function Map() {
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                     onClick={async () => {
                       console.log(selectedLocationMarker, places, sightings);
+                      if (filterRef.current) {
+                        filterRef.current.resetButtonText();
+                      }
                       if (selectedLocationMarker) {
                         clear([selectedLocationMarker]);
                         setIsTracking(true);
@@ -353,12 +352,16 @@ export default function Map() {
                         setSelectedSighting(null);
                         setDisplaySightingsMarker(false);
                       }
+                      if (filterRef.current) {
+                        filterRef.current.resetButtonText();
+                      }
                     }}
                   >
                     <FiRefreshCcw className="text-white" />
                   </button>
 
                   <Filter
+                    ref={filterRef}
                     google={google}
                     map={map}
                     displayPlacesMarker={displayPlacesMarker}
