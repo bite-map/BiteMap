@@ -25,6 +25,7 @@ type FilterProps = {
   location: Location;
   places: any[] | undefined;
   setPlaces: (param: any[]) => void;
+  setSelectedStatic: (place: any) => void;
 };
 export interface FilterMethods {
   resetButtonText: () => void;
@@ -43,6 +44,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
     location,
     places,
     setPlaces,
+    setSelectedStatic,
   } = props;
 
   const [fold, setFold] = useState<boolean>(false);
@@ -107,8 +109,13 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
         clear(places);
         setDisplayPlacesMarker(false);
       }
-
-      searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
+      searchFoodTruck(
+        google,
+        map as google.maps.Map,
+        setPlaces,
+        location,
+        setSelectedStatic
+      );
       setDisplayPlacesMarker(true);
     },
     // TODO

@@ -30,7 +30,6 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
     setLocalTime(
       `${year}-${month}-${day} ${dayOfWeek} ${hours}:${minutes}:${seconds}`
     );
-    console.log("TIME", sightingData.last_active_time);
   }, []);
 
   return (

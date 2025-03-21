@@ -10,6 +10,7 @@ import { Input } from "../ui/input";
 import { createSelectedLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
 import Filter, { FilterMethods } from "./filter";
+import StaticTruckCard from "./static-truck-card";
 // types
 import { Location, Sighting } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
@@ -90,6 +91,9 @@ export default function Map() {
 
   // current id of sighting to display
   const [selectedSighting, setSelectedSighting] = useState<any>();
+
+  // current static truck
+  const [selectedStatic, setSelectedStatic] = useState<any>();
 
   const [toastMessage, setToastMessage] = useState<{
     message: string;
@@ -344,6 +348,7 @@ export default function Map() {
                       }
                       if (places) {
                         clear(places);
+                        setSelectedStatic(null);
                         setPlaces(undefined);
                       }
                       if (sightings) {
@@ -374,6 +379,7 @@ export default function Map() {
                     location={location}
                     places={places}
                     setPlaces={setPlaces}
+                    setSelectedStatic={setSelectedStatic}
                   />
 
                   {/* display sighitngs */}
@@ -396,6 +402,15 @@ export default function Map() {
                     setToastMessage={setToastMessage}
                     sighting={selectedSighting}
                     setSelectedSighting={setSelectedSighting}
+                  />
+                </div>
+              )}
+              {/* StaticTruckCard */}
+              {places && selectedStatic && (
+                <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
+                  <StaticTruckCard
+                    place={selectedStatic}
+                    setSelectedStatic={setSelectedStatic}
                   />
                 </div>
               )}

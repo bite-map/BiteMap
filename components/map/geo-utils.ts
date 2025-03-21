@@ -18,6 +18,7 @@ export const createMarkerOnMap = (
   infoCardContent: string | null = null,
   map: google.maps.Map,
   clickEvent: Function | null = null
+  // setSelectedPlace
 ) => {
   const pin = createPin(google);
   const marker: google.maps.marker.AdvancedMarkerElement =
@@ -27,21 +28,14 @@ export const createMarkerOnMap = (
       title: title,
       content: pin.element,
     });
-  const infoCard = new window.google.maps.InfoWindow({
-    content: infoCardContent,
-    maxWidth: 200,
-    position: location,
-  });
 
   const clickListener = marker.addListener("click", () => {
-    if (infoCardContent) {
-      infoCard.open({ map: map, anchor: marker });
-    }
+    //
     if (clickEvent) {
       clickEvent();
     }
   });
-  return { marker, infoCard, clickListener };
+  return { marker, infoCard: null, clickListener };
 };
 
 export const clear = (
@@ -119,7 +113,8 @@ export const searchFoodTruck = async (
   google: any,
   map: google.maps.Map,
   setPlaces: Function,
-  location: Location
+  location: Location,
+  setSelectedStatic: (place: any) => void
 ) => {
   const { Place } = (await google.maps.importLibrary(
     "places"
@@ -148,8 +143,7 @@ export const searchFoodTruck = async (
           </div>`,
           map,
           () => {
-            // fix this , open a small pop up
-            window.open(url, "_blank");
+            setSelectedStatic(place);
           }
         );
         return obj;
