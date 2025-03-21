@@ -12,7 +12,7 @@ export default function StarRating({
   isClickable,
   setRating,
 }: StarRatingProps) {
-  const starColor = "#FACC15";
+  const starColor = "#ef6262";
   const starColorEmpty = "#D1D5DB";
 
   return (
