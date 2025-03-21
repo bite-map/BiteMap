@@ -57,7 +57,7 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
               </div>
               <div className="flex items-center justify-between ml-2 min-w-10">
                 {/* show how many  confirmation the sighting has, may need to change icon if it's confusing */}
-                <GiConfirmed size={22} className="text-primary" />
+                <GiConfirmed size={24} className="text-primary" />
                 <p className="text-center ml-1">
                   {sightingData.confirmation_count}
                 </p>
