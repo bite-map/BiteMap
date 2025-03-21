@@ -40,7 +40,6 @@ export default function SightingConfirmCard({
   useEffect(() => {
     const getTruck = async () => {
       const truck = await getFoodTruckDataById(sighting.food_truck_id);
-      console.log(sighting);
       setTruck(truck);
     };
     getTruck();

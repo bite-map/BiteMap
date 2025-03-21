@@ -84,7 +84,7 @@ export default function AddSighting({
       >
         <IoMdClose />
       </button>
-      <h1 className="text-2xl font-medium pl-2">Add sighitng</h1>
+      <h1 className="text-2xl font-medium pl-2">Add sighting</h1>
       <div className="p-2 flex justify-between items-center gap-4 font-semibold text-xl">
         <Input
           type="text"

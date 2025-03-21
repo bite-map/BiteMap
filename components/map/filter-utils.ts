@@ -1,5 +1,5 @@
 "use server";
-
+import { addFoodTruck } from "@/app/database-actions";
 import { createClient } from "@/utils/supabase/server";
 
 // get each truck's nearest sightings
@@ -33,7 +33,6 @@ export const getSightingsOrderedByLastActiveCountConfirm = async () => {
     .rpc("get_sightings_ordered_by_last_active_count_confirm")
     .select();
   if (error) return error;
-  console.log(data);
   return data.filter((sighting) => {
     return sighting.confirmation_count > 10;
   });

@@ -3,9 +3,14 @@ import {
   createTruckPin,
   createSightingPin,
 } from "./createPinStyles";
-import { getSightingsByLastActive } from "@/app/database-actions";
+import {
+  getSightingsByLastActive,
+  getSightingBySightingId,
+} from "@/app/database-actions";
 import { Location } from "../global-component-types";
-
+import { PostgrestError } from "@supabase/supabase-js";
+import { error } from "console";
+// for google static truck:
 export const createMarkerOnMap = (
   location: google.maps.LatLng,
   createPin: Function,
@@ -41,10 +46,14 @@ export const createMarkerOnMap = (
 
 export const clear = (markers: any[]) => {
   markers.forEach((obj: any) => {
-    if (obj.marker && obj.infoCard && obj.clickListener) {
+    if (obj) {
       google.maps.event.removeListener(obj.clickListener);
-      obj.infoCard.close();
-      obj.marker.setMap(null);
+      if (obj.infoCard) {
+        obj.infoCard.close();
+      }
+      if (obj.marker) {
+        obj.marker.setMap(null);
+      }
     }
   });
 };
@@ -93,20 +102,6 @@ export const trackLocation = (
   }
 };
 
-export const createInfoCard = (title: string, body: string) =>
-  // TODO: a link, route to google map in new page to navigate to place
-  `<div class="map_infocard_content">
-    <div class="map_infocard_title">${title}</div>
-       <Link href="/truck-profile/${1}"></Link>
-    <div class="map_infocard_body">${body}</div>
-  </div>`;
-
-export const createInfoCardLink = (truckId: number) =>
-  // TODO: a link, route to google map in new page to navigate to place
-  ` <div>
-         <a href="/truck-profile/${truckId}" >GO TRUCK</a>
-      </div>`;
-
 export const searchFoodTruck = async (
   google: any,
   map: google.maps.Map,
@@ -125,16 +120,25 @@ export const searchFoodTruck = async (
     includedType: "restaurant",
   };
   //@ts-ignore
+  // TODO: make 'createMarkerOnMap' for places, and split 2 kinds of markers
   const { places } = await Place.searchByText(request);
   if (places.length) {
+  
     if (map && places) {
       const placeMarkers = places.map((place) => {
+        const url = "https://www.google.com/maps/place/?q=place_id:${place.id}";
         const obj = createMarkerOnMap(
           place.location as google.maps.LatLng,
           createTruckPin,
           place.displayName as string,
-          `<div>${place.displayName}</div>`,
-          map
+          `<div>
+          ${place.displayName}
+          </div>`,
+          map,
+          () => {
+            // fix this , open a small pop up
+            window.open(url, "_blank");
+          }
         );
         return obj;
       });
@@ -182,8 +186,8 @@ export const fetchSighting = async (
 
 export const makeSightingMarkerUsingSighting = async (
   map: google.maps.Map,
-  setSightingMarkers: Function,
-  setSelectedSighting: Function,
+  setSightingMarkers: (sightingArray: any[]) => void,
+  setSelectedSighting: (sighting: any) => void,
   sightings: any[]
 ) => {
   if (sightings.length > 0) {
@@ -207,5 +211,42 @@ export const makeSightingMarkerUsingSighting = async (
       return marker;
     });
     setSightingMarkers(sightingMarkers);
+  }
+};
+
+//
+export const displayInitSighting = async (
+  initialSightinId: number,
+  map: google.maps.Map,
+  setSighting: (sightings: any[]) => void,
+  setSelectedSighting: (sighting: any) => void,
+  setDisplaySightingsMarker: (param: boolean) => void
+) => {
+  if (initialSightinId) {
+    try {
+      // fetch that sighting
+      const initFetchedSighting = await getSightingBySightingId(
+        Number(initialSightinId)
+      );
+      if (initFetchedSighting instanceof PostgrestError) {
+        return;
+      }
+      await makeSightingMarkerUsingSighting(
+        map,
+        setSighting,
+        setSelectedSighting,
+        initFetchedSighting
+      );
+      setDisplaySightingsMarker(true);
+      map?.setCenter(
+        new google.maps.LatLng({
+          lat: initFetchedSighting[0].lat,
+          lng: initFetchedSighting[0].lng,
+        })
+      );
+      setSelectedSighting(initFetchedSighting[0]);
+    } catch (error) {
+      console.error(error);
+    }
   }
 };

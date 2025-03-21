@@ -1,10 +1,109 @@
 import { useState, useEffect } from "react";
+import { Location } from "../global-component-types";
 import { FaChevronDown } from "react-icons/fa6";
+import {
+  makeSightingMarkerUsingSighting,
+  searchFoodTruck,
+  clear,
+} from "./geo-utils";
+import {
+  getSightingActiveInLastWeek,
+  getSightingsOrderedByLastActiveCountConfirm,
+} from "./filter-utils";
+import { PostgrestError } from "@supabase/supabase-js";
 type FilterProps = {
-  buttonActions: { [key: string]: () => void };
+  google: any;
+  map: any;
+  displayPlacesMarker: boolean;
+  setDisplayPlacesMarker: (param: boolean) => void;
+  displaySightingsMarker: boolean;
+  setDisplaySightingsMarker: (param: boolean) => void;
+  sightings: any[] | undefined;
+  setSighting: (param: any) => void;
+  setSelectedSighting: (param: any) => void;
+  location: Location;
+  places: any[] | undefined;
+  setPlaces: (param: any[]) => void;
 };
-export default function Filter({ buttonActions }: FilterProps) {
+export default function Filter({
+  google,
+  map,
+  displayPlacesMarker,
+  setDisplayPlacesMarker,
+  displaySightingsMarker,
+  setDisplaySightingsMarker,
+  sightings,
+  setSighting,
+  setSelectedSighting,
+  location,
+  places,
+  setPlaces,
+}: FilterProps) {
   const [fold, setFold] = useState<boolean>(false);
+  const buttonActionsCollect = {
+    allSightings: async () => {},
+    activeInLastWeek: async () => {
+      if (!displaySightingsMarker) {
+        const data = await getSightingActiveInLastWeek();
+        if (data instanceof PostgrestError) {
+          console.error(data);
+          return;
+        }
+        makeSightingMarkerUsingSighting(
+          map as google.maps.Map,
+          setSighting,
+          setSelectedSighting,
+          data
+        );
+        setDisplaySightingsMarker(true);
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
+    },
+    popular: async () => {
+      if (!displaySightingsMarker) {
+        const data = await getSightingsOrderedByLastActiveCountConfirm();
+        if (data instanceof PostgrestError) {
+          console.error(data);
+          return;
+        }
+        makeSightingMarkerUsingSighting(
+          map as google.maps.Map,
+          setSighting,
+          setSelectedSighting,
+          data
+        );
+        setDisplaySightingsMarker(true);
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
+      if (displaySightingsMarker && sightings) {
+        clear(sightings);
+        setSelectedSighting(null);
+        setDisplaySightingsMarker(false);
+      }
+    },
+    staticTrucks: () => {
+      if (!displayPlacesMarker && location) {
+        searchFoodTruck(google, map as google.maps.Map, setPlaces, location);
+        setDisplayPlacesMarker(true);
+      }
+      if (displayPlacesMarker && places) {
+        clear(places);
+        setDisplayPlacesMarker(false);
+      }
+    },
+    // TODO
+    // getSightingActiveOnCurrentDayOfWeek: async () => {
+    // },
+  };
+
   const formatButtonName = (name: string): string => {
     return name
       .replace(/([A-Z])/g, " $1")
@@ -25,24 +124,29 @@ export default function Filter({ buttonActions }: FilterProps) {
       {fold && (
         <ul className="absolute bg-white mt-1 text-slate-500 text-xs  ">
           {/* map: function array, onclick = set to function, then click marker button to execute function*/}
-          {Object.entries(buttonActions).map(([actionName, actionFunction]) => {
-            return (
-              <li
-                key={actionName}
-                className="flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-400 border"
-              >
-                <button
-                  className="relative items-start w-full "
+          {Object.entries(buttonActionsCollect).map(
+            ([actionName, actionFunction]) => {
+              return (
+                <li
                   key={actionName}
-                  onClick={() => {
-                    actionFunction();
-                  }}
+                  className="flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-400 border"
                 >
-                  <p className="text-start "> {formatButtonName(actionName)}</p>
-                </button>
-              </li>
-            );
-          })}
+                  <button
+                    className="relative items-start w-full h-full "
+                    key={actionName}
+                    onClick={() => {
+                      actionFunction();
+                    }}
+                  >
+                    <p className="text-start ">
+                      {" "}
+                      {formatButtonName(actionName)}
+                    </p>
+                  </button>
+                </li>
+              );
+            }
+          )}
         </ul>
       )}
     </div>

@@ -38,20 +38,22 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
       <div className="grow overflow-hidden px-2 py-1">
         {sightingData ? (
           <div className="flex flex-row ">
-            <div className="flex flex-col w-80">
-              {sightingData.address_formatted ? (
-                <p className="truncate overflow-auto mb-1">
-                  {sightingData.address_formatted}
-                </p>
-              ) : (
-                <p className="truncate">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
-              )}
-              {pathname === "/user-profile" ? (
-                <p>{`Created at: ${sightingData.created_at}`}</p>
-              ) : (
-                <p>{`Last sighted at: ${localTime}`}</p>
-              )}
-            </div>
+            <Link href={`/truck-map?sighting-id=${sightingData.id}`}>
+              <div className="flex flex-col w-80">
+                {sightingData.address_formatted ? (
+                  <p className="truncate overflow-auto mb-1">
+                    {sightingData.address_formatted}
+                  </p>
+                ) : (
+                  <p className="truncate">{`lat: ${sightingData.lat}, lng: ${sightingData.lng}`}</p>
+                )}
+                {pathname === "/user-profile" ? (
+                  <p>{`Created at: ${sightingData.created_at}`}</p>
+                ) : (
+                  <p>{`Last sighted at: ${localTime}`}</p>
+                )}
+              </div>
+            </Link>
             <div className="flex items-center justify-center w-full">
               {/* show how many  confirmation the sighting has, may need to change icon if it's confusing */}
               <p className="text-center mr-1">
