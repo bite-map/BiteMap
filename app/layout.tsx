@@ -28,7 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className="absolute top-0 right-0 antialiased max-w-[600px] bg-gray-300"
+        className="antialiased max-w-[600px]"
         suppressHydrationWarning={true}
       >
         <ThemeProvider

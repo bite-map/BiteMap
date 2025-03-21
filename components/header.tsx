@@ -25,7 +25,7 @@ export default function Header({ user }: HeaderProps) {
 
   return (
     <>
-      <header className="fixed top-0 right-0 z-10 bg-background w-full max-w-[600px] flex shrink-0 justify-between items-center h-16 px-2 drop-shadow-sm ">
+      <header className="fixed top-0 left-0 z-10 bg-background w-full max-w-[600px] flex shrink-0 justify-between items-center h-16 px-2 drop-shadow-sm ">
         {/* displays the logo */}
         <Link href="/">
           <Image
