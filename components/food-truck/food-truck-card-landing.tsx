@@ -6,13 +6,13 @@ import Link from "next/link";
 import { FaArrowRight, FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
 import {
   getNearbyTruckFullInfo,
-  getFoodNewTrucks,
+  getNewFoodTrucks,
 } from "@/app/database-actions";
 import { getLocation } from "../map/geo-utils";
 import { createToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
 import FoodTruckCardRecent from "./food-truck-card-recent";
-import { montserrat, ranchers } from "../fonts";
+import { montserrat } from "../fonts";
 
 type FoodTruckCardProps = {
   // foodTruck: Truck;
@@ -60,7 +60,7 @@ export default function FoodTruckCardLanding(
 
   useEffect(() => {
     (async () => {
-      setNewTrucks(await getFoodNewTrucks());
+      setNewTrucks(await getNewFoodTrucks());
     })();
 
     if (locationDenied && locationToast) {
@@ -100,13 +100,13 @@ export default function FoodTruckCardLanding(
                           height={600}
                         ></Image>
                         <div className="flex flex-row">
-                          <div className="relative w-1/2 pt-3 pb-3 pl-3">
-                            <h2 className="text-lg font-semibold text-primary">
+                          <div className="px-3 py-2 truncate ">
+                            <h2 className="text-xl font-semibold truncate">
                               {truck.truck_name}
                             </h2>
-                            <p>{truck.truck_food_style}</p>
-                          </div>
-                          <div className="relative w-1/2 pt-3 pb-3 pr-3">
+                            <p className="-mt-1 text-sm text-gray-500">
+                              {truck.truck_food_style}
+                            </p>
                             {Math.floor(truck.nearest_dist_meters) < 1000 ? (
                               Math.floor(truck.nearest_dist_meters) <= 5 ? (
                                 <span className="flex gap-1 items-center mt-1">
