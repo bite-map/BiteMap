@@ -5,14 +5,21 @@ import { TiArrowForward } from "react-icons/ti";
 import Link from "next/link";
 import { IoMdHeart } from "react-icons/io";
 import { FaArrowRight } from "react-icons/fa";
-import { toggleFavorite } from "@/app/database-actions";
+import { getFavoriteTruck, toggleFavorite } from "@/app/database-actions";
+import { UserMetadata } from "@supabase/supabase-js";
 
 type FoodTruckCardProps = {
   foodTruck: Favorite;
+  setFavoriteTrucks: React.Dispatch<React.SetStateAction<any[]>>;
+  favoriteTrucks: any[];
+  user: UserMetadata | undefined;
 };
 
 export default function FoodTruckCardProfile({
   foodTruck,
+  setFavoriteTrucks,
+  favoriteTrucks,
+  user,
 }: FoodTruckCardProps) {
   // const [isFavorited, setIsFavorited] = useState(true);
   const [isFavorite, setIsFavorite] = useState<boolean>(true);
@@ -20,6 +27,7 @@ export default function FoodTruckCardProfile({
   useEffect(() => {
     //
   }, [isFavorite]);
+
   return (
     <div className="relative flex flex-col rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
       <button
@@ -32,6 +40,12 @@ export default function FoodTruckCardProfile({
           } catch (error) {
             console.error(error);
           }
+
+          // refresh favorites
+          (async () => {
+            const favoriteTruckData = await getFavoriteTruck(user?.sub);
+            setFavoriteTrucks(favoriteTruckData);
+          })();
         }}
       >
         <IoMdHeart
