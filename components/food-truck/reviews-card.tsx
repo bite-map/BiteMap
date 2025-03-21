@@ -28,7 +28,7 @@ export default function ReviewCard({ reviewsData }: ReviewCardProps) {
               <Image
                 className="h-[300px] object-cover"
                 src={reviewsData.image}
-                alt="Picture of a food truck"
+                alt="Review picture"
                 width={600}
                 height={600}
               ></Image>
