@@ -54,7 +54,7 @@ export default function FoodTruckCardProfile({
             <h2 className="text-xl font-semibold truncate">
               {foodTruck.food_truck_profiles.name}
             </h2>
-            <p className="text-sm">
+            <p className="text-sm text-gray-500">
               {foodTruck.food_truck_profiles.food_style}
             </p>
           </div>
