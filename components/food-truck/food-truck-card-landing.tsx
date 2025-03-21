@@ -3,12 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Truck, Location } from "./../global-component-types";
 import Image from "next/image";
 import Link from "next/link";
-import { FaArrowRight, FaSpinner } from "react-icons/fa";
+import { FaArrowRight, FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
 import { getNearbyTruck, getFoodNewTrucks } from "@/app/database-actions";
 import { getLocation } from "../map/geo-utils";
 import { createToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
 import FoodTruckCardRecent from "./food-truck-card-recent";
+import { montserrat, ranchers } from "../fonts";
 
 type FoodTruckCardProps = {
   // foodTruck: Truck;
@@ -60,7 +61,7 @@ export default function FoodTruckCardLanding(
 
   return (
     <>
-      <div className="flex flex-col gap-4 p-3 bg-muted">
+      <div className="flex flex-col gap-4 p-3 bg-muted min-h-screen">
         {!locationDenied ? (
           loading ? (
             <p className="flex items-center gap-2 h-full w-full">
@@ -71,15 +72,17 @@ export default function FoodTruckCardLanding(
             <FoodTruckCardRecent trucks={newTrucks} />
           ) : (
             <>
-              <h1 className="text-xl text-primary">
-                <strong>Nearby Food Trucks You Might Like</strong>
+              <h1
+                className={` ${montserrat.className} text-3xl text-primary tracking-tight`}
+              >
+                <strong>Nearby Food Trucks</strong>
               </h1>
               {/* display nearby trucks */}
               {trucks.map((truck) => {
                 return (
                   <div key={truck.id}>
                     <Link href={`/truck-profile/${truck.id}`}>
-                      <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
+                      <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full">
                         <Image
                           className="h-[200px] object-cover"
                           src={truck.avatar}
@@ -88,24 +91,32 @@ export default function FoodTruckCardLanding(
                           height={600}
                         ></Image>
                         <div className="flex flex-row">
-                          <div className="relative w-1/2 pt-3 pb-3 pl-3">
-                            <h2 className="text-lg font-semibold text-primary">
+                          <div className="px-3 py-2 truncate">
+                            <h2 className="text-xl font-semibold truncate">
                               {truck.name}
                             </h2>
-                            <p>{truck.food_style}</p>
-                          </div>
-                          <div className="relative w-1/2 pt-3 pb-3 pr-3">
+                            <p className="-mt-1 text-sm">{truck.food_style}</p>
+
                             {Math.floor(truck.nearest_dist_meters) < 1000 ? (
                               Math.floor(truck.nearest_dist_meters) <= 5 ? (
-                                <p className="text-sm m-1">{"You are here"}</p>
+                                <span className="flex gap-1 items-center mt-1">
+                                  <FaMapMarkerAlt className="text-primary mr-1" />
+                                  <p>{"You are here"}</p>
+                                </span>
                               ) : (
-                                <p className="text-sm m-1">{`${Math.floor(truck.nearest_dist_meters)}m from you`}</p>
+                                <span className="flex gap-1 items-center mt-1">
+                                  <FaMapMarkerAlt className="text-primary mr-1" />
+                                  <p>{`${Math.floor(truck.nearest_dist_meters)}m from you`}</p>
+                                </span>
                               )
                             ) : (
-                              <p className="text-sm m-1">{`${(truck.nearest_dist_meters / 1000).toFixed(1)}km from you`}</p>
+                              <span className="flex gap-1 items-center mt-1">
+                                <FaMapMarkerAlt className="text-primary mr-1" />
+                                <p>{`${(truck.nearest_dist_meters / 1000).toFixed(1)}km from you`}</p>
+                              </span>
                             )}
                           </div>
-                          <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16">
+                          <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-w-16">
                             <FaArrowRight />
                           </div>
                         </div>

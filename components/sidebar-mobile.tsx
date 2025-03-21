@@ -18,21 +18,21 @@ export default function SidebarMobile({
   user,
 }: SidebarMobileProps) {
   return (
-    <div
-      className={clsx("fixed top-16 right-0 z-20 flex w-full h-screen", {
-        hidden: !isDisplayed,
-      })}
-    >
-      {/* this is temporary div to handle closing the menu when clicking outide
-      we should research a better way to do this as it breaks the animations */}
+    <>
+      {/* this is the gray area to the left of the sidebar */}
       <div
         onClick={handleToggle}
-        className={clsx("grow", { hidden: !isDisplayed })}
+        className={clsx(
+          "fixed top-0  w-full h-full bg-black bg-opacity-50 z-20",
+          {
+            hidden: !isDisplayed,
+          }
+        )}
       ></div>
       <div
         className={clsx(
-          "fixed top-16 right-0 translate-x-0 flex flex-col border-l-[1.5px] border-primary w-16 h-full  bg-muted transition-transform duration-300",
-          { "translate-x-16": !isDisplayed }
+          "fixed top-0 right-0 translate-x-0 flex flex-col border-l-[1.5px] border-primary w-40 h-full pt-16 bg-muted transition-transform duration-300 z-20",
+          { "translate-x-40": !isDisplayed }
         )}
       >
         {/* creates a button for each button passed to the component */}
@@ -46,6 +46,6 @@ export default function SidebarMobile({
         {/* displays logout button if a user is logged in */}
         {user ? <LogoutButton handleToggle={handleToggle} /> : null}
       </div>
-    </div>
+    </>
   );
 }
