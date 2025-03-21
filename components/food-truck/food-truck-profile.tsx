@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { IoCreateOutline } from "react-icons/io5";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { montserrat } from "../fonts";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -94,12 +95,10 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     }
   }, [sightings]);
 
-
-
   return (
-    <div className="p-3">
+    <div className="p-3 min-h-screen">
       {foodTruck && (
-        <div className="rounded-xl bg-background overflow-clip shadow-md">
+        <div className="relative rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full">
           <Image
             className="h-[200px] object-cover"
             src={foodTruck.avatar as string}
@@ -108,27 +107,22 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
             height={600}
           ></Image>
 
-          <div className="flex justify-between p-3">
-            <div>
-              <h2 className="text-lg font-semibold text-primary">
+          <div className="flex flex-row">
+            <div className="px-3 py-2 truncate">
+              <h2 className="text-xl font-semibold truncate">
                 {foodTruck.name}
               </h2>
-
-              <p>{foodTruck.food_style}</p>
-            </div>
-            <div>
-              {lastActive && (
-                <div>
-                  <p> Last seen:</p>
-                  <p>{lastActiveHumanRead}</p>
-                </div>
-              )}
+              <p className="-mt-1 text-sm text-gray-500">
+                {foodTruck.food_style}
+              </p>
+              {lastActive && <p>Last seen: {lastActiveHumanRead}</p>}
             </div>
             {user && (
               <button
                 style={{
-                  color: isFavorite ? "red" : "gray",
+                  color: isFavorite ? "#ef6262" : "#D1D5DB",
                 }}
+                className="ml-auto mr-3"
                 onClick={async () => {
                   try {
                     const data = await toggleFavorite(truckId);
@@ -138,7 +132,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
                   }
                 }}
               >
-                <IoMdHeart />
+                <IoMdHeart size={32} />
               </button>
             )}
           </div>
@@ -165,7 +159,11 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         {activeTab === "reviews" && (
           <>
             <div className="flex">
-              <h1 className="text-2xl font-medium ml-2">Recent reviews</h1>
+              <h1
+                className={`${montserrat.className} text-2xl text-primary tracking-tight`}
+              >
+                <strong>Recent Reviews</strong>
+              </h1>
               <button
                 className="bg-primary p-2 mr-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center ml-auto mb-2"
                 onClick={() => {

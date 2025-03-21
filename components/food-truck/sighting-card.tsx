@@ -55,7 +55,7 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
                   Last seen: {dayjs(sightingData.last_active_time).fromNow()}
                 </p>
               </div>
-              <div className="flex items-center justify-center ml-2">
+              <div className="flex items-center justify-between ml-2 min-w-10">
                 {/* show how many  confirmation the sighting has, may need to change icon if it's confusing */}
                 <GiConfirmed size={22} className="text-primary" />
                 <p className="text-center ml-1">
