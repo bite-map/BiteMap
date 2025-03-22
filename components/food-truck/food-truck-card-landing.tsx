@@ -23,6 +23,7 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
   const [trucks, setTrucks] = useState<any[]>([]);
   const [newTrucks, setNewTrucks] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [chancesLoading, setChancesLoading] = useState(true);
   const [locationDenied, setLocationDenied] = useState<boolean>(false);
   // Store chances by truck ID and location
   const [truckLocationChances, setTruckLocationChances] = useState<
@@ -43,7 +44,8 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
   useEffect(() => {
     const fetchTruck = async () => {
       if (location) {
-        setLoading(true); // set loading state while getting data
+        setChancesLoading(true);
+        // setLoading(true); // set loading state while getting data
 
         // get nearby trucks using the users location(lat, lng) with radius os 2500 meters
         const trucksWithFullInfo = await getNearbyTruckFullInfo(
@@ -126,6 +128,7 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
           newTruckLocationChances
         );
         setTruckLocationChances(newTruckLocationChances);
+        setChancesLoading(false);
       }
     };
 
@@ -209,14 +212,23 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
                               </span>
                             )}
                             {/* display the chance of sighting for the specific location */}
-                            {chanceForThisLocation !== undefined && (
-                              <div className="mt-2 text-sm text-primary">
-                                <strong>
-                                  Chance of being at this location:{" "}
-                                </strong>
-                                {Math.round(chanceForThisLocation * 100)}%
+                           
+                              {chancesLoading ? (
+                                 <p className="flex items-center mt-2 text-sm gap-2">
+                                    Calculating Chances{" "}
+                                   <FaSpinner className="animate-spin text-primary" />
+                                 </p>
+                            ) : (
+                               chanceForThisLocation !== undefined ? (
+                                     <div className="mt-2 text-sm">
+                               Chance of being at this location: <strong className="text-primary">{Math.round(chanceForThisLocation * 100)}% </strong>
                               </div>
-                            )}
+                               ):(
+                                <div className="mt-2 text-sm">
+                               Insufficient data to calculate chance
+                              </div>
+                               )
+                             )}
                           </div>
                           <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-w-16">
                             <FaArrowRight size={24} />

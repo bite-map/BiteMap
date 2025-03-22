@@ -22,6 +22,7 @@ import { IoCreateOutline } from "react-icons/io5";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { montserrat } from "../fonts";
+import { FaSpinner } from "react-icons/fa";
 
 type FoodTruckProfileProps = {
   truckId: number;
@@ -43,6 +44,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
   const [locationsChance, setLocationsChance] = useState<Map<string, number>>(new Map());
+  const [chancesLoading, setChancesLoading] = useState(true);
 
 
   const handleToggleAddReview = () => {
@@ -82,6 +84,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
 
   useEffect(() => {
     if (sightings && sightings.length > 0) {
+      setChancesLoading(true);
       const calculateChance = async () => {
         const chancesMap = new Map<string, number>();
         const dayOfWeek = new Date().getDay(); // get the current day of the week (0-6)
@@ -115,6 +118,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         }
 
         setLocationsChance(chancesMap);
+        setChancesLoading(false);
       };
 
       calculateChance();
@@ -181,7 +185,13 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </div>
         </div>
       )}
-      {locationsChance.size > 0 && (
+      {chancesLoading ? (
+       <p className="flex items-center mt-2 text-sm gap-2">
+          Calculating Chances{" "}
+        <FaSpinner className="animate-spin text-primary" />
+       </p>
+      ) : (
+      locationsChance.size > 0 && (
         <h2><strong>
           <p className="text-sm text-black-500">
             Showing chances for {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()]}:
@@ -195,6 +205,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
             ))}
           </ul>
         </h2>
+      )
       )}
       <div className="border-b border-gray-200 mt-4">
         <nav className="flex -mb-px">
