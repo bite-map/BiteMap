@@ -7,7 +7,7 @@ export function createSelectedLocationPin(google: any) {
   const selectedLocationPin = new google.maps.marker.PinElement({
     scale: 1,
     background: "#93c04f",
-    glyphColor: "#a5d163",
+    glyphColor: "#f9ebea",
   });
   return selectedLocationPin;
 }
