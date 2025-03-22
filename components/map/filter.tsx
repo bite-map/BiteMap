@@ -55,7 +55,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
   const [fold, setFold] = useState<boolean>(false);
 
   // current filter name to display
-  const [currentAction, setCurrentAction] = useState<string>("allSightings");
+  const [currentAction, setCurrentAction] = useState<string>("Sightings");
   // use ref to clear filter when reset button clicked
 
   const buttonActionsCollect = {
