@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Favorite, Truck } from "./../global-component-types";
+import { Favorite } from "./../global-component-types";
 import Image from "next/image";
 import { TiArrowForward } from "react-icons/ti";
 import Link from "next/link";

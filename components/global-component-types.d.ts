@@ -30,6 +30,8 @@ type Sighting = {
   food_truck_id: number;
   location: geography;
   created_by_profile_id: string;
+  address_formated: string;
+  created_at: Date;
   food_truck_profiles: { name: string };
 };
 
