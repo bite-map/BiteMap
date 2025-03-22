@@ -250,5 +250,3 @@ export const displayInitSighting = async (
     }
   }
 };
-
-export const fetchImg = async (google: any, placeId: string) => {};
