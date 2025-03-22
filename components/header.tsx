@@ -12,6 +12,7 @@ import {
   LuMap,
   LuShieldAlert,
   LuX,
+  LuCircleHelp,
 } from "react-icons/lu";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
@@ -71,6 +72,12 @@ export default function Header({ user }: HeaderProps) {
               href: "/privacy-policy",
               marginTop: "auto",
             },
+            {
+              icon: LuCircleHelp,
+              text: "FAQ",
+              href: "/faq",
+              marginTop: "",
+            },
           ]}
           isDisplayed={isDisplayed}
           handleToggle={handleToggle}
@@ -92,6 +99,12 @@ export default function Header({ user }: HeaderProps) {
               text: "Privacy Policy",
               href: "/privacy-policy",
               marginTop: "auto",
+            },
+            {
+              icon: LuCircleHelp,
+              text: "FAQ",
+              href: "/faq",
+              marginTop: "",
             },
           ]}
           isDisplayed={isDisplayed}
