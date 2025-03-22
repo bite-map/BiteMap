@@ -23,7 +23,7 @@ export default function NavButtonMobile({
         <Link onClick={handleToggle} href={NavButton.href}>
           <div
             className={clsx(
-              "flex font-semibold items-center w-40 h-12 p-3 mt-3",
+              "flex font-semibold items-center w-48 h-12 p-3 mt-3",
               {
                 "bg-primary text-background": pathname === NavButton.href,
               }
@@ -37,7 +37,7 @@ export default function NavButtonMobile({
         <a onClick={handleToggle} href={NavButton.href}>
           <div
             className={clsx(
-              "flex font-semibold items-center w-40 h-12 p-3 mt-3",
+              "flex font-semibold items-center w-48 h-12 p-3 mt-3",
               {
                 "bg-primary text-background": pathname === NavButton.href,
               }
