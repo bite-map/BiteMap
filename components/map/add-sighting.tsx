@@ -129,25 +129,18 @@ export default function AddSighting({
                 );
               })}
 
-              {searchItem === "" ? (
-                <>
-                  <p className="pl-2 pt-1">
-                    Can't find the truck you're looking for? You can add one
-                    below.
-                  </p>
-                  <button
-                    className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center text-sm"
-                    onClick={() => {
-                      handleToggleAddSighting();
-                      handleToggleAddTruck();
-                    }}
-                  >
-                    Add truck
-                  </button>
-                </>
-              ) : (
-                <p className="pl-2 pt-1">End of search results</p>
-              )}
+              <p className="pl-2 pt-1">
+                Can't find the truck you're looking for? You can add one below.
+              </p>
+              <button
+                className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center text-sm"
+                onClick={() => {
+                  handleToggleAddSighting();
+                  handleToggleAddTruck();
+                }}
+              >
+                Add truck
+              </button>
             </>
           ) : (
             <>
