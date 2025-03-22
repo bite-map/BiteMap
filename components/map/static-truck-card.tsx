@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
+import { ExternalLink } from "lucide-react";
 import { IoMdClose } from "react-icons/io";
 type StaticTruckProps = {
   place: any;
   setSelectedStatic: (param: any) => void;
+  google: any;
 };
 
 export default function StaticTruckCard({
@@ -14,10 +16,9 @@ export default function StaticTruckCard({
   //   set toggle this card display
 }: StaticTruckProps) {
   const [url, setUrl] = useState<string>();
+  const [img, setImg] = useState<string | null>();
 
   useEffect(() => {
-    //
-    console.log(place);
     setUrl(`https://www.google.com/maps/place/?q=place_id:${place.id}`);
   }, [place]);
 
@@ -33,17 +34,18 @@ export default function StaticTruckCard({
       </button>
 
       <div className="flex bg-muted">
-        {/* <img className="object-cover w-32 " src={truck?.avatar} alt="" /> */}
         <div className="ml-2 flex flex-col justify-center">
-          <p className="text-lg text-primary font-semibold truncate w-[140px]">
+          <p className="text-lg text-primary font-semibold truncate w-3/4">
             {place?.displayName}
           </p>
           {/* <p className="-mt-1 text-sm">{truck?.food_style}</p> */}
           {place.businessStatus && (
-            <p className="text-sm mt-2">{place.businessStatus}</p>
+            <p className="text-sm mt-2 ">{place.businessStatus}</p>
           )}
           {place.formattedAddress && (
-            <p className="text-sm mt-2">{place.formattedAddress}</p>
+            <p className="text-sm mt-2 max-w-80 pb-1">
+              {place.formattedAddress}
+            </p>
           )}
         </div>
       </div>
@@ -57,7 +59,7 @@ export default function StaticTruckCard({
         >
           <div className="flex items-center justify-center w-full gap-2">
             <span>Go to Truck</span>
-            <FiExternalLink />
+            <ExternalLink className="w-4 items-center justify-center" />
           </div>
         </button>
       </div>

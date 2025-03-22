@@ -103,19 +103,11 @@ export default function SightingConfirmCard({
                 sighting.food_truck_id
               );
 
-              // This is sort of working but it seems to cause issues with the filtering
               // updates the sightings so confirmations show without a refresh
-              // use current filter to fetch sighting
-              // fetchSighting(
-              //   location,
-              //   map as google.maps.Map,
-              //   setSighting,
-              //   setSelectedSighting
-              // );
+              // why this work:use current filter to fetch sighting
               if (filter.current) {
                 const actionName = filter.current?.getCurrentAction();
                 if (actionName) {
-                  console.log(filter.current);
                   filter.current.executeCurrentAction();
                 }
               }

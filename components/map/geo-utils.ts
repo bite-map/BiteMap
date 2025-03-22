@@ -128,7 +128,6 @@ export const searchFoodTruck = async (
   };
   //@ts-ignore
   const { places } = await Place.searchByText(request);
-  console.log(places);
   if (places.length) {
     if (map && places) {
       const placeMarkers = places.map((place) => {
@@ -136,7 +135,6 @@ export const searchFoodTruck = async (
           place.location as google.maps.LatLng,
           createTruckPin,
           place.displayName as string,
-
           map,
           () => {
             setSelectedStatic(place);
@@ -252,3 +250,5 @@ export const displayInitSighting = async (
     }
   }
 };
+
+export const fetchImg = async (google: any, placeId: string) => {};

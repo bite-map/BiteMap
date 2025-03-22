@@ -164,14 +164,14 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
         <FaChevronDown size={8} className="mr-1" />
       </button>
       {fold && (
-        <ul className="absolute bg-white mt-1 text-slate-500 text-xs  ">
+        <ul className="absolute bg-white mt-1 text-slate-500 text-xs  w-32 ">
           {/* map: function array, onclick = set to function, then click marker button to execute function*/}
           {Object.entries(buttonActionsCollect).map(
             ([actionName, actionFunction]) => {
               return (
                 <li
                   key={actionName}
-                  className="flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-300 border"
+                  className="  w-32 flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-300 border"
                 >
                   <button
                     className="relative items-start w-full h-full "
@@ -181,7 +181,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
                       actionFunction();
                     }}
                   >
-                    <p className="text-start ">
+                    <p className="text-start ml-2">
                       {" "}
                       {formatButtonName(actionName)}
                     </p>
