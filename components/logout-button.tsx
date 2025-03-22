@@ -1,5 +1,5 @@
 import React from "react";
-import { GrLogout } from "react-icons/gr";
+import { LuLogOut } from "react-icons/lu";
 import { signOutAction } from "@/app/actions";
 
 type LogoutButtonProps = {
@@ -13,9 +13,9 @@ export default function LogoutButton({ handleToggle }: LogoutButtonProps) {
         signOutAction();
         handleToggle();
       }}
-      className="flex font-semibold items-center w-48 h-12 p-3 mt-3"
+      className="flex font-semibold items-center w-48 h-12 p-3 mt-3 last:mb-4"
     >
-      <GrLogout size={26} />
+      <LuLogOut size={26} />
       <p className="ml-2">Logout</p>
     </button>
   );
