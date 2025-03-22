@@ -165,7 +165,7 @@ export default function AddSighting({
                 </>
               ) : (
                 <p className="flex items-center gap-2">
-                  Loading location{" "}
+                  Loading trucks{" "}
                   <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
                 </p>
               )}
