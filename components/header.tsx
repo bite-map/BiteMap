@@ -16,6 +16,7 @@ import {
 } from "react-icons/lu";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
+import { FaQuestionCircle } from "react-icons/fa";
 
 type HeaderProps = {
   user: User | null;
