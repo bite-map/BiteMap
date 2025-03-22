@@ -15,6 +15,8 @@ import {
 } from "react-icons/lu";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
+import { FaQuestionCircle } from "react-icons/fa";
+
 
 type HeaderProps = {
   user: User | null;
@@ -70,6 +72,12 @@ export default function Header({ user }: HeaderProps) {
               text: "Privacy Policy",
               href: "/privacy-policy",
               marginTop: "auto",
+            },         
+            { 
+              icon: FaQuestionCircle, 
+              text: "FAQ", 
+              href:"/faq", 
+              marginTop: "",
             },
           ]}
           isDisplayed={isDisplayed}
@@ -92,6 +100,12 @@ export default function Header({ user }: HeaderProps) {
               text: "Privacy Policy",
               href: "/privacy-policy",
               marginTop: "auto",
+            },
+            { 
+              icon: FaQuestionCircle, 
+              text: "FAQ", 
+              href:"/faq"
+              marginTop: "",
             },
           ]}
           isDisplayed={isDisplayed}
