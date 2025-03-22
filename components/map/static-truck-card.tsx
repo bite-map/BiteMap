@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { GiConfirmed } from "react-icons/gi";
+import { FiExternalLink } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 type StaticTruckProps = {
   place: any;
@@ -38,13 +35,16 @@ export default function StaticTruckCard({
       <div className="flex bg-muted">
         {/* <img className="object-cover w-32 " src={truck?.avatar} alt="" /> */}
         <div className="ml-2 flex flex-col justify-center">
-          {/* <p className="text-lg text-primary font-semibold truncate w-[140px]">
-            {truck?.name}
+          <p className="text-lg text-primary font-semibold truncate w-[140px]">
+            {place?.displayName}
           </p>
-          <p className="-mt-1 text-sm">{truck?.food_style}</p>
-          {sighting.address_formatted && (
-            <p className="text-sm mt-2">{sighting.address_formatted}</p>
-          )} */}
+          {/* <p className="-mt-1 text-sm">{truck?.food_style}</p> */}
+          {place.businessStatus && (
+            <p className="text-sm mt-2">{place.businessStatus}</p>
+          )}
+          {place.formattedAddress && (
+            <p className="text-sm mt-2">{place.formattedAddress}</p>
+          )}
         </div>
       </div>
 
@@ -53,9 +53,12 @@ export default function StaticTruckCard({
           onClick={() => {
             window.open(url, "_blank");
           }}
-          className="w-64 bg-primary my-1 mx-3 rounded-xl text-background py-[0.1rem]"
+          className="flex flex-row w-64 bg-primary my-1 mx-3 rounded-xl text-background py-[0.1rem] space-x-2"
         >
-          <p className="justify-center items-center text-center">Go to Truck</p>
+          <div className="flex items-center justify-center w-full gap-2">
+            <span>Go to Truck</span>
+            <FiExternalLink />
+          </div>
         </button>
       </div>
     </div>

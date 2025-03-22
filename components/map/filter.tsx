@@ -28,10 +28,10 @@ type FilterProps = {
   setSelectedStatic: (place: any) => void;
 };
 export interface FilterMethods {
-  allSightings: () => Promise<void>;
-  activeInLastWeek: () => Promise<void>;
+  sightings: () => Promise<void>;
+  recentlyActive: () => Promise<void>;
   accurate: () => Promise<void>;
-  staticTrucks: () => Promise<void>;
+  permanent: () => Promise<void>;
   getCurrentAction: () => string | null;
   executeCurrentAction: () => void;
 }
@@ -59,7 +59,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
   // use ref to clear filter when reset button clicked
 
   const buttonActionsCollect = {
-    allSightings: async () => {
+    sightings: async () => {
       if (displaySightingsMarker && sightings) {
         clear(sightings);
       }
@@ -71,7 +71,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
       );
       setDisplaySightingsMarker(true);
     },
-    activeInLastWeek: async () => {
+    recentlyActive: async () => {
       if (displaySightingsMarker && sightings) {
         clear(sightings);
       }
@@ -107,7 +107,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
       );
       setDisplaySightingsMarker(true);
     },
-    staticTrucks: async () => {
+    permanent: async () => {
       if (displayPlacesMarker && places) {
         clear(places);
         setDisplayPlacesMarker(false);
@@ -130,10 +130,10 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
   const getCurrentAction = () => currentAction;
 
   useImperativeHandle(ref, () => ({
-    allSightings: buttonActionsCollect.allSightings,
-    activeInLastWeek: buttonActionsCollect.activeInLastWeek,
+    sightings: buttonActionsCollect.sightings,
+    recentlyActive: buttonActionsCollect.recentlyActive,
     accurate: buttonActionsCollect.accurate,
-    staticTrucks: buttonActionsCollect.staticTrucks,
+    permanent: buttonActionsCollect.permanent,
     getCurrentAction: getCurrentAction,
     executeCurrentAction: () => {
       if (
@@ -160,7 +160,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
           setFold(!fold);
         }}
       >
-        <p className="w-full">{currentAction}</p>
+        <p className="w-full">{formatButtonName(currentAction)}</p>
         <FaChevronDown size={8} className="mr-1" />
       </button>
       {fold && (

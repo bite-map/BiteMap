@@ -15,7 +15,6 @@ export const createMarkerOnMap = (
   location: google.maps.LatLng,
   createPin: Function,
   title: string = "place",
-  infoCardContent: string | null = null,
   map: google.maps.Map,
   clickEvent: Function | null = null
   // setSelectedPlace
@@ -123,24 +122,21 @@ export const searchFoodTruck = async (
   const circle = new google.maps.Circle({ center: center, radius: 5000 });
   const request = {
     textQuery: "Food Truck",
-    fields: ["displayName", "location", "businessStatus"],
+    fields: ["displayName", "location", "businessStatus", "formattedAddress"],
     locationBias: circle,
     includedType: "restaurant",
   };
   //@ts-ignore
-  // TODO: make 'createMarkerOnMap' for places, and split 2 kinds of markers
   const { places } = await Place.searchByText(request);
+  console.log(places);
   if (places.length) {
     if (map && places) {
       const placeMarkers = places.map((place) => {
-        const url = "https://www.google.com/maps/place/?q=place_id:${place.id}";
         const obj = createMarkerOnMap(
           place.location as google.maps.LatLng,
           createTruckPin,
           place.displayName as string,
-          `<div>
-          ${place.displayName}
-          </div>`,
+
           map,
           () => {
             setSelectedStatic(place);
@@ -180,7 +176,7 @@ export const fetchSighting = async (
         location,
         createSightingPin,
         sighting.id.toString() as string,
-        null,
+
         map as google.maps.Map,
         sightingMarkerClickEvent
       );
@@ -210,7 +206,7 @@ export const makeSightingMarkerUsingSighting = async (
         location,
         createSightingPin,
         sighting.id.toString() as string,
-        null,
+
         map as google.maps.Map,
         sightingMarkerClickEvent
       );

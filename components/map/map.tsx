@@ -18,12 +18,8 @@ import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
 import AddSighting from "./add-sighting";
 import {
   clear,
-  createMarkerOnMap,
-  fetchSighting,
   makeSightingMarkerUsingSighting,
-  searchFoodTruck,
   trackLocation,
-  getLocation,
   displayInitSighting,
 } from "./geo-utils";
 
@@ -283,7 +279,6 @@ export default function Map() {
         placeAutoCompleteRef.current as HTMLInputElement,
         autocompleteOptions
       );
-
       setMap(gMap);
       setAutoComplete(gAutoComplete);
     }
@@ -296,22 +291,23 @@ export default function Map() {
         const place = autoComplete.getPlace();
         if (place && place.geometry?.location) {
           // drop marker
-          const marker = createMarkerOnMap(
-            place.geometry?.location as google.maps.LatLng,
-            createSelectedLocationPin,
-            "selectedLocation",
-            null,
-            map
-          );
+          // const marker = createMarkerOnMap(
+          //   place.geometry?.location as google.maps.LatLng,
+          //   createSelectedLocationPin,
+          //   "selectedLocation",
+          //   null,
+          //   map
+          // );
 
           setLocation({
             lat: place.geometry?.location.lat(),
             lng: place.geometry?.location.lng(),
           });
           setIsTracking(false);
-          setSelectedLocationMarker(marker);
+          // setSelectedLocationMarker(marker);
 
           map?.setCenter(place.geometry?.location as google.maps.LatLng);
+          map.setZoom(17);
         }
       });
     }

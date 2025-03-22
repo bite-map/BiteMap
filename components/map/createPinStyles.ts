@@ -6,8 +6,8 @@
 export function createSelectedLocationPin(google: any) {
   const selectedLocationPin = new google.maps.marker.PinElement({
     scale: 1,
-    background: "#82e0aa",
-    glyphColor: "#f9ebea",
+    background: "#93c04f",
+    glyphColor: "#a5d163",
   });
   return selectedLocationPin;
 }
@@ -17,9 +17,7 @@ export function createSelectedLocationPin(google: any) {
 export function createTruckPin(google: any) {
   const truckPin = new google.maps.marker.PinElement({
     scale: 1,
-
     background: "#82e0aa",
-
     borderColor: "#196f3d",
     glyphColor: "#196f3d",
   });
@@ -32,7 +30,7 @@ const activityLevel = {
   l0: "#fef9e7",
   l1: "#fcf3cf",
   l2: "#f9e79f",
-  l3: "#f7dc6f",
+  l3: "#f5b7b1",
   l4: "#f4d03f",
   l5: "#f1c40f",
 };
@@ -44,8 +42,8 @@ export function createSightingPin(google: any, activity: number = 3) {
     background: activityLevel[
       `l${activity}` as keyof typeof activityLevel
     ] as string,
-    borderColor: "#ca6f1e",
-    glyphColor: "#ca6f1e",
+    borderColor: "#cb4335",
+    glyphColor: "#cb4335",
   });
   return sightingPin;
 }
