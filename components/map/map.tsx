@@ -5,6 +5,7 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
+import { FaLocationCrosshairs } from "react-icons/fa6";
 import { FiRefreshCcw } from "react-icons/fi";
 import { Input } from "../ui/input";
 import { createSelectedLocationPin } from "./createPinStyles";
@@ -137,8 +138,11 @@ export default function Map() {
     if (filterRef.current) {
       filterRef.current.resetButtonText();
     }
-    if (selectedLocationMarker) {
+    if (!isTracking) {
       clear([selectedLocationMarker]);
+      if (placeAutoCompleteRef.current?.value) {
+        placeAutoCompleteRef.current.value = "";
+      }
       setIsTracking(true);
       //back to current location
     }
@@ -148,14 +152,9 @@ export default function Map() {
       setPlaces(undefined);
     }
     if (sightings) {
-      clear(sightings);
-      setSighting(undefined);
       setSelectedSighting(null);
-      setDisplaySightingsMarker(false);
     }
-    if (filterRef.current) {
-      filterRef.current.resetButtonText();
-    }
+    trackLocation(setLocation, setLocationDenied);
   };
   // -----Effect-----
   //initial display markers
@@ -362,7 +361,7 @@ export default function Map() {
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
                     onClick={handleClear}
                   >
-                    <FiRefreshCcw className="text-white" />
+                    <FaLocationCrosshairs className="text-white" />
                   </button>
 
                   <Filter

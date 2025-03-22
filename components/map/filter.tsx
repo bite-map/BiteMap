@@ -109,14 +109,16 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
         clear(places);
         setDisplayPlacesMarker(false);
       }
-      searchFoodTruck(
-        google,
-        map as google.maps.Map,
-        setPlaces,
-        location,
-        setSelectedStatic
-      );
-      setDisplayPlacesMarker(true);
+      if (!displayPlacesMarker) {
+        searchFoodTruck(
+          google,
+          map as google.maps.Map,
+          setPlaces,
+          location,
+          setSelectedStatic
+        );
+        setDisplayPlacesMarker(true);
+      }
     },
     // TODO
     // getSightingActiveOnCurrentDayOfWeek: async () => {
@@ -130,9 +132,9 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
   };
   useEffect(() => {}, [setFold]);
   return (
-    <div className="relative w-32 font-medium items-center h-10">
+    <div className="relative w-32 font-medium items-center h-10  ">
       <button
-        className=" bg-white w-full h-8 p-1 mt-1 mb-1 flex items-center justify-between rounded text-xs text-slate-500 "
+        className=" bg-white w-full h-8 p-1 mt-1 mb-1 flex items-center justify-between rounded text-xs text-slate-500 border border-gray-300 "
         onClick={() => {
           setFold(!fold);
         }}
@@ -150,7 +152,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
               return (
                 <li
                   key={actionName}
-                  className="flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-400 border"
+                  className="flex items-center justify-center p-1 h-10  hover:bg-slate-300 border-l-0 border-r-0 border-t-0 border-b-1 border-gray-300 border"
                 >
                   <button
                     className="relative items-start w-full h-full "
