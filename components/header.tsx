@@ -4,14 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "../public/logo.svg";
 import SidebarMobile from "./sidebar-mobile";
-import { LuMenu } from "react-icons/lu";
-import { AiOutlineHome, AiOutlineUser } from "react-icons/ai";
-import { GrMapLocation } from "react-icons/gr";
-import { MdClose } from "react-icons/md";
-import { GrLogin } from "react-icons/gr";
+import {
+  LuMenu,
+  LuLogIn,
+  LuHouse,
+  LuUserRound,
+  LuMap,
+  LuShieldAlert,
+  LuX,
+  LuCircleHelp,
+} from "react-icons/lu";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { MdOutlinePrivacyTip } from "react-icons/md";
 import { FaQuestionCircle } from "react-icons/fa";
 
 type HeaderProps = {
@@ -31,7 +35,7 @@ export default function Header({ user }: HeaderProps) {
         className="fixed top-3 right-2 z-30 text-gray-700 text-2xl border-2 border-primary bg-muted rounded-xl text-primary w-10 h-10 mr-[3px] flex justify-center items-center"
         onClick={handleToggle}
       >
-        {!isDisplayed ? <LuMenu /> : <MdClose />}
+        {!isDisplayed ? <LuMenu /> : <LuX />}
       </button>
       <header className="fixed top-0 left-0 z-10 bg-background w-full flex shrink-0 justify-between items-center h-16 px-2 drop-shadow-sm ">
         {/* displays the logo */}
@@ -50,15 +54,31 @@ export default function Header({ user }: HeaderProps) {
       {user ? (
         <SidebarMobile
           NavButtons={[
-            { icon: AiOutlineHome, text: "Home", href: "/" },
+            { icon: LuHouse, text: "Home", href: "/", marginTop: "" },
             {
-              icon: GrMapLocation,
+              icon: LuMap,
               text: "Map",
               href: "/truck-map?init=active",
+              marginTop: "",
             },
-            { icon: AiOutlineUser, text: "Account", href: "/user-profile" },
-            { icon: MdOutlinePrivacyTip, text: "Privacy Policy", href:"/privacy-policy"},
-            { icon: FaQuestionCircle, text: "FAQ", href:"/faq"},
+            {
+              icon: LuUserRound,
+              text: "Account",
+              href: "/user-profile",
+              marginTop: "",
+            },
+            {
+              icon: LuShieldAlert,
+              text: "Privacy Policy",
+              href: "/privacy-policy",
+              marginTop: "auto",
+            },
+            {
+              icon: LuCircleHelp,
+              text: "FAQ",
+              href: "/faq",
+              marginTop: "",
+            },
           ]}
           isDisplayed={isDisplayed}
           handleToggle={handleToggle}
@@ -67,15 +87,26 @@ export default function Header({ user }: HeaderProps) {
       ) : (
         <SidebarMobile
           NavButtons={[
-            { icon: AiOutlineHome, text: "Home", href: "/" },
+            { icon: LuHouse, text: "Home", href: "/", marginTop: "" },
             {
-              icon: GrMapLocation,
+              icon: LuMap,
               text: "Map",
               href: "/truck-map?init=active",
+              marginTop: "",
             },
-            { icon: GrLogin, text: "Login", href: "/sign-in" },
-            { icon: MdOutlinePrivacyTip, text: "Privacy Policy", href:"/privacy-policy"},
-            { icon: FaQuestionCircle, text: "FAQ", href:"/faq"},
+            { icon: LuLogIn, text: "Login", href: "/sign-in", marginTop: "" },
+            {
+              icon: LuShieldAlert,
+              text: "Privacy Policy",
+              href: "/privacy-policy",
+              marginTop: "auto",
+            },
+            {
+              icon: LuCircleHelp,
+              text: "FAQ",
+              href: "/faq",
+              marginTop: "",
+            },
           ]}
           isDisplayed={isDisplayed}
           handleToggle={handleToggle}

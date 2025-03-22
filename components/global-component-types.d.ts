@@ -4,6 +4,7 @@ type NavButton = {
   icon: React.ElementType;
   text: string;
   href: Url;
+  marginTop: string;
 };
 
 type Truck = {

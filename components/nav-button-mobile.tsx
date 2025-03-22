@@ -20,7 +20,11 @@ export default function NavButtonMobile({
   return (
     <>
       {NavButton.href !== "/truck-map" ? (
-        <Link onClick={handleToggle} href={NavButton.href}>
+        <Link
+          onClick={handleToggle}
+          href={NavButton.href}
+          className={`mt-${NavButton.marginTop} last:mb-4`}
+        >
           <div
             className={clsx(
               "flex font-semibold items-center w-48 h-12 p-3 mt-3",
