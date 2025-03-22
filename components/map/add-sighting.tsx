@@ -128,9 +128,10 @@ export default function AddSighting({
                   </li>
                 );
               })}
-              {searchItem === "" && (
+
+              {searchItem === "" ? (
                 <>
-                  <p className="pl-2">
+                  <p className="pl-2 pt-1">
                     Can't find the truck you're looking for? You can add one
                     below.
                   </p>
@@ -144,6 +145,8 @@ export default function AddSighting({
                     Add truck
                   </button>
                 </>
+              ) : (
+                <p className="pl-2 pt-1">End of search results</p>
               )}
             </>
           ) : (
