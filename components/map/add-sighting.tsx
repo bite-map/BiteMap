@@ -117,10 +117,10 @@ export default function AddSighting({
                         height={60}
                       />
                       <div className="flex flex-col justify-between leading-normal relative w-full truncate px-3">
-                        <h5 className="text-2xl font-bold className-tight text-gray-900 dark:text-white truncate">
+                        <h5 className="text-xl font-bold className-tight text-gray-900 dark:text-white truncate">
                           {truck.name}
                         </h5>
-                        <p className="mb-1 font-normal text-gray-500 dark:text-gray-400">
+                        <p className="mb-1 font-normal text-sm text-gray-500 dark:text-gray-400">
                           {truck.food_style}
                         </p>
                       </div>
