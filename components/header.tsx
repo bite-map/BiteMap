@@ -11,7 +11,6 @@ import { MdClose } from "react-icons/md";
 import { GrLogin } from "react-icons/gr";
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { MdOutlinePrivacyTip } from "react-icons/md";
 
 type HeaderProps = {
   user: User | null;
@@ -56,7 +55,6 @@ export default function Header({ user }: HeaderProps) {
               href: "/truck-map?init=active",
             },
             { icon: AiOutlineUser, text: "Account", href: "/user-profile" },
-            { icon: MdOutlinePrivacyTip, text: "Privacy Policy", href: "/privacy-policy"}
           ]}
           isDisplayed={isDisplayed}
           handleToggle={handleToggle}
@@ -72,7 +70,6 @@ export default function Header({ user }: HeaderProps) {
               href: "/truck-map?init=active",
             },
             { icon: GrLogin, text: "Login", href: "/sign-in" },
-            { icon: MdOutlinePrivacyTip, text: "Privacy Policy", href: "/privacy-policy"}
           ]}
           isDisplayed={isDisplayed}
           handleToggle={handleToggle}
