@@ -35,7 +35,9 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const supabase = createClient();
 
   const [user, setUser] = useState<UserMetadata | undefined>(undefined);
-  const [activeTab, setActiveTab] = useState<"sightings" | "reviews">("reviews");
+  const [activeTab, setActiveTab] = useState<"sightings" | "reviews">(
+    "reviews"
+  );
   const [foodTruck, setFoodTruck] = useState<Truck | null>(null);
   const [sightings, setSightings] = useState<any[] | null>();
   const [reviews, setReviews] = useState<any[]>([]);
@@ -43,9 +45,10 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   const [lastActiveHumanRead, setLastActiveHumanRead] = useState<string>();
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isDisplayedAddReview, setIsDisplayedAddReview] = useState(false);
-  const [locationsChance, setLocationsChance] = useState<Map<string, number>>(new Map());
+  const [locationsChance, setLocationsChance] = useState<Map<string, number>>(
+    new Map()
+  );
   const [chancesLoading, setChancesLoading] = useState(true);
-
 
   const handleToggleAddReview = () => {
     setIsDisplayedAddReview((prev) => !prev);
@@ -100,7 +103,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           const confirmationCount = confirmations.length;
 
           if (confirmationCount > 0) {
-            const currentChance = chancesMap.get(sighting.address_formatted) || 0;
+            const currentChance =
+              chancesMap.get(sighting.address_formatted) || 0;
             chancesMap.set(
               sighting.address_formatted,
               currentChance + confirmationCount // Normalize chance by the number of sightings
@@ -108,13 +112,16 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           }
         }
 
-        const totalConfirmations = Array.from(chancesMap.values()).reduce((acc, val) => acc + val, 0);
+        const totalConfirmations = Array.from(chancesMap.values()).reduce(
+          (acc, val) => acc + val,
+          0
+        );
 
-        if(totalConfirmations > 0) {
+        if (totalConfirmations > 0) {
           chancesMap.forEach((count, address) => {
-            const maxChance = Math.min(count / totalConfirmations, 0.9)
-            chancesMap.set( address, maxChance)
-          })
+            const maxChance = Math.min(count / totalConfirmations, 0.9);
+            chancesMap.set(address, maxChance);
+          });
         }
 
         setLocationsChance(chancesMap);
@@ -185,28 +192,50 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </div>
         </div>
       )}
+
       {chancesLoading ? (
-       <p className="flex items-center mt-2 text-sm gap-2">
+        <p className="flex items-center mt-2 ml-2 text-sm gap-2">
           Calculating Chances{" "}
-        <FaSpinner className="animate-spin text-primary" />
-       </p>
+          <FaSpinner className="animate-spin text-primary" />
+        </p>
       ) : (
-      locationsChance.size > 0 && (
-        <h2><strong>
-          <p className="text-sm text-black-500">
-            Showing chances for {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()]}:
-          </p>
-          </strong>
-          <ul>
-            {Array.from(locationsChance.entries()).map(([location, chance]) => (
-              <li key={location} className="text-sm">
-                {location}: <strong>{Math.round(chance * 100)}% chance</strong>
-              </li>
-            ))}
-          </ul>
-        </h2>
-      )
+        locationsChance.size > 0 && (
+          <div className="relative rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full mt-4 min-h-16 px-3 py-2">
+            <strong>
+              <p className="text-lg">
+                Chances for{" "}
+                {
+                  [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                  ][new Date().getDay()]
+                }
+              </p>
+            </strong>
+            <ul className="pl-3 marker:text-primary">
+              {Array.from(locationsChance.entries()).map(
+                ([location, chance]) => (
+                  <li
+                    key={location}
+                    className="text-sm list-disc first:pt-1 pt-3 text-gray-500"
+                  >
+                    {location}:{" "}
+                    <strong className="text-primary">
+                      {Math.round(chance * 100)}%
+                    </strong>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+        )
       )}
+
       <div className="border-b border-gray-200 mt-4">
         <nav className="flex -mb-px">
           {["reviews", "sightings"].map((tab) => (
@@ -225,8 +254,8 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
         </nav>
       </div>
 
-  {/* Reviews Tab */}
-  <div className="pt-2">
+      {/* Reviews Tab */}
+      <div className="pt-2">
         {activeTab === "reviews" && (
           <>
             <div className="flex">
