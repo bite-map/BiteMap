@@ -4,7 +4,7 @@ import { Truck, Location } from "./../global-component-types";
 import Image from "next/image";
 import Link from "next/link";
 import { FaArrowRight, FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
-import { getNearbyTruckFullInfo, getFoodNewTrucks, getAllSighConfirmationsByDayLocationId } from "@/app/database-actions";
+import { getNearbyTruckFullInfo, getNewFoodTrucks, getAllSighConfirmationsByDayLocationId } from "@/app/database-actions";
 import { getLocation } from "../map/geo-utils";
 import { createToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
