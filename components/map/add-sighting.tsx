@@ -102,25 +102,25 @@ export default function AddSighting({
                 return (
                   <li
                     key={truck.id}
-                    className="h-1/4 mb-1 w-full justify-center items-center"
+                    className="px-1 pt-1 mb-1 w-full justify-center items-center"
                     onClick={() => {
                       setSelectedTruck(truck);
                     }}
                   >
                     {/* link go to truck profile or get all sighitng? */}
-                    <div className="flex flex-row items-center h-full w-full  bg-white border border-gray-200 rounded-xl shadow-sm   hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <div className="h-[5.5rem] flex flex-row items-center w-full overflow-clip bg-background ring-1 ring-primary rounded-xl shadow-md hover:bg-muted dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                       <Image
-                        className="m-3 h-[60px] w-[60px] object-cover rounded-t-lg  md:h-auto md:w-48 md:rounded-none md:rounded-s-lg items-start"
+                        className="h-full min-w-20 object-cover"
                         src={truck.avatar}
                         alt="Image of a food truck"
                         width={60}
                         height={60}
                       />
-                      <div className="flex flex-col justify-between leading-normal relative w-full">
-                        <h5 className="mb-2 text-2xl font-bold className-tight text-gray-900 dark:text-white">
+                      <div className="flex flex-col justify-between leading-normal relative w-full truncate px-3">
+                        <h5 className="text-xl font-bold className-tight text-gray-900 dark:text-white truncate">
                           {truck.name}
                         </h5>
-                        <p className="mb-1 font-normal text-gray-700 dark:text-gray-400">
+                        <p className="mb-1 font-normal text-sm text-gray-500 dark:text-gray-400">
                           {truck.food_style}
                         </p>
                       </div>
@@ -128,23 +128,19 @@ export default function AddSighting({
                   </li>
                 );
               })}
-              {searchItem === "" && (
-                <>
-                  <p className="pl-2">
-                    Can't find the truck you're looking for? You can add one
-                    below.
-                  </p>
-                  <button
-                    className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center text-sm"
-                    onClick={() => {
-                      handleToggleAddSighting();
-                      handleToggleAddTruck();
-                    }}
-                  >
-                    Add truck
-                  </button>
-                </>
-              )}
+
+              <p className="pl-2 pt-1">
+                Can't find the truck you're looking for? You can add one below.
+              </p>
+              <button
+                className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center text-sm"
+                onClick={() => {
+                  handleToggleAddSighting();
+                  handleToggleAddTruck();
+                }}
+              >
+                Add truck
+              </button>
             </>
           ) : (
             <>
@@ -165,7 +161,7 @@ export default function AddSighting({
                 </>
               ) : (
                 <p className="flex items-center gap-2">
-                  Loading location{" "}
+                  Loading trucks{" "}
                   <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
                 </p>
               )}
