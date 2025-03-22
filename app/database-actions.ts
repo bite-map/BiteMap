@@ -255,7 +255,6 @@ export const getSightingBySightingId = async (sightignId: number) => {
   const { data, error } = await supabase
     .rpc("get_sighting_by_id", { sighting_id: sightignId })
     .select();
-  console.log(data, error);
   if (error) return error;
 
   return data;
@@ -567,7 +566,10 @@ export const getIsFavorite = async (truckId: number) => {
 // -------------- FAVORITE (END) --------------
 
 // -------------- ALGORITHM -------------------
-export const getSightingByTruckIdAndLocation = async (truckId: number, address: string) => {
+export const getSightingByTruckIdAndLocation = async (
+  truckId: number,
+  address: string
+) => {
   const supabase = await createClient();
   const currentDate = new Date();
   const lastMonthDate = new Date();
@@ -586,15 +588,18 @@ export const getSightingByTruckIdAndLocation = async (truckId: number, address: 
   }
 
   return data;
-}
+};
 
 // get all sightings confirmations by truckId and day
-export const getAllSighConfirmationsByDayId = async (truckId: number, dayOfWeek: number) => {
+export const getAllSighConfirmationsByDayId = async (
+  truckId: number,
+  dayOfWeek: number
+) => {
   const sightings = await getSightingByTruckId(truckId);
   const supabase = await createClient();
 
   if (!sightings || sightings.length === 0) {
-    console.log("No sightings found for the required info");
+    console.error("No sightings found for the required info");
     return [];
   }
 
@@ -619,42 +624,56 @@ export const getAllSighConfirmationsByDayId = async (truckId: number, dayOfWeek:
 };
 
 // get all confirmations based on truckId, Location and Day of week
-export const getAllSighConfirmationsByDayLocationId = async (truckId: number, address: string, dayOfWeek: number) => {
+export const getAllSighConfirmationsByDayLocationId = async (
+  truckId: number,
+  address: string,
+  dayOfWeek: number
+) => {
   const sightings = await getSightingByTruckIdAndLocation(truckId, address);
   const supabase = await createClient();
 
   if (sightings.length === 0) {
-    console.log("No sightings found for the required info");
+    console.error("No sightings found for the required info");
     return [];
   }
 
   // get all the confirmations for the sightings
-  const allConfirmations = await Promise.all(sightings.map(async (sighting) => {
-    const { data: confirmations, error } = await supabase
-      .from("sighting_confirmations")
-      .select()
-      .eq("food_truck_sighting_id", sighting.id);
+  const allConfirmations = await Promise.all(
+    sightings.map(async (sighting) => {
+      const { data: confirmations, error } = await supabase
+        .from("sighting_confirmations")
+        .select()
+        .eq("food_truck_sighting_id", sighting.id);
 
-    if (error) {
-      console.error(`Error getting confirmations for sighting ID ${sighting.id}`, error);
-      return [];
-    }
+      if (error) {
+        console.error(
+          `Error getting confirmations for sighting ID ${sighting.id}`,
+          error
+        );
+        return [];
+      }
 
-    return confirmations;
-  }));
+      return confirmations;
+    })
+  );
 
-  console.log('All confirmations:', allConfirmations);
+  console.error("All confirmations:", allConfirmations);
 
-  const confirmationsByDayAndLocation = allConfirmations.flat().filter((confirmation) => {
-    const confirmationDate = new Date(confirmation.created_at);
-    return confirmationDate.getDay() === dayOfWeek;
-  });
+  const confirmationsByDayAndLocation = allConfirmations
+    .flat()
+    .filter((confirmation) => {
+      const confirmationDate = new Date(confirmation.created_at);
+      return confirmationDate.getDay() === dayOfWeek;
+    });
 
   if (confirmationsByDayAndLocation.length === 0) {
-    console.log("No confirmations found for the specified day and location");
+    console.error("No confirmations found for the specified day and location");
     return [];
   }
 
-  console.log('Confirmations for the specified day and location:', confirmationsByDayAndLocation);
+  console.log(
+    "Confirmations for the specified day and location:",
+    confirmationsByDayAndLocation
+  );
   return confirmationsByDayAndLocation;
-}
+};

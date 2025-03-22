@@ -57,8 +57,6 @@ export default function AddSighting({
     // default to fetch a large radius
     const fetchTruck = async () => {
       if (sightingLocation) {
-        //
-
         const data = (await getFoodTruckData()) as Truck[];
 
         if (data?.length) {
