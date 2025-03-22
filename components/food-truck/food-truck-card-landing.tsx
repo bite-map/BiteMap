@@ -9,7 +9,7 @@ import { getLocation } from "../map/geo-utils";
 import { createToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
 import FoodTruckCardRecent from "./food-truck-card-recent";
-import { montserrat, ranchers } from "../fonts";
+import { montserrat } from "../fonts";
 
 type FoodTruckCardProps = {};
 
@@ -98,7 +98,7 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
 
   useEffect(() => {
     (async () => {
-      setNewTrucks(await getFoodNewTrucks());
+      setNewTrucks(await getNewFoodTrucks());
     })();
 
     if (locationDenied && locationToast) {
@@ -162,7 +162,7 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
                             )}
                           </div>
                           <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-w-16">
-                            <FaArrowRight />
+                            <FaArrowRight size={24} />
                           </div>
                         </div>
                         {/* Display the chance of sighting */}

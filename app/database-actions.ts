@@ -91,12 +91,12 @@ export const getFoodTruckData = async () => {
 };
 
 // gets information about 10 most recently added trucks
-export const getFoodNewTrucks = async () => {
+export const getNewFoodTrucks = async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("food_truck_profiles")
     .select()
-    .order("id", { ascending: true })
+    .order("id", { ascending: false })
     .limit(10); // orders alphabetically
 
   if (error) console.error("Error fetching all food truck data", error);
