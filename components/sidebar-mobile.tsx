@@ -31,8 +31,8 @@ export default function SidebarMobile({
       ></div>
       <div
         className={clsx(
-          "fixed top-0 right-0 translate-x-0 flex flex-col border-l-[1.5px] border-primary w-40 h-full pt-16 bg-muted transition-transform duration-300 z-20",
-          { "translate-x-40": !isDisplayed }
+          "fixed top-0 right-0 translate-x-0 flex flex-col border-l-[1.5px] border-primary w-48 h-full pt-16 bg-muted transition-transform duration-300 z-20",
+          { "translate-x-48": !isDisplayed }
         )}
       >
         {/* creates a button for each button passed to the component */}
