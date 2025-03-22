@@ -84,7 +84,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
     if (sightings && sightings.length > 0) {
       const calculateChance = async () => {
         const chancesMap = new Map<string, number>();
-        const dayOfWeek = new Date().getDay(); // Current day of the week (0-6)
+        const dayOfWeek = new Date().getDay(); // get the current day of the week (0-6)
 
         // Get sightings confirmations for all sightings
         for (let sighting of sightings) {
