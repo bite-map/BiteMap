@@ -133,6 +133,30 @@ export default function Map() {
   // show sighting confirm card
   // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
 
+  const handleClear = async () => {
+    if (filterRef.current) {
+      filterRef.current.resetButtonText();
+    }
+    if (selectedLocationMarker) {
+      clear([selectedLocationMarker]);
+      setIsTracking(true);
+      //back to current location
+    }
+    if (places) {
+      clear(places);
+      setSelectedStatic(null);
+      setPlaces(undefined);
+    }
+    if (sightings) {
+      clear(sightings);
+      setSighting(undefined);
+      setSelectedSighting(null);
+      setDisplaySightingsMarker(false);
+    }
+    if (filterRef.current) {
+      filterRef.current.resetButtonText();
+    }
+  };
   // -----Effect-----
   //initial display markers
   useEffect(() => {
@@ -336,31 +360,7 @@ export default function Map() {
                   {/* make this button as 'back to my current location, reset zoom and center, and clear all markers' */}
                   <button
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
-                    onClick={async () => {
-                      console.log(selectedLocationMarker, places, sightings);
-                      if (filterRef.current) {
-                        filterRef.current.resetButtonText();
-                      }
-                      if (selectedLocationMarker) {
-                        clear([selectedLocationMarker]);
-                        setIsTracking(true);
-                        //back to current location
-                      }
-                      if (places) {
-                        clear(places);
-                        setSelectedStatic(null);
-                        setPlaces(undefined);
-                      }
-                      if (sightings) {
-                        clear(sightings);
-                        setSighting(undefined);
-                        setSelectedSighting(null);
-                        setDisplaySightingsMarker(false);
-                      }
-                      if (filterRef.current) {
-                        filterRef.current.resetButtonText();
-                      }
-                    }}
+                    onClick={handleClear}
                   >
                     <FiRefreshCcw className="text-white" />
                   </button>
