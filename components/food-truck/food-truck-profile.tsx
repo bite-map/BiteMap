@@ -174,7 +174,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
                   handleToggleAddReview();
                 }}
               >
-                <IoCreateOutline size={22} />
+                <IoCreateOutline size={24} />
               </button>
             </div>
             <div className="grid grid-cols-1 gap-y-3">
