@@ -105,6 +105,9 @@ export default function UserProfile() {
                 <FoodTruckCardProfile
                   key={truck.food_truck_id}
                   foodTruck={truck}
+                  setFavoriteTrucks={setFavoriteTrucks}
+                  favoriteTrucks={favoriteTrucks}
+                  user={user}
                 />
               ))
             ) : (

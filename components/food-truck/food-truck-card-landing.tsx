@@ -4,12 +4,15 @@ import { Truck, Location } from "./../global-component-types";
 import Image from "next/image";
 import Link from "next/link";
 import { FaArrowRight, FaSpinner, FaMapMarkerAlt } from "react-icons/fa";
-import { getNearbyTruck, getFoodNewTrucks } from "@/app/database-actions";
+import {
+  getNearbyTruckFullInfo,
+  getNewFoodTrucks,
+} from "@/app/database-actions";
 import { getLocation } from "../map/geo-utils";
 import { createToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
 import FoodTruckCardRecent from "./food-truck-card-recent";
-import { montserrat, ranchers } from "../fonts";
+import { montserrat } from "../fonts";
 
 type FoodTruckCardProps = {
   // foodTruck: Truck;
@@ -40,9 +43,15 @@ export default function FoodTruckCardLanding(
     const fetchTruck = async () => {
       if (location) {
         setLoading(true);
-        const trucks = await getNearbyTruck(location?.lat, location?.lng, 2500);
-
-        setTrucks(trucks);
+        //  This fetch full info of nearby truck.
+        const trucksWithFullInfo = await getNearbyTruckFullInfo(
+          location?.lat,
+          location?.lng,
+          2500
+        );
+        // console log full info, use info: sighting_address_formatted
+        console.log(trucksWithFullInfo);
+        setTrucks(trucksWithFullInfo);
         setLoading(false);
       }
     };
@@ -51,7 +60,7 @@ export default function FoodTruckCardLanding(
 
   useEffect(() => {
     (async () => {
-      setNewTrucks(await getFoodNewTrucks());
+      setNewTrucks(await getNewFoodTrucks());
     })();
 
     if (locationDenied && locationToast) {
@@ -80,23 +89,24 @@ export default function FoodTruckCardLanding(
               {/* display nearby trucks */}
               {trucks.map((truck) => {
                 return (
-                  <div key={truck.id}>
-                    <Link href={`/truck-profile/${truck.id}`}>
+                  <div key={truck.truck_id}>
+                    <Link href={`/truck-profile/${truck.truck_id}`}>
                       <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full">
                         <Image
                           className="h-[200px] object-cover"
-                          src={truck.avatar}
+                          src={truck.truck_avatar}
                           alt="Picture of a food truck"
                           width={600}
                           height={600}
                         ></Image>
                         <div className="flex flex-row">
-                          <div className="px-3 py-2 truncate">
+                          <div className="px-3 py-2 truncate ">
                             <h2 className="text-xl font-semibold truncate">
-                              {truck.name}
+                              {truck.truck_name}
                             </h2>
-                            <p className="-mt-1 text-sm">{truck.food_style}</p>
-
+                            <p className="-mt-1 text-sm text-gray-500">
+                              {truck.truck_food_style}
+                            </p>
                             {Math.floor(truck.nearest_dist_meters) < 1000 ? (
                               Math.floor(truck.nearest_dist_meters) <= 5 ? (
                                 <span className="flex gap-1 items-center mt-1">
@@ -117,7 +127,7 @@ export default function FoodTruckCardLanding(
                             )}
                           </div>
                           <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-w-16">
-                            <FaArrowRight />
+                            <FaArrowRight size={24} />
                           </div>
                         </div>
                       </div>

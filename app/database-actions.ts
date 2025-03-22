@@ -78,7 +78,6 @@ export const addProfileImageToFoodTruck = async (
 };
 
 // gets information about all food trucks
-// gets information about all food trucks
 export const getFoodTruckData = async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -92,12 +91,12 @@ export const getFoodTruckData = async () => {
 };
 
 // gets information about 10 most recently added trucks
-export const getFoodNewTrucks = async () => {
+export const getNewFoodTrucks = async () => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("food_truck_profiles")
     .select()
-    .order("id", { ascending: true })
+    .order("id", { ascending: false })
     .limit(10); // orders alphabetically
 
   if (error) console.error("Error fetching all food truck data", error);
@@ -196,6 +195,30 @@ export const getNearbyTruck = async (
     return [];
   }
 };
+
+// similar to above, but get full information
+export const getNearbyTruckFullInfo = async (
+  lat: number,
+  lng: number,
+  radius: number | null = null
+) => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .rpc("get_nearby_truck_with_full_info", {
+        user_lat: lat,
+        user_lng: lng,
+        radius: radius,
+      })
+      .select();
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
 // -------------- FOOD TRUCK (END) --------------
 
 // -------------- SIGHTING (START) --------------

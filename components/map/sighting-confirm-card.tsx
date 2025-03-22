@@ -43,7 +43,7 @@ export default function SightingConfirmCard({
       setTruck(truck);
     };
     getTruck();
-  }, []);
+  }, [sighting]);
 
   return (
     <div className="relative  w-80 flex flex-col">
