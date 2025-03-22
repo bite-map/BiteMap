@@ -136,7 +136,7 @@ export default function Map() {
 
   const handleClear = async () => {
     if (filterRef.current) {
-      filterRef.current.resetButtonText();
+      //
     }
     if (!isTracking) {
       clear([selectedLocationMarker]);
@@ -394,6 +394,7 @@ export default function Map() {
               {selectedSighting && (
                 <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
                   <SightingConfirmCard
+                    filter={filterRef}
                     location={location}
                     map={map as google.maps.Map}
                     setSighting={setSighting}

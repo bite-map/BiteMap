@@ -28,7 +28,12 @@ type FilterProps = {
   setSelectedStatic: (place: any) => void;
 };
 export interface FilterMethods {
-  resetButtonText: () => void;
+  allSightings: () => Promise<void>;
+  activeInLastWeek: () => Promise<void>;
+  accurate: () => Promise<void>;
+  staticTrucks: () => Promise<void>;
+  getCurrentAction: () => string | null;
+  executeCurrentAction: () => void;
 }
 const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
   const {
@@ -48,13 +53,11 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
   } = props;
 
   const [fold, setFold] = useState<boolean>(false);
-  const [currentAction, setCurrentAction] = useState<string | null>(null);
+
+  // current filter name to display
+  const [currentAction, setCurrentAction] = useState<string>("allSightings");
   // use ref to clear filter when reset button clicked
-  useImperativeHandle(ref, () => ({
-    resetButtonText: () => {
-      setCurrentAction(null);
-    },
-  }));
+
   const buttonActionsCollect = {
     allSightings: async () => {
       if (displaySightingsMarker && sightings) {
@@ -86,7 +89,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
       );
       setDisplaySightingsMarker(true);
     },
-    accurite: async () => {
+    accurate: async () => {
       if (displaySightingsMarker && sightings) {
         clear(sightings);
       }
@@ -104,7 +107,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
       );
       setDisplaySightingsMarker(true);
     },
-    staticTrucks: () => {
+    staticTrucks: async () => {
       if (displayPlacesMarker && places) {
         clear(places);
         setDisplayPlacesMarker(false);
@@ -124,7 +127,25 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
     // getSightingActiveOnCurrentDayOfWeek: async () => {
     // },
   };
+  const getCurrentAction = () => currentAction;
 
+  useImperativeHandle(ref, () => ({
+    allSightings: buttonActionsCollect.allSightings,
+    activeInLastWeek: buttonActionsCollect.activeInLastWeek,
+    accurate: buttonActionsCollect.accurate,
+    staticTrucks: buttonActionsCollect.staticTrucks,
+    getCurrentAction: getCurrentAction,
+    executeCurrentAction: () => {
+      if (
+        currentAction &&
+        buttonActionsCollect[currentAction as keyof typeof buttonActionsCollect]
+      ) {
+        buttonActionsCollect[
+          currentAction as keyof typeof buttonActionsCollect
+        ]();
+      }
+    },
+  }));
   const formatButtonName = (name: string): string => {
     return name
       .replace(/([A-Z])/g, " $1")
@@ -139,9 +160,7 @@ const Filter = forwardRef<FilterMethods, FilterProps>((props, ref) => {
           setFold(!fold);
         }}
       >
-        <p className="w-full">
-          {currentAction ? formatButtonName(currentAction) : `Select Sightings`}
-        </p>
+        <p className="w-full">{currentAction}</p>
         <FaChevronDown size={8} className="mr-1" />
       </button>
       {fold && (

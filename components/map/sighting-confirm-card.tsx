@@ -1,11 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Truck } from "../global-component-types";
 import {
   addSightingConfirmation,
   getFoodTruckDataById,
 } from "@/app/database-actions";
+import { FilterMethods } from "./filter";
 import Link from "next/link";
 import { UserMetadata } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ type SightingConfirmCardProps = {
   sighting: any;
   setSelectedSighting: Function;
   user: UserMetadata | undefined;
+  filter: React.RefObject<FilterMethods | null>;
 };
 
 export default function SightingConfirmCard({
@@ -30,6 +32,7 @@ export default function SightingConfirmCard({
   sighting,
   setSelectedSighting,
   user,
+  filter,
   //   set toggle this card display
 }: SightingConfirmCardProps) {
   const router = useRouter();
@@ -100,14 +103,22 @@ export default function SightingConfirmCard({
                 sighting.food_truck_id
               );
 
-              // This is sort of working but it seems to cause issues with the filtering <----- Yizhen
+              // This is sort of working but it seems to cause issues with the filtering
               // updates the sightings so confirmations show without a refresh
+              // use current filter to fetch sighting
               // fetchSighting(
               //   location,
               //   map as google.maps.Map,
               //   setSighting,
               //   setSelectedSighting
               // );
+              if (filter.current) {
+                const actionName = filter.current?.getCurrentAction();
+                if (actionName) {
+                  console.log(filter.current);
+                  filter.current.executeCurrentAction();
+                }
+              }
 
               if (data) {
                 // toast
