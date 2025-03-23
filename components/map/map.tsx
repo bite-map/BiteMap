@@ -6,9 +6,7 @@ import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import { FiRefreshCcw } from "react-icons/fi";
 import { Input } from "../ui/input";
-import { createSelectedLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
 import Filter, { FilterMethods } from "./filter";
 import StaticTruckCard from "./static-truck-card";
