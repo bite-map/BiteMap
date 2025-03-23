@@ -422,7 +422,7 @@ export default function Map() {
               }}
             >
               <FaPlus
-                className="focus:outline-none focus:ring-4 focus:shadow font-sans rounded-full  "
+                className="focus:outline-none focus:ring-4 focus:shadow font-sans rounded-full cursor-pointer"
                 color="white"
                 fontSize={16}
               />
