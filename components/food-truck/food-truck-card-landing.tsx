@@ -212,23 +212,25 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
                               </span>
                             )}
                             {/* display the chance of sighting for the specific location */}
-                           
-                              {chancesLoading ? (
-                                 <p className="flex items-center mt-2 text-sm gap-2">
-                                    Calculating Chances{" "}
-                                   <FaSpinner className="animate-spin text-primary" />
-                                 </p>
+
+                            {chancesLoading ? (
+                              <p className="flex items-center mt-2 text-sm gap-2">
+                                Calculating Chances{" "}
+                                <FaSpinner className="animate-spin text-primary" />
+                              </p>
+                            ) : chanceForThisLocation !== undefined ? (
+                              <div className="mt-2 text-sm">
+                                Chance of being at this location:{" "}
+                                <strong className="text-primary">
+                                  {Math.round(chanceForThisLocation * 100)}
+                                  %{" "}
+                                </strong>
+                              </div>
                             ) : (
-                               chanceForThisLocation !== undefined ? (
-                                     <div className="mt-2 text-sm">
-                               Chance of being at this location: <strong className="text-primary">{Math.round(chanceForThisLocation * 100)}% </strong>
+                              <div className="mt-2 text-sm">
+                                Insufficient data to calculate chance
                               </div>
-                               ):(
-                                <div className="mt-2 text-sm">
-                               Insufficient data to calculate chance
-                              </div>
-                               )
-                             )}
+                            )}
                           </div>
                           <div className="flex justify-center items-center text-background text-2xl ml-auto bg-primary w-16 min-w-16">
                             <FaArrowRight size={24} />

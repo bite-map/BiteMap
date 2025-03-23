@@ -6,9 +6,7 @@ import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import { FiRefreshCcw } from "react-icons/fi";
 import { Input } from "../ui/input";
-import { createSelectedLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
 import Filter, { FilterMethods } from "./filter";
 import StaticTruckCard from "./static-truck-card";
@@ -195,12 +193,14 @@ export default function Map() {
       setUser(session.data.session?.user.user_metadata);
     })();
   }, []);
+
   // toggle track current location
   useEffect(() => {
     // pause track when setting autocomplete
     if (isTracking) {
       try {
         watchIdRef.current = trackLocation(setLocation, setLocationDenied);
+        console.log(watchIdRef.current);
       } catch (error) {
         if (watchIdRef.current) {
           navigator.geolocation.clearWatch(watchIdRef.current);
@@ -218,8 +218,9 @@ export default function Map() {
   useEffect(() => {
     // updates the users marker when position changes
     if (userMarker && isTracking) {
-      map?.setCenter(location as Location);
+      // map?.setCenter(location as Location);
       userMarker.setCenter(location as Location);
+      console.log(location);
     }
 
     // if the user marker isn't already created, create one
@@ -237,6 +238,13 @@ export default function Map() {
       );
     }
   }, [map, location]);
+
+  //  jump when ref mount (from autocomplete location back to current location)
+  useEffect(() => {
+    if (map && location) {
+      map.setCenter(location);
+    }
+  }, [watchIdRef.current]);
 
   useEffect(() => {
     if (isLoaded && location && map === null) {
@@ -290,22 +298,12 @@ export default function Map() {
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
         if (place && place.geometry?.location) {
-          // drop marker
-          // const marker = createMarkerOnMap(
-          //   place.geometry?.location as google.maps.LatLng,
-          //   createSelectedLocationPin,
-          //   "selectedLocation",
-          //   null,
-          //   map
-          // );
-
           setLocation({
             lat: place.geometry?.location.lat(),
             lng: place.geometry?.location.lng(),
           });
           setIsTracking(false);
           // setSelectedLocationMarker(marker);
-
           map?.setCenter(place.geometry?.location as google.maps.LatLng);
           map.setZoom(17);
         }
@@ -355,7 +353,10 @@ export default function Map() {
                   {/* make this button as 'back to my current location, reset zoom and center, and clear all markers' */}
                   <button
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
-                    onClick={handleClear}
+                    onClick={() => {
+                      handleClear();
+                      map?.setCenter(location);
+                    }}
                   >
                     <FaLocationCrosshairs className="text-white" />
                   </button>

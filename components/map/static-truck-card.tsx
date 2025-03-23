@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FiExternalLink } from "react-icons/fi";
 import { ExternalLink } from "lucide-react";
 import { IoMdClose } from "react-icons/io";
 type StaticTruckProps = {
@@ -16,9 +15,10 @@ export default function StaticTruckCard({
   //   set toggle this card display
 }: StaticTruckProps) {
   const [url, setUrl] = useState<string>();
-  const [img, setImg] = useState<string | null>();
 
   useEffect(() => {
+    //
+    console.log(place);
     setUrl(`https://www.google.com/maps/place/?q=place_id:${place.id}`);
   }, [place]);
 
