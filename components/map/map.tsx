@@ -5,22 +5,21 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 // components / UI
 import { FaSpinner, FaPlus, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
+import { FaLocationCrosshairs } from "react-icons/fa6";
+import { FiRefreshCcw } from "react-icons/fi";
 import { Input } from "../ui/input";
-import { createCurrentLocationPin } from "./createPinStyles";
+import { createSelectedLocationPin } from "./createPinStyles";
 import SightingConfirmCard from "./sighting-confirm-card";
-import Filter from "./filter";
+import Filter, { FilterMethods } from "./filter";
+import StaticTruckCard from "./static-truck-card";
 // types
 import { Location, Sighting } from "../global-component-types";
 import AddNewFoodTruckForm from "../food-truck/add-new-food-truck-form";
 import AddSighting from "./add-sighting";
 import {
   clear,
-  createMarkerOnMap,
-  fetchSighting,
   makeSightingMarkerUsingSighting,
-  searchFoodTruck,
   trackLocation,
-  getLocation,
   displayInitSighting,
 } from "./geo-utils";
 
@@ -43,6 +42,8 @@ export default function Map() {
   // references
   const mapRef = useRef<HTMLDivElement>(null);
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
+  const watchIdRef = useRef<number | null>(null);
+  const filterRef = useRef<FilterMethods | null>(null);
 
   // search params
   const searchParams = useSearchParams();
@@ -63,6 +64,7 @@ export default function Map() {
   const [geocoder, setGeocoder] = useState<google.maps.Geocoder>();
   // marker for tracking users location
   const [userMarker, setUserMarker] = useState<google.maps.Circle | null>(null);
+  const [isTracking, setIsTracking] = useState<boolean>(true);
 
   //google map food truck location with markers
   const [places, setPlaces] = useState<any[]>();
@@ -75,7 +77,7 @@ export default function Map() {
     useState<boolean>(false);
 
   //autocomplete location with markers
-  const [selectedLocation, setSelectedLocation] = useState<any>();
+  const [selectedLocationMarker, setSelectedLocationMarker] = useState<any>();
 
   const [isAddingActive, setIsAddingActive] = useState<boolean>(false);
   //used to toggle add sighting / truck
@@ -86,6 +88,9 @@ export default function Map() {
 
   // current id of sighting to display
   const [selectedSighting, setSelectedSighting] = useState<any>();
+
+  // current static truck
+  const [selectedStatic, setSelectedStatic] = useState<any>();
 
   const [toastMessage, setToastMessage] = useState<{
     message: string;
@@ -125,6 +130,28 @@ export default function Map() {
   // show sighting confirm card
   // refresh sighting confirm number realtime: pass a refresh state hook, trigger get sighting by id if confirmed, to increment confirm number immediately
 
+  const handleClear = async () => {
+    if (filterRef.current) {
+      //
+    }
+    if (!isTracking) {
+      clear([selectedLocationMarker]);
+      if (placeAutoCompleteRef.current?.value) {
+        placeAutoCompleteRef.current.value = "";
+      }
+      setIsTracking(true);
+      //back to current location
+    }
+    if (places) {
+      clear(places);
+      setSelectedStatic(null);
+      setPlaces(undefined);
+    }
+    if (sightings) {
+      setSelectedSighting(null);
+    }
+    trackLocation(setLocation, setLocationDenied);
+  };
   // -----Effect-----
   //initial display markers
   useEffect(() => {
@@ -160,8 +187,6 @@ export default function Map() {
       setInitialSightingLoaded(true);
     }
   }, [map, isLoaded]);
-  //TODO 2  Change location follow autocomplete
-  //TODO 3  If autocomplete marker clicked again, display button to back to current location
 
   useEffect(() => {
     // get logged in user
@@ -169,15 +194,20 @@ export default function Map() {
       const session = await supabase.auth.getSession();
       setUser(session.data.session?.user.user_metadata);
     })();
-    let id: any;
-    try {
-      id = trackLocation(setLocation, setLocationDenied);
-    } catch (error) {
-      navigator.geolocation.clearWatch(id);
-      getLocation(setLocation, setLocationDenied);
-      // Toast error (currently is using static location)
-    }
   }, []);
+  // toggle track current location
+  useEffect(() => {
+    // pause track when setting autocomplete
+    if (isTracking) {
+      try {
+        watchIdRef.current = trackLocation(setLocation, setLocationDenied);
+      } catch (error) {
+        if (watchIdRef.current) {
+          navigator.geolocation.clearWatch(watchIdRef.current);
+        }
+      }
+    }
+  }, [isTracking]);
 
   useEffect(() => {
     if (locationDenied && locationToast) {
@@ -187,7 +217,7 @@ export default function Map() {
 
   useEffect(() => {
     // updates the users marker when position changes
-    if (userMarker) {
+    if (userMarker && isTracking) {
       map?.setCenter(location as Location);
       userMarker.setCenter(location as Location);
     }
@@ -249,7 +279,6 @@ export default function Map() {
         placeAutoCompleteRef.current as HTMLInputElement,
         autocompleteOptions
       );
-
       setMap(gMap);
       setAutoComplete(gAutoComplete);
     }
@@ -260,23 +289,30 @@ export default function Map() {
       // set center to place in auto complete
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
-
-        if (place) {
+        if (place && place.geometry?.location) {
           // drop marker
-          const selectedLocationMarker = createMarkerOnMap(
-            place.geometry?.location as google.maps.LatLng,
-            createCurrentLocationPin,
-            "selectedLocation",
-            null,
-            map
-          );
-          setSelectedLocation(selectedLocationMarker);
+          // const marker = createMarkerOnMap(
+          //   place.geometry?.location as google.maps.LatLng,
+          //   createSelectedLocationPin,
+          //   "selectedLocation",
+          //   null,
+          //   map
+          // );
+
+          setLocation({
+            lat: place.geometry?.location.lat(),
+            lng: place.geometry?.location.lng(),
+          });
+          setIsTracking(false);
+          // setSelectedLocationMarker(marker);
 
           map?.setCenter(place.geometry?.location as google.maps.LatLng);
+          map.setZoom(17);
         }
       });
     }
   }, [autoComplete]);
+
   // turn off after adding truck / sighting
   useEffect(() => {
     if (!isDisplayedAddTruck && !isDisplayedAddSighting && isAddingActive) {
@@ -316,30 +352,16 @@ export default function Map() {
             <div className="absolute w-full flex flex-row justify-center items-center">
               <div className="relative flex p-2 gap-1 w-full">
                 <div className="flex gap-2 w-full justify-center h-10 items-center">
-                  {/* make this button as 'back to my current location' */}
+                  {/* make this button as 'back to my current location, reset zoom and center, and clear all markers' */}
                   <button
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
-                    onClick={async () => {
-                      if (!displaySightingsMarker) {
-                        fetchSighting(
-                          location,
-                          map as google.maps.Map,
-                          setSighting,
-                          setSelectedSighting
-                        );
-                        setDisplaySightingsMarker(true);
-                      }
-                      if (displaySightingsMarker && sightings) {
-                        clear(sightings);
-                        setSelectedSighting(null);
-                        setDisplaySightingsMarker(false);
-                      }
-                    }}
+                    onClick={handleClear}
                   >
-                    <FaMapMarkerAlt className="fill-white" />
+                    <FaLocationCrosshairs className="text-white" />
                   </button>
-                  {}
+
                   <Filter
+                    ref={filterRef}
                     google={google}
                     map={map}
                     displayPlacesMarker={displayPlacesMarker}
@@ -352,6 +374,7 @@ export default function Map() {
                     location={location}
                     places={places}
                     setPlaces={setPlaces}
+                    setSelectedStatic={setSelectedStatic}
                   />
 
                   {/* display sighitngs */}
@@ -367,6 +390,7 @@ export default function Map() {
               {selectedSighting && (
                 <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
                   <SightingConfirmCard
+                    filter={filterRef}
                     location={location}
                     map={map as google.maps.Map}
                     setSighting={setSighting}
@@ -374,6 +398,16 @@ export default function Map() {
                     setToastMessage={setToastMessage}
                     sighting={selectedSighting}
                     setSelectedSighting={setSelectedSighting}
+                  />
+                </div>
+              )}
+              {/* StaticTruckCard */}
+              {places && selectedStatic && (
+                <div className="absolute flex flex-col h-fit w-fit justify-center items-center top-16 bg-white rounded-xl border border-gray-300">
+                  <StaticTruckCard
+                    google={google}
+                    place={selectedStatic}
+                    setSelectedStatic={setSelectedStatic}
                   />
                 </div>
               )}
