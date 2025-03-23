@@ -96,6 +96,7 @@ export const trackLocation = (
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
+
         setLocationDenied(false);
       },
       (error) => {
@@ -238,12 +239,12 @@ export const displayInitSighting = async (
         initFetchedSighting
       );
       setDisplaySightingsMarker(true);
-      map?.setCenter(
-        new google.maps.LatLng({
-          lat: initFetchedSighting[0].lat,
-          lng: initFetchedSighting[0].lng,
-        })
-      );
+      // map?.setCenter(
+      //   new google.maps.LatLng({
+      //     lat: initFetchedSighting[0].lat,
+      //     lng: initFetchedSighting[0].lng,
+      //   })
+      // );
       setSelectedSighting(initFetchedSighting[0]);
     } catch (error) {
       console.error(error);

@@ -150,7 +150,6 @@ export default function Map() {
     if (sightings) {
       setSelectedSighting(null);
     }
-
     trackLocation(setLocation, setLocationDenied);
   };
   // -----Effect-----
@@ -196,6 +195,7 @@ export default function Map() {
       setUser(session.data.session?.user.user_metadata);
     })();
   }, []);
+
   // toggle track current location
   useEffect(() => {
     // pause track when setting autocomplete
@@ -220,7 +220,6 @@ export default function Map() {
   useEffect(() => {
     // updates the users marker when position changes
     if (userMarker && isTracking) {
-      //
       // map?.setCenter(location as Location);
       userMarker.setCenter(location as Location);
       console.log(location);
@@ -242,7 +241,7 @@ export default function Map() {
     }
   }, [map, location]);
 
-  // only jump when ref mount
+  //  jump when ref mount (from autocomplete location back to current location)
   useEffect(() => {
     if (map && location) {
       map.setCenter(location);
@@ -307,7 +306,6 @@ export default function Map() {
           });
           setIsTracking(false);
           // setSelectedLocationMarker(marker);
-
           map?.setCenter(place.geometry?.location as google.maps.LatLng);
           map.setZoom(17);
         }
@@ -357,7 +355,10 @@ export default function Map() {
                   {/* make this button as 'back to my current location, reset zoom and center, and clear all markers' */}
                   <button
                     className="h-8 w-8 bg-primary flex items-center justify-center rounded-xl  "
-                    onClick={handleClear}
+                    onClick={() => {
+                      handleClear();
+                      map?.setCenter(location);
+                    }}
                   >
                     <FaLocationCrosshairs className="text-white" />
                   </button>
