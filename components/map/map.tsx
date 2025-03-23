@@ -150,6 +150,7 @@ export default function Map() {
     if (sightings) {
       setSelectedSighting(null);
     }
+
     trackLocation(setLocation, setLocationDenied);
   };
   // -----Effect-----
@@ -201,6 +202,7 @@ export default function Map() {
     if (isTracking) {
       try {
         watchIdRef.current = trackLocation(setLocation, setLocationDenied);
+        console.log(watchIdRef.current);
       } catch (error) {
         if (watchIdRef.current) {
           navigator.geolocation.clearWatch(watchIdRef.current);
@@ -218,8 +220,10 @@ export default function Map() {
   useEffect(() => {
     // updates the users marker when position changes
     if (userMarker && isTracking) {
-      map?.setCenter(location as Location);
+      //
+      // map?.setCenter(location as Location);
       userMarker.setCenter(location as Location);
+      console.log(location);
     }
 
     // if the user marker isn't already created, create one
@@ -237,6 +241,13 @@ export default function Map() {
       );
     }
   }, [map, location]);
+
+  // only jump when ref mount
+  useEffect(() => {
+    if (map && location) {
+      map.setCenter(location);
+    }
+  }, [watchIdRef.current]);
 
   useEffect(() => {
     if (isLoaded && location && map === null) {
@@ -290,15 +301,6 @@ export default function Map() {
       autoComplete.addListener("place_changed", () => {
         const place = autoComplete.getPlace();
         if (place && place.geometry?.location) {
-          // drop marker
-          // const marker = createMarkerOnMap(
-          //   place.geometry?.location as google.maps.LatLng,
-          //   createSelectedLocationPin,
-          //   "selectedLocation",
-          //   null,
-          //   map
-          // );
-
           setLocation({
             lat: place.geometry?.location.lat(),
             lng: place.geometry?.location.lng(),
