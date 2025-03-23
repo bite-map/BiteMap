@@ -8,6 +8,7 @@ import {
 } from "@/app/database-actions";
 import StarRating from "./star-rating";
 import { IoMdClose } from "react-icons/io";
+import { handleImageUpload } from "@/utils/file-compress";
 
 type AddReviewFoodTruckFormProps = {
   handleToggle: () => void;
@@ -21,7 +22,7 @@ export default function AddReviewFoodTruckForm({
   setReviews,
 }: AddReviewFoodTruckFormProps) {
   const [rating, setRating] = useState(0);
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | undefined>();
 
   return (
     <div className="relative w-80 h-fit bg-white p-2  border border-gray-300 rounded-xl">
@@ -69,9 +70,11 @@ export default function AddReviewFoodTruckForm({
             required
             type="file"
             name="review-picture"
-            onChange={(e) => {
+            onChange={async (e) => {
               if (e.target.files) {
-                setFile(e.target.files[0]);
+                const compressedImage = await handleImageUpload(e);
+                //setFile(e.target.files[0]);
+                setFile(compressedImage);
               }
             }}
           />

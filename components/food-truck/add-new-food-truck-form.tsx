@@ -8,6 +8,7 @@ import { addFoodTruck, addSighting } from "@/app/database-actions";
 import { useState } from "react";
 import { Location } from "../global-component-types";
 import { FaArrowLeft } from "react-icons/fa";
+import { handleImageUpload } from "@/utils/file-compress";
 
 type AddNewFoodTruckFormProps = {
   setToastMessage: (params: { message: string; type: string }) => void;
@@ -24,7 +25,7 @@ export default function AddNewFoodTruckForm({
   location,
   geocoder,
 }: AddNewFoodTruckFormProps) {
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | undefined>();
 
   return (
     <div className="relative pt-2 w-80">
@@ -66,10 +67,13 @@ export default function AddNewFoodTruckForm({
           <Input
             required
             type="file"
+            accept="image/*"
             name="truck-profile-picture"
-            onChange={(e) => {
+            onChange={async (e) => {
               if (e.target.files) {
-                setFile(e.target.files[0]);
+                const compressedImage = await handleImageUpload(e);
+                //setFile(e.target.files[0]);
+                setFile(compressedImage);
               }
             }}
           />
