@@ -1,5 +1,5 @@
 import {
-  createCurrentLocationPin,
+  createSelectedLocationPin,
   createTruckPin,
   createSightingPin,
 } from "./createPinStyles";
@@ -15,9 +15,9 @@ export const createMarkerOnMap = (
   location: google.maps.LatLng,
   createPin: Function,
   title: string = "place",
-  infoCardContent: string | null = null,
   map: google.maps.Map,
   clickEvent: Function | null = null
+  // setSelectedPlace
 ) => {
   const pin = createPin(google);
   const marker: google.maps.marker.AdvancedMarkerElement =
@@ -27,35 +27,40 @@ export const createMarkerOnMap = (
       title: title,
       content: pin.element,
     });
-  const infoCard = new window.google.maps.InfoWindow({
-    content: infoCardContent,
-    maxWidth: 200,
-    position: location,
-  });
 
   const clickListener = marker.addListener("click", () => {
-    if (infoCardContent) {
-      infoCard.open({ map: map, anchor: marker });
-    }
+    //
     if (clickEvent) {
       clickEvent();
     }
   });
-  return { marker, infoCard, clickListener };
+  return { marker, infoCard: null, clickListener };
 };
 
-export const clear = (markers: any[]) => {
-  markers.forEach((obj: any) => {
-    if (obj) {
-      google.maps.event.removeListener(obj.clickListener);
-      if (obj.infoCard) {
-        obj.infoCard.close();
-      }
-      if (obj.marker) {
-        obj.marker.setMap(null);
+export const clear = (
+  markers: {
+    clickListener: null | any;
+    infoCard: null | any;
+    marker: google.maps.marker.AdvancedMarkerElement;
+  }[]
+) => {
+  markers.forEach(
+    (obj: {
+      clickListener: null | any;
+      infoCard: null | any;
+      marker: google.maps.marker.AdvancedMarkerElement;
+    }) => {
+      if (obj) {
+        google.maps.event.removeListener(obj.clickListener);
+        if (obj.infoCard) {
+          obj.infoCard.close();
+        }
+        if (obj.marker) {
+          obj.marker.map = null;
+        }
       }
     }
-  });
+  );
 };
 
 export const getLocation = (
@@ -100,13 +105,15 @@ export const trackLocation = (
       { enableHighAccuracy: true }
     );
   }
+  return null;
 };
 
 export const searchFoodTruck = async (
   google: any,
   map: google.maps.Map,
   setPlaces: Function,
-  location: Location
+  location: Location,
+  setSelectedStatic: (place: any) => void
 ) => {
   const { Place } = (await google.maps.importLibrary(
     "places"
@@ -115,29 +122,22 @@ export const searchFoodTruck = async (
   const circle = new google.maps.Circle({ center: center, radius: 5000 });
   const request = {
     textQuery: "Food Truck",
-    fields: ["displayName", "location", "businessStatus"],
+    fields: ["displayName", "location", "businessStatus", "formattedAddress"],
     locationBias: circle,
     includedType: "restaurant",
   };
   //@ts-ignore
-  // TODO: make 'createMarkerOnMap' for places, and split 2 kinds of markers
   const { places } = await Place.searchByText(request);
   if (places.length) {
-  
     if (map && places) {
       const placeMarkers = places.map((place) => {
-        const url = "https://www.google.com/maps/place/?q=place_id:${place.id}";
         const obj = createMarkerOnMap(
           place.location as google.maps.LatLng,
           createTruckPin,
           place.displayName as string,
-          `<div>
-          ${place.displayName}
-          </div>`,
           map,
           () => {
-            // fix this , open a small pop up
-            window.open(url, "_blank");
+            setSelectedStatic(place);
           }
         );
         return obj;
@@ -174,7 +174,7 @@ export const fetchSighting = async (
         location,
         createSightingPin,
         sighting.id.toString() as string,
-        null,
+
         map as google.maps.Map,
         sightingMarkerClickEvent
       );
@@ -204,7 +204,7 @@ export const makeSightingMarkerUsingSighting = async (
         location,
         createSightingPin,
         sighting.id.toString() as string,
-        null,
+
         map as google.maps.Map,
         sightingMarkerClickEvent
       );

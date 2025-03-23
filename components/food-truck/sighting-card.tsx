@@ -18,9 +18,6 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
   const pathname = usePathname();
   const [localTime, setLocalTime] = useState<string>();
 
-  // TODO: calculate sighting frequency, using db function
-  // TODO: parse latlng to address
-  // parse to human readable str
   useEffect(() => {
     const localTime = new Date(sightingData.last_active_time);
     const year = localTime.getFullYear().toString().slice(-2);
@@ -33,7 +30,6 @@ export default function SightingCard({ sightingData }: SightingCardProps) {
     setLocalTime(
       `${year}-${month}-${day} ${dayOfWeek} ${hours}:${minutes}:${seconds}`
     );
-    console.log("TIME", sightingData.last_active_time);
   }, []);
 
   return (

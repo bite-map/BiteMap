@@ -257,7 +257,6 @@ export const getSightingBySightingId = async (sightignId: number) => {
   const { data, error } = await supabase
     .rpc("get_sighting_by_id", { sighting_id: sightignId })
     .select();
-  console.log(data, error);
   if (error) return error;
 
   return data;
@@ -604,7 +603,7 @@ export const getAllSighConfirmationsByDayId = async (
   const supabase = await createClient();
 
   if (!sightings || sightings.length === 0) {
-    console.log("No sightings found for the required info");
+    console.error("No sightings found for the required info");
     return [];
   }
 
@@ -638,7 +637,7 @@ export const getAllSighConfirmationsByDayLocationId = async (
   const supabase = await createClient();
 
   if (sightings.length === 0) {
-    console.log("No sightings found for the required info");
+    console.error("No sightings found for the required info");
     return [];
   }
 
@@ -662,7 +661,7 @@ export const getAllSighConfirmationsByDayLocationId = async (
     })
   );
 
-  console.log("All confirmations:", allConfirmations);
+  console.error("All confirmations:", allConfirmations);
 
   const confirmationsByDayAndLocation = allConfirmations
     .flat()
@@ -672,7 +671,7 @@ export const getAllSighConfirmationsByDayLocationId = async (
     });
 
   if (confirmationsByDayAndLocation.length === 0) {
-    console.log("No confirmations found for the specified day and location");
+    console.error("No confirmations found for the specified day and location");
     return [];
   }
 
