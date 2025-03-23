@@ -131,7 +131,7 @@ export default function AddSighting({
                 Can't find the truck you're looking for? You can add one below.
               </p>
               <button
-                className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center text-sm"
+                className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border rounded-xl flex-none  w-64 h-[40px] flex justify-center items-center text-sm"
                 onClick={() => {
                   handleToggleAddSighting();
                   handleToggleAddTruck();
@@ -148,7 +148,7 @@ export default function AddSighting({
                     No trucks match your search. You can add one below.
                   </p>
                   <button
-                    className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center text-sm"
+                    className="mt-3 relative ml-2 mr-2 bg-primary p-2 text-background border rounded-xl flex-none w-64 h-[40px] flex justify-center items-center text-sm"
                     onClick={() => {
                       handleToggleAddSighting();
                       handleToggleAddTruck();
@@ -215,7 +215,7 @@ export default function AddSighting({
           }}
           className={
             (sightingLocation ? "" : "disabled:") +
-            "mt-3 relative mr-2 bg-primary p-2 text-background border border-gray-300 rounded-xl flex-none h-9 w-64 flex justify-center items-center"
+            "mt-3 relative mr-2 bg-primary p-2 text-background border  rounded-xl flex-none  w-64 flex justify-center items-center"
           }
         >
           Submit

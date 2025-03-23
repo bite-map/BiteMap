@@ -44,6 +44,8 @@ export const addFoodTruck = async (
   // add profile image to storage and store returned data
   const profileImage = await addFoodTruckProfileImageToBucket(truckId, file);
 
+  console.log("FILE:", file);
+
   // get the public url for the profile image
   const { publicUrl } = await getPublicUrlForImage(
     profileImage as ProfileImage
@@ -494,6 +496,8 @@ export const AddFoodTruckReview = async (
 
   // add review image to storage and store returned data
   const reviewImage = await addReviewImageToBucket(truckId, reviewId, file);
+
+  console.log("FILE:", file);
 
   // get the public url for the profile image
   const { publicUrl } = await getPublicUrlForImage(reviewImage as ProfileImage);
