@@ -465,7 +465,7 @@ export default function Map() {
           </div>
         ) : (
           <div className="flex justify-center items-center gap-2 text-lg mt-2">
-            Loading map{" "}
+            Loading Map{" "}
             <FaSpinner className="animate-[spin_2s_ease-in-out_infinite] text-primary" />
           </div>
         )

@@ -199,7 +199,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           <FaSpinner className="animate-spin text-primary" />
         </p>
       ) : (
-        locationsChance.size > 0 && (
+        locationsChance.size > 0 ? (
           <div className="relative rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full mt-4 min-h-16 px-3 py-2">
             <strong>
               <p className="text-lg">
@@ -232,6 +232,10 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
                 )
               )}
             </ul>
+          </div>
+        ) : (
+          <div className="mt-4 text-sm ml-2">
+            Insufficient data to calculate chance
           </div>
         )
       )}
