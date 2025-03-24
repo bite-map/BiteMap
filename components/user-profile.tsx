@@ -10,6 +10,7 @@ import Image from "next/image";
 import SightingCard from "./food-truck/sighting-card";
 import FoodTruckCardProfile from "./food-truck/food-truck-card-profile";
 import ReviewCard from "./food-truck/reviews-card";
+import { FaSpinner } from "react-icons/fa";
 
 export default function UserProfile() {
   const supabase = createClient();
@@ -21,6 +22,7 @@ export default function UserProfile() {
   const [activeTab, setActiveTab] = useState<
     "favorites" | "sightings" | "reviews"
   >("favorites");
+  const [chancesLoading, setChancesLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -31,16 +33,19 @@ export default function UserProfile() {
 
   useEffect(() => {
     const fetchFavorites = async () => {
+      setChancesLoading(true);
       const session = await supabase.auth.getSession();
       const profileId = session.data?.session?.user.id;
       if (profileId) {
         const favoriteTruckData = await getFavoriteTruck(profileId);
         setFavoriteTrucks(favoriteTruckData);
+        setChancesLoading(false);
       }
     };
     const fetchSightings = async () => {
       const data = await getSightingsOfUser();
       setSightingData(data);
+      
     };
 
     const fetchReviews = async () => {
@@ -98,7 +103,13 @@ export default function UserProfile() {
         </nav>
       </div>
       <div className="relative pt-3">
-        {activeTab === "favorites" && (
+      {chancesLoading ? (
+        <p className="flex items-center mt-2 ml-2 text-sm gap-2">
+          Loading Favorites{" "}
+          <FaSpinner className="animate-spin text-primary" />
+        </p>
+      ) :
+        activeTab === "favorites" && (
           <div className="grid grid-cols-2 gap-4">
             {favoriteTrucks.length > 0 ? (
               favoriteTrucks.map((truck) => (
