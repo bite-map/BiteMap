@@ -153,8 +153,9 @@ export default function Map() {
   // -----Effect-----
   //initial display markers
   useEffect(() => {
-    if (!initialSightingLoaded && map && isLoaded) {
+    if (!initialSightingLoaded && map && isLoaded && filterRef.current) {
       if (initialSightingId && !isNaN(initialSightingId)) {
+        console.log(initialSightingId);
         displayInitSighting(
           initialSightingId,
           map,
@@ -164,23 +165,24 @@ export default function Map() {
         );
       }
       if (initialDisplay === "active") {
-        if (!displaySightingsMarker) {
-          const displayActiveAtInit = async () => {
-            const data = await getSightingActiveInLastWeek();
-            if (data instanceof PostgrestError) {
-              console.error(data);
-              return;
-            }
-            makeSightingMarkerUsingSighting(
-              map as google.maps.Map,
-              setSighting,
-              setSelectedSighting,
-              data
-            );
-          };
-          displayActiveAtInit();
-          setDisplaySightingsMarker(true);
-        }
+        filterRef.current.sightings();
+        //   if (!displaySightingsMarker) {
+        //     const displayActiveAtInit = async () => {
+        //       const data = await getSightingActiveInLastWeek();
+        //       if (data instanceof PostgrestError) {
+        //         console.error(data);
+        //         return;
+        //       }
+        //       makeSightingMarkerUsingSighting(
+        //         map as google.maps.Map,
+        //         setSighting,
+        //         setSelectedSighting,
+        //         data
+        //       );
+        //     };
+        //     displayActiveAtInit();
+        //     setDisplaySightingsMarker(true);
+        //   }
       }
       setInitialSightingLoaded(true);
     }
