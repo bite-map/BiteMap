@@ -53,7 +53,7 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
           location.lng,
           2500
         );
-        console.log("Fetched trucks: ", trucksWithFullInfo);
+        // console.log("Fetched trucks: ", trucksWithFullInfo);
         setTrucks(trucksWithFullInfo); // update state with the nearby trucks
         setLoading(false); // reset
       }
@@ -123,10 +123,10 @@ export default function FoodTruckCardLanding({}: FoodTruckCardProps) {
           }
         }
 
-        console.log(
-          "Setting truck location chances map:",
-          newTruckLocationChances
-        );
+        // console.log(
+        //   "Setting truck location chances map:",
+        //   newTruckLocationChances
+        // );
         setTruckLocationChances(newTruckLocationChances);
         setChancesLoading(false);
       }

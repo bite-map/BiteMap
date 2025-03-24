@@ -200,7 +200,7 @@ export default function Map() {
     if (isTracking) {
       try {
         watchIdRef.current = trackLocation(setLocation, setLocationDenied);
-        console.log(watchIdRef.current);
+        // console.log(watchIdRef.current);
       } catch (error) {
         if (watchIdRef.current) {
           navigator.geolocation.clearWatch(watchIdRef.current);
@@ -220,7 +220,7 @@ export default function Map() {
     if (userMarker && isTracking) {
       // map?.setCenter(location as Location);
       userMarker.setCenter(location as Location);
-      console.log(location);
+      // console.log(location);
     }
 
     // if the user marker isn't already created, create one
