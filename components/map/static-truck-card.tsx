@@ -18,7 +18,7 @@ export default function StaticTruckCard({
 
   useEffect(() => {
     //
-    console.log(place);
+    // console.log(place);
     setUrl(`https://www.google.com/maps/place/?q=place_id:${place.id}`);
   }, [place]);
 

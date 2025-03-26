@@ -82,7 +82,7 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   }, [foodTruck]);
 
   useEffect(() => {
-    console.log(reviews);
+    // console.log(reviews);
   }, [reviews]);
 
   useEffect(() => {
@@ -198,46 +198,42 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           Calculating Chances{" "}
           <FaSpinner className="animate-spin text-primary" />
         </p>
+      ) : locationsChance.size > 0 ? (
+        <div className="relative rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full mt-4 min-h-16 px-3 py-2">
+          <strong>
+            <p className="text-lg">
+              Chances for{" "}
+              {
+                [
+                  "Sunday",
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                ][new Date().getDay()]
+              }
+            </p>
+          </strong>
+          <ul className="pl-3 marker:text-primary">
+            {Array.from(locationsChance.entries()).map(([location, chance]) => (
+              <li
+                key={location}
+                className="text-sm list-disc first:pt-1 pt-3 text-gray-500"
+              >
+                {location}:{" "}
+                <strong className="text-primary">
+                  {Math.round(chance * 100)}%
+                </strong>
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
-        locationsChance.size > 0 ? (
-          <div className="relative rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full mt-4 min-h-16 px-3 py-2">
-            <strong>
-              <p className="text-lg">
-                Chances for{" "}
-                {
-                  [
-                    "Sunday",
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                  ][new Date().getDay()]
-                }
-              </p>
-            </strong>
-            <ul className="pl-3 marker:text-primary">
-              {Array.from(locationsChance.entries()).map(
-                ([location, chance]) => (
-                  <li
-                    key={location}
-                    className="text-sm list-disc first:pt-1 pt-3 text-gray-500"
-                  >
-                    {location}:{" "}
-                    <strong className="text-primary">
-                      {Math.round(chance * 100)}%
-                    </strong>
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-        ) : (
-          <div className="mt-4 text-sm ml-2">
-            Insufficient data to calculate chance
-          </div>
-        )
+        <div className="mt-4 text-sm ml-2">
+          Insufficient data to calculate chance
+        </div>
       )}
 
       <div className="border-b border-gray-200 mt-4">
