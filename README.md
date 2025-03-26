@@ -1,34 +1,19 @@
-## Clone and run locally
+![BiteMap Logo](https://github.com/bite-map/BiteMap/blob/main/public/logo.svg)
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+BiteMap is a progressive web app which makes information about food trucks and food stands more readily avaliable.
 
-2. Install dependencies
+Through community contribution we aim to build a living map of food truck acitivty across Tokyo and Japan.
 
-   ```bash
-   npm install
-   ```
+![BiteMap Screenshots](https://i.postimg.cc/BnkCWZDH/bitemap-screenshots.png)
 
-   ```bash
-   yarn install
-   ```
-
-   ```bash
-   pnpm install
-   ```
-
-3. Add `.env.local` and update the following:
-
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
-
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
-
-4. You can now run the Next.js local development server:
-
-   ```bash
-   npm run dev
-   ```
-
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+## Features
+- A local map displaying sightings of food trucks spotted nearby
+- Map filters to help users find the perfect place to eat
+- Food truck profiles for each truck in the BiteMap library
+  - Can view and leave reviews
+  - Can view where the food truck has been recently sighted
+  - Can view where the food truck is most likely to be
+  - Can favorite food trucks to easily find later
+- Users can add sightings to the local map for other to view
+- When adding a sighting users can also upload a new food truck to the BiteMap library if it doesn't already exist.
+- Users each have a profile where they can view their favourite trucks as well as information about their uploaded reviews and sightings
