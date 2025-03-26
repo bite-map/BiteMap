@@ -1,34 +1,43 @@
-## Clone and run locally
+<a href="https://bite-map.com"><img src="https://github.com/bite-map/BiteMap/blob/main/public/logo.svg" alt="BiteMap's Logo" width="400"/></a>
+# Find your next bite to eat
+# The Concept
+BiteMap is a progressive web app which makes information about food trucks more readily avaliable. Through user contribution we are working to build a living map of food truck activity across Tokyo and Japan.
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+<a href="https://bite-map.com"><img src="https://i.postimg.cc/BnkCWZDH/bitemap-screenshots.png" alt="BiteMap Screenshots" /></a>
 
-2. Install dependencies
 
-   ```bash
-   npm install
-   ```
+# Find Us Here ⬇️
 
-   ```bash
-   yarn install
-   ```
+### [BiteMap](https://bite-map.com/)
 
-   ```bash
-   pnpm install
-   ```
+# Running Locally
+1. Download or clone this repository
+2. Open in your IDE
+3. Install dependencies
+```console
+pnpm i
+```
+4. Start the dev server
+```console
+pnpm dev
+```
+5. Create a `.env.local` file in the root directory
+```
+NEXT_PUBLIC_SUPABASE_URL=<Insert Supabase URL>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=e<Insert Supabase anon key>
 
-3. Add `.env.local` and update the following:
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<Insert Google Maps API key>
+```
+ - If you are not sure how to obtain these details please contact a member of the team and we'll be happy to help.
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+6. If everything went as planned you should be up and running on http://localhost:3000/
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
+# Our Tech Stack
+BiteMap's front-end is built using React, Next.js and TypeScript. The back-end leverages Next.js's API routes and server components. For our database, authentication and storage we are using Supabase.
 
-4. You can now run the Next.js local development server:
+The map functionaility is achieved using the Google Maps and Google Places APIs.
 
-   ```bash
-   npm run dev
-   ```
-
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+# The Team
+<a href="https://github.com/bite-map/BiteMap/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=bite-map/BiteMap" />
+</a>
