@@ -109,7 +109,7 @@ export default function AddNewFoodTruckForm({
                 );
                 if (sighitng) {
                   setToastMessage({
-                    message: "successfully add new truck",
+                    message: "Successfully added a new truck",
                     type: "success",
                   });
                 }

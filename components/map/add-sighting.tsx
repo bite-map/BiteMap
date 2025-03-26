@@ -198,12 +198,12 @@ export default function AddSighting({
                 if (data.duplicatedSightingCount) {
                   setToastMessage({
                     message:
-                      "Found an existing sighting, automatically confirming..",
+                      "Found an existing nearby sighting, automatically confirming..",
                     type: "info",
                   });
                 } else {
                   setToastMessage({
-                    message: "successfully add new sighting",
+                    message: "Successfully added a new sighting",
                     type: "success",
                   });
                 }
