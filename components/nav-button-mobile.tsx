@@ -28,7 +28,7 @@ export default function NavButtonMobile({
         >
           <div
             className={clsx(
-              "flex font-semibold items-center w-48 h-12 p-3 mt-3 md:max-w-[] md:justify-center md:p-0  md:rounded-t-xl md:ring-1 md:ring-primary",
+              "flex font-semibold items-center w-48 h-12 p-3 mt-3 md:max-w-[36] md:justify-center md:p-0  md:rounded-xl md:mb-2 md:mt-2",
               {
                 "bg-primary text-background": pathname === NavButton.href,
               }
@@ -46,7 +46,7 @@ export default function NavButtonMobile({
         >
           <div
             className={clsx(
-              "flex font-semibold items-center w-48 h-12 p-3 mt-3 md:max-w-1/5 md:justify-center  md:rounded-t-xl md:ring-1 md:ring-primary",
+              "flex font-semibold items-center w-48 h-12 p-3 mt-3 md:max-w-1/5 md:justify-center md:rounded-xl md:mb-2 md:mt-2  ",
               {
                 "bg-primary text-background": pathname.includes("/truck-map"),
               }
