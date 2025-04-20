@@ -9,7 +9,9 @@ export default async function TruckProfile({
 
   return (
     <>
-      <FoodTruckProfile truckId={truckId} />
+      <div className="md:flex md:justify-center md:items-center md:min-h-screen">
+        <FoodTruckProfile truckId={truckId} />
+      </div>
     </>
   );
 }

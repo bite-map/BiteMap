@@ -150,19 +150,19 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
   }, [sightings]);
 
   return (
-    <div className="p-3 min-h-screen">
+    <div className="p-3 min-h-screen  md:w-[768px] md:min-w-[768px] md:flex md:flex-col md:items-center ">
       {foodTruck && (
-        <div className="relative rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full">
+        <div className="relative rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary width-full md:w-full md:h-[55svh]">
           <Image
-            className="h-[200px] object-cover"
+            className="h-[200px] object-cover md:h-4/5 md:w-full"
             src={foodTruck.avatar as string}
             alt="Picture of a food truck"
             width={600}
             height={600}
           ></Image>
 
-          <div className="flex flex-row">
-            <div className="px-3 py-2 truncate">
+          <div className="flex flex-row md:bottom-0 md:flex md:h-1/5">
+            <div className="px-3 py-2 truncate md:mt-1">
               <h2 className="text-xl font-semibold truncate">
                 {foodTruck.name}
               </h2>
@@ -231,12 +231,12 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
           </ul>
         </div>
       ) : (
-        <div className="mt-4 text-sm ml-2">
+        <div className="mt-4 text-sm ml-2 md:w-full">
           Insufficient data to calculate chance
         </div>
       )}
 
-      <div className="border-b border-gray-200 mt-4">
+      <div className="border-b border-gray-200 mt-4 md:w-full">
         <nav className="flex -mb-px">
           {["reviews", "sightings"].map((tab) => (
             <button
@@ -255,29 +255,29 @@ export default function FoodTruckProfile({ truckId }: FoodTruckProfileProps) {
       </div>
 
       {/* Reviews Tab */}
-      <div className="pt-2">
+      <div className="pt-2 md:w-full md:h-[40vh] ">
         {activeTab === "reviews" && (
           <>
-            <div className="flex">
+            <div className="flex md:mt-1 md:mb-1 ">
               <h1
-                className={`${montserrat.className} text-2xl text-primary tracking-tight`}
+                className={`${montserrat.className} text-2xl text-primary tracking-tight `}
               >
                 <strong>Recent Reviews</strong>
               </h1>
               <button
-                className="bg-primary p-2 mr-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center ml-auto mb-2"
+                className="bg-primary p-2 mr-2 text-primary-foreground rounded-xl flex-none w-9 h-9 flex justify-center items-center ml-auto mb-2 md:w-auto"
                 onClick={() => {
                   if (!user) {
                     return router.push("/sign-in?error=Not signed in");
                   }
-
                   handleToggleAddReview();
                 }}
               >
+                <p className=" hidden md:mr-2 md:flex">Add Review</p>
                 <IoCreateOutline size={24} />
               </button>
             </div>
-            <div className="grid grid-cols-1 gap-y-3">
+            <div className="grid grid-cols-1 gap-y-3  ">
               {reviews.length > 0 ? (
                 reviews.map((review) => (
                   <ReviewCard key={review.id} reviewsData={review} />
