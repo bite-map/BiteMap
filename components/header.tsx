@@ -32,7 +32,7 @@ export default function Header({ user }: HeaderProps) {
   return (
     <>
       <button
-        className="fixed top-3 right-2 z-30 text-gray-700 text-2xl border-2 border-primary bg-muted rounded-xl text-primary w-10 h-10 mr-[3px] flex justify-center items-center"
+        className="fixed top-3 right-2 z-30 text-gray-700 text-2xl border-2 border-primary bg-muted rounded-xl text-primary w-10 h-10 mr-[3px] flex justify-center items-center md:hidden"
         onClick={handleToggle}
       >
         {!isDisplayed ? <LuMenu /> : <LuX />}

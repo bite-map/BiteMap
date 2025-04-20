@@ -26,13 +26,15 @@ export default function SidebarMobile({
           "fixed top-0  w-full h-full bg-black bg-opacity-50 z-20",
           {
             hidden: !isDisplayed,
-          }
+          },
+          "md:hidden"
         )}
       ></div>
       <div
         className={clsx(
           "fixed top-0 right-0 translate-x-0 flex flex-col border-l-[1.5px] border-primary w-48 h-full pt-16 bg-muted transition-transform duration-300 z-20",
-          { "translate-x-48": !isDisplayed }
+          { "translate-x-48": !isDisplayed },
+          "md:absolute md:flex-row md:w-4/5 md:max-w-3/4 md:h-16 md:pt-0 md:border-l-0 md:bg-transparent md:translate-x-0 md:items-center md:justify-end md:top-0 md:border-0"
         )}
       >
         {/* creates a button for each button passed to the component */}
