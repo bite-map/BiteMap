@@ -36,14 +36,14 @@ export default function ReviewCard({ reviewsData }: ReviewCardProps) {
           </div>
         </Link>
       ) : (
-        <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary">
-          <div className="flex flex-col">
+        <div className="rounded-xl bg-background overflow-clip shadow-md ring-1 ring-primary relative  ">
+          <div className="flex flex-col ">
             <div className="p-2">
               <StarRating rating={reviewsData.rating} isClickable={false} />
               <p className="my-2">{reviewsData.content}</p>
             </div>
             <Image
-              className="h-[300px] object-cover"
+              className="h-[300px] object-cover md:w-full md:h-[55vh]"
               src={reviewsData.image}
               alt="Picture of a food truck"
               width={600}
